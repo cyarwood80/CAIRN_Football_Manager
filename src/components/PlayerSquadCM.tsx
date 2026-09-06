@@ -49,41 +49,37 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
   const isLiveMatch = teamLivePlayers.length > 0;
   const isUserTeam = selectedTeam === userTeamKey;
 
-  // Rating color helper
+  // Rating color helper (IBM Carbon Compliant)
   const getRatingBadge = (rating: number = 6.0) => {
     if (rating >= 8.0) {
       return {
-        bg: "rgba(16, 185, 129, 0.2)",
-        border: "#10b981",
-        color: "#34d399",
+        bg: "#e6f4ea",
+        border: "#b7e1cd",
+        color: "#0F6B45",
         label: "Superb",
-        glow: "0 0 10px rgba(16, 185, 129, 0.4)",
       };
     }
     if (rating >= 6.8) {
       return {
-        bg: "rgba(6, 182, 212, 0.2)",
-        border: "#06b6d4",
-        color: "#22d3ee",
+        bg: "#e0f2fe",
+        border: "#bae6fd",
+        color: "#0369a1",
         label: "Good",
-        glow: "none",
       };
     }
     if (rating >= 5.8) {
       return {
-        bg: "rgba(245, 158, 11, 0.2)",
-        border: "#f59e0b",
-        color: "#fbbf24",
+        bg: "#fef3c7",
+        border: "#fde68a",
+        color: "#b45309",
         label: "Average",
-        glow: "none",
       };
     }
     return {
-      bg: "rgba(239, 68, 68, 0.2)",
-      border: "#ef4444",
-      color: "#f87171",
+      bg: "#fce8e6",
+      border: "#f5c6cb",
+      color: "#da1e28",
       label: "Needs Sub",
-      glow: "0 0 10px rgba(239, 68, 68, 0.4)",
     };
   };
 
@@ -153,7 +149,6 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
         setActiveSubbingTargetId(null);
       }
     } else {
-      // Pre-match squad swap between starting 11 and bench
       const starterIdx = displayPlayers.findIndex((p) => p.id === activeSubbingTargetId);
       if (starterIdx === -1 || !fallbackSquad[starterIdx] || !fallbackBench[subIdx]) {
         setActiveSubbingTargetId(null);
@@ -188,48 +183,45 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
 
   return (
     <div
-      className="glass-panel"
+      className="carbon-card"
       style={{
-        borderRadius: "14px",
-        padding: "18px 20px",
+        padding: "14px 18px",
+        background: "var(--cds-surface)",
+        border: "1px solid var(--cds-border)",
         display: "flex",
         flexDirection: "column",
-        gap: "16px",
-        background: "linear-gradient(180deg, rgba(17, 24, 39, 0.95) 0%, rgba(10, 15, 26, 0.98) 100%)",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        gap: "12px",
       }}
     >
       {/* Top Header: Club Identity, Financials & Team Switcher */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
           <div
             style={{
-              padding: "6px 12px",
-              borderRadius: "8px",
-              background: "rgba(255, 255, 255, 0.05)",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              background: "var(--cds-layer)",
+              border: "1px solid var(--cds-border)",
               display: "flex",
               alignItems: "center",
-              gap: "8px",
+              gap: "6px",
             }}
           >
-            <Shield size={18} color={teamConfig.color} />
-            <span style={{ fontWeight: "800", fontSize: "1rem", color: "#fff" }}>
+            <Shield size={16} color={teamConfig.color || "var(--cds-green-primary)"} />
+            <span style={{ fontWeight: "700", fontSize: "13px", color: "var(--cds-text-primary)" }}>
               {teamConfig.name} Squad Sheet
             </span>
             {isUserTeam && onFormationChange ? (
               <select
                 value={teamConfig.formation || "4-3-3"}
                 onChange={(e) => onFormationChange(e.target.value as Formation)}
+                className="carbon-input"
                 style={{
-                  fontSize: "0.75rem",
+                  fontSize: "11px",
                   fontWeight: "700",
-                  background: "rgba(0,0,0,0.45)",
-                  color: "#38bdf8",
-                  border: "1px solid rgba(56, 189, 248, 0.4)",
-                  borderRadius: "6px",
-                  padding: "3px 8px",
+                  padding: "1px 6px",
+                  height: "22px",
                   cursor: "pointer",
-                  outline: "none",
                 }}
                 title="Change team formation"
               >
@@ -241,7 +233,7 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
                 <option value="3-4-3">3-4-3</option>
               </select>
             ) : (
-              <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
+              <span style={{ fontSize: "11px", color: "var(--cds-text-muted)" }}>
                 ({teamConfig.formation || "4-3-3"})
               </span>
             )}
@@ -252,17 +244,17 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "6px",
-              padding: "4px 10px",
-              borderRadius: "8px",
-              background: "rgba(16, 185, 129, 0.12)",
-              border: "1px solid rgba(16, 185, 129, 0.3)",
-              fontSize: "0.78rem",
+              gap: "4px",
+              padding: "3px 8px",
+              borderRadius: "4px",
+              background: "var(--cds-layer)",
+              border: "1px solid var(--cds-border)",
+              fontSize: "11px",
               fontWeight: "700",
-              color: "#10b981",
+              color: "var(--cds-green-primary)",
             }}
           >
-            <DollarSign size={14} />
+            <DollarSign size={13} />
             <span>Budget: £{transferBudget.toFixed(1)}M</span>
           </div>
 
@@ -270,17 +262,17 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "6px",
-              padding: "4px 10px",
-              borderRadius: "8px",
-              background: "rgba(56, 189, 248, 0.12)",
-              border: "1px solid rgba(56, 189, 248, 0.3)",
-              fontSize: "0.78rem",
+              gap: "4px",
+              padding: "3px 8px",
+              borderRadius: "4px",
+              background: "var(--cds-layer)",
+              border: "1px solid var(--cds-border)",
+              fontSize: "11px",
               fontWeight: "700",
-              color: "#38bdf8",
+              color: "var(--cds-text-primary)",
             }}
           >
-            <TrendingUp size={14} />
+            <TrendingUp size={13} />
             <span>Squad Value: £{calculatedTotalSquadValue}M</span>
           </div>
 
@@ -289,77 +281,69 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "6px",
-              padding: "4px 10px",
-              borderRadius: "8px",
-              background: "rgba(168, 85, 247, 0.12)",
-              border: "1px solid rgba(168, 85, 247, 0.3)",
-              fontSize: "0.78rem",
+              gap: "4px",
+              padding: "3px 8px",
+              borderRadius: "4px",
+              background: "var(--cds-layer)",
+              border: "1px solid var(--cds-border)",
+              fontSize: "11px",
               fontWeight: "700",
-              color: "#c084fc",
+              color: "#7c3aed",
             }}
-            title="Squad Chemistry & Harmony: impacts on-pitch passing coherence. Selling stars and promoting youth temporarily drops harmony."
+            title="Squad Harmony: impacts passing coherence"
           >
-            <Sparkles size={14} />
+            <Sparkles size={13} />
             <span>Harmony: {squadHarmony}%</span>
           </div>
 
           {/* Subs Counter */}
           <div
             style={{
-              fontSize: "0.75rem",
+              fontSize: "11px",
               fontWeight: "700",
-              padding: "4px 10px",
-              borderRadius: "20px",
-              background: subsLeft > 0 ? "rgba(16, 185, 129, 0.15)" : "rgba(239, 68, 68, 0.15)",
-              color: subsLeft > 0 ? "#10b981" : "#ef4444",
-              border: `1px solid ${subsLeft > 0 ? "#10b98155" : "#ef444455"}`,
+              padding: "3px 8px",
+              borderRadius: "4px",
+              background: subsLeft > 0 ? "#e6f4ea" : "#fce8e6",
+              color: subsLeft > 0 ? "#0F6B45" : "#da1e28",
+              border: `1px solid ${subsLeft > 0 ? "#b7e1cd" : "#f5c6cb"}`,
               display: "flex",
               alignItems: "center",
-              gap: "5px",
+              gap: "4px",
             }}
           >
-            <RefreshCw size={12} />
+            <RefreshCw size={11} />
             <span>Subs: {subsLeft} / 3</span>
           </div>
         </div>
 
         {/* Team toggle buttons */}
-        <div style={{ display: "flex", gap: "6px", background: "rgba(0,0,0,0.3)", padding: "4px", borderRadius: "10px" }}>
+        <div style={{ display: "flex", gap: "4px", background: "var(--cds-layer)", padding: "2px", borderRadius: "4px", border: "1px solid var(--cds-border)" }}>
           <button
+            type="button"
             onClick={() => {
               setSelectedTeam("home");
               setActiveSubbingTargetId(null);
             }}
+            className={`btn ${selectedTeam === "home" ? "btn-primary" : "btn-secondary"}`}
             style={{
-              padding: "6px 14px",
-              borderRadius: "7px",
-              border: "none",
-              fontSize: "0.78rem",
-              fontWeight: "700",
-              cursor: "pointer",
-              background: selectedTeam === "home" ? homeTeam.color : "transparent",
-              color: selectedTeam === "home" ? "#000" : "var(--text-secondary)",
-              transition: "all 0.2s ease",
+              padding: "3px 10px",
+              fontSize: "11px",
+              height: "24px",
             }}
           >
             {homeTeam.name}
           </button>
           <button
+            type="button"
             onClick={() => {
               setSelectedTeam("away");
               setActiveSubbingTargetId(null);
             }}
+            className={`btn ${selectedTeam === "away" ? "btn-primary" : "btn-secondary"}`}
             style={{
-              padding: "6px 14px",
-              borderRadius: "7px",
-              border: "none",
-              fontSize: "0.78rem",
-              fontWeight: "700",
-              cursor: "pointer",
-              background: selectedTeam === "away" ? awayTeam.color : "transparent",
-              color: selectedTeam === "away" ? "#fff" : "var(--text-secondary)",
-              transition: "all 0.2s ease",
+              padding: "3px 10px",
+              fontSize: "11px",
+              height: "24px",
             }}
           >
             {awayTeam.name}
@@ -369,23 +353,23 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
 
       {/* Championship Manager Squad Table */}
       <div style={{ overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.8rem" }}>
+        <table className="carbon-table" style={{ width: "100%", fontSize: "12px" }}>
           <thead>
-            <tr style={{ borderBottom: "1px solid rgba(255, 255, 255, 0.1)", color: "var(--text-secondary)", textTransform: "uppercase", fontSize: "0.68rem", letterSpacing: "0.05em" }}>
-              <th style={{ padding: "8px 6px" }}>#</th>
-              <th style={{ padding: "8px 6px" }}>Pos</th>
-              <th style={{ padding: "8px 10px" }}>Agent / Player</th>
-              <th style={{ padding: "8px 6px", textAlign: "center" }}>Tier</th>
-              <th style={{ padding: "8px 8px", textAlign: "center" }}>CM Rating</th>
-              <th style={{ padding: "8px 8px" }}>Health & Stamina</th>
-              <th style={{ padding: "8px 8px", textAlign: "center" }}>Transfer Val</th>
-              <th style={{ padding: "8px 6px", textAlign: "center" }}>Mastery</th>
-              <th style={{ padding: "8px 6px", textAlign: "center" }}>G</th>
-              <th style={{ padding: "8px 6px", textAlign: "center" }}>A</th>
-              <th style={{ padding: "8px 6px", textAlign: "center" }}>Sh</th>
-              <th style={{ padding: "8px 6px", textAlign: "center" }}>Tk</th>
-              <th style={{ padding: "8px 6px", textAlign: "center" }}>Sv</th>
-              <th style={{ padding: "8px 10px", textAlign: "right" }}>Manager Action</th>
+            <tr>
+              <th style={{ width: "24px", textAlign: "center" }}>#</th>
+              <th style={{ width: "40px" }}>Pos</th>
+              <th>Player / Agent</th>
+              <th style={{ width: "36px", textAlign: "center" }}>Tier</th>
+              <th style={{ width: "65px", textAlign: "center" }}>Rating</th>
+              <th style={{ width: "140px" }}>Stamina & Health</th>
+              <th style={{ width: "60px", textAlign: "center" }}>Value</th>
+              <th style={{ width: "45px", textAlign: "center" }}>Mast</th>
+              <th style={{ width: "26px", textAlign: "center" }}>G</th>
+              <th style={{ width: "26px", textAlign: "center" }}>A</th>
+              <th style={{ width: "26px", textAlign: "center" }}>Sh</th>
+              <th style={{ width: "26px", textAlign: "center" }}>Tk</th>
+              <th style={{ width: "26px", textAlign: "center" }}>Sv</th>
+              <th style={{ width: "140px", textAlign: "right" }}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -401,7 +385,6 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
                     if (!isUserTeam) return;
                     if (isLiveMatch && subsLeft <= 0) return;
 
-                    // If another starter is already selected in pre-match, swap positions!
                     if (activeSubbingTargetId && activeSubbingTargetId !== player.id && !isLiveMatch) {
                       const idxA = fallbackSquad.findIndex((p, i) => (p.number || i + 1) === activeTargetPlayer?.number);
                       const idxB = fallbackSquad.findIndex((p, i) => (p.number || i + 1) === player.number);
@@ -419,40 +402,30 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
                     setActiveSubbingTargetId((prev) => (prev === player.id ? null : player.id));
                   }}
                   style={{
-                    borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
                     background: isSubbingThis
-                      ? "rgba(234, 179, 8, 0.16)"
+                      ? "#fef3c7"
                       : isLowRating
-                      ? "rgba(239, 68, 68, 0.05)"
+                      ? "#fdf2f2"
                       : "transparent",
-                    outline: isSubbingThis ? "2px solid #fbbf24" : "none",
-                    outlineOffset: "-2px",
                     cursor: isUserTeam ? "pointer" : "default",
-                    transition: "all 0.15s ease",
                   }}
-                  title={
-                    isUserTeam
-                      ? isSubbingThis
-                        ? "Click to deselect player"
-                        : `Click to select ${player.name} to sub off / swap`
-                      : undefined
-                  }
                 >
                   {/* Number */}
-                  <td style={{ padding: "10px 6px", fontWeight: "800", color: isSubbingThis ? "#fbbf24" : teamConfig.color }}>
+                  <td style={{ textAlign: "center", fontWeight: "700", color: isSubbingThis ? "#b45309" : "var(--cds-text-primary)" }}>
                     {player.number}
                   </td>
 
                   {/* Position */}
-                  <td style={{ padding: "10px 6px" }}>
+                  <td>
                     <span
                       style={{
-                        padding: "2px 6px",
-                        borderRadius: "4px",
-                        fontSize: "0.68rem",
-                        fontWeight: "800",
-                        background: player.role === "GK" ? "#f59e0b33" : player.role.includes("B") ? "#3b82f633" : player.role.includes("M") ? "#10b98133" : "#ef444433",
-                        color: player.role === "GK" ? "#fbbf24" : player.role.includes("B") ? "#60a5fa" : player.role.includes("M") ? "#34d399" : "#f87171",
+                        padding: "1px 5px",
+                        borderRadius: "3px",
+                        fontSize: "10px",
+                        fontWeight: "700",
+                        background: player.role === "GK" ? "#fef3c7" : player.role.includes("B") ? "#e0f2fe" : player.role.includes("M") ? "#e6f4ea" : "#fee2e2",
+                        color: player.role === "GK" ? "#b45309" : player.role.includes("B") ? "#0369a1" : player.role.includes("M") ? "#0F6B45" : "#b91c1c",
+                        border: "1px solid rgba(0,0,0,0.06)",
                       }}
                     >
                       {player.role}
@@ -460,37 +433,27 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
                   </td>
 
                   {/* Name & Thought */}
-                  <td style={{ padding: "10px 10px", minWidth: "160px" }}>
+                  <td style={{ minWidth: "150px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                      <span style={{ fontWeight: "700", color: "#fff" }}>{player.name}</span>
+                      <span style={{ fontWeight: "700", color: "var(--cds-text-primary)" }}>{player.name}</span>
                       {isSubbingThis && (
-                        <span
-                          style={{
-                            fontSize: "0.62rem",
-                            padding: "2px 6px",
-                            borderRadius: "4px",
-                            background: "#fbbf24",
-                            color: "#000",
-                            fontWeight: "900",
-                            letterSpacing: "0.04em",
-                          }}
-                        >
-                          SUB TARGET
+                        <span className="badge badge-warning" style={{ fontSize: "9px", padding: "0 4px" }}>
+                          TARGET
                         </span>
                       )}
                       {player.isYouth && (
-                        <span style={{ fontSize: "0.65rem", padding: "1px 5px", borderRadius: "4px", background: "rgba(245, 158, 11, 0.2)", color: "#fbbf24", fontWeight: "800" }}>
+                        <span className="badge badge-info" style={{ fontSize: "9px", padding: "0 4px" }}>
                           YOUTH
                         </span>
                       )}
                       {player.goals ? (
-                        <span title={`${player.goals} Goals`} style={{ fontSize: "0.75rem" }}>⚽ {player.goals > 1 ? `x${player.goals}` : ""}</span>
+                        <span title={`${player.goals} Goals`} style={{ fontSize: "11px" }}>⚽ {player.goals > 1 ? `x${player.goals}` : ""}</span>
                       ) : null}
                     </div>
                     <div
                       style={{
-                        fontSize: "0.68rem",
-                        color: "var(--text-secondary)",
+                        fontSize: "11px",
+                        color: "var(--cds-text-secondary)",
                         fontStyle: "italic",
                         whiteSpace: "nowrap",
                         overflow: "hidden",
@@ -498,193 +461,172 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
                         maxWidth: "200px",
                       }}
                     >
-                      "{player.thought || "Awaiting instruction..."}"
+                      "{player.thought || "Awaiting tactical instruction..."}"
                     </div>
                   </td>
 
                   {/* Prompt Capability Tier */}
-                  <td style={{ padding: "10px 6px", textAlign: "center" }}>
+                  <td style={{ textAlign: "center" }}>
                     <span
                       style={{
-                        padding: "2px 6px",
-                        borderRadius: "4px",
-                        fontSize: "0.68rem",
-                        fontWeight: "800",
-                        background: (player.tier || 3) >= 4 ? "rgba(245, 158, 11, 0.2)" : "rgba(255, 255, 255, 0.05)",
-                        color: (player.tier || 3) >= 4 ? "#fbbf24" : "var(--text-secondary)",
+                        padding: "1px 4px",
+                        borderRadius: "2px",
+                        fontSize: "10px",
+                        fontWeight: "700",
+                        background: (player.tier || 3) >= 4 ? "#fef3c7" : "var(--cds-layer)",
+                        color: (player.tier || 3) >= 4 ? "#b45309" : "var(--cds-text-muted)",
+                        border: "1px solid var(--cds-border-subtle)",
                       }}
-                      title={player.promptCapability || `Tier ${player.tier || 3}`}
                     >
                       T{player.tier || 3}
                     </span>
                   </td>
 
                   {/* Championship Manager Rating */}
-                  <td style={{ padding: "10px 8px", textAlign: "center" }}>
+                  <td style={{ textAlign: "center" }}>
                     <div
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
-                        gap: "4px",
-                        padding: "3px 8px",
-                        borderRadius: "8px",
+                        gap: "2px",
+                        padding: "2px 6px",
+                        borderRadius: "4px",
                         background: rBadge.bg,
                         border: `1px solid ${rBadge.border}`,
-                        boxShadow: rBadge.glow,
-                        fontWeight: "900",
-                        fontSize: "0.88rem",
+                        fontWeight: "800",
+                        fontSize: "12px",
                         fontFamily: "var(--font-mono)",
                         color: rBadge.color,
                       }}
                       title={rBadge.label}
                     >
                       <span>{(player.rating || 6.0).toFixed(1)}</span>
-                      {isLowRating ? <AlertTriangle size={12} color="#ef4444" /> : null}
+                      {isLowRating && <AlertTriangle size={11} color="#da1e28" />}
                     </div>
                   </td>
 
-                  {/* Health & Stamina Bars */}
-                  <td style={{ padding: "10px 8px", minWidth: "120px" }}>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                  {/* Stamina & Health Bars */}
+                  <td>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                      {/* Stamina */}
+                      <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "10px" }}>
+                        <Zap size={9} color="var(--cds-green-primary)" />
+                        <div style={{ flex: 1, height: "4px", background: "var(--cds-border)", borderRadius: "2px", overflow: "hidden" }}>
+                          <div
+                            style={{
+                              width: `${player.stamina || 100}%`,
+                              height: "100%",
+                              background: (player.stamina || 100) > 70 ? "var(--cds-green-primary)" : (player.stamina || 100) > 40 ? "#d97706" : "#da1e28",
+                            }}
+                          />
+                        </div>
+                        <span style={{ color: "var(--cds-text-muted)", fontSize: "10px", width: "22px", textAlign: "right" }}>{player.stamina || 100}%</span>
+                      </div>
                       {/* Health */}
-                      <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.68rem" }}>
-                        <Heart size={10} color="#f43f5e" />
-                        <div style={{ flex: 1, height: "4px", background: "rgba(255,255,255,0.08)", borderRadius: "2px", overflow: "hidden" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "10px" }}>
+                        <Heart size={9} color="#e11d48" />
+                        <div style={{ flex: 1, height: "4px", background: "var(--cds-border)", borderRadius: "2px", overflow: "hidden" }}>
                           <div
                             style={{
                               width: `${player.health || 100}%`,
                               height: "100%",
-                              background: (player.health || 100) > 75 ? "#10b981" : (player.health || 100) > 55 ? "#f59e0b" : "#ef4444",
+                              background: (player.health || 100) > 75 ? "var(--cds-green-primary)" : "#da1e28",
                             }}
                           />
                         </div>
-                        <span style={{ color: "var(--text-muted)", fontSize: "0.65rem", width: "24px" }}>{player.health || 100}%</span>
-                      </div>
-                      {/* Stamina */}
-                      <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.68rem" }}>
-                        <Zap size={10} color="#38bdf8" />
-                        <div style={{ flex: 1, height: "4px", background: "rgba(255,255,255,0.08)", borderRadius: "2px", overflow: "hidden" }}>
-                          <div style={{ width: `${player.stamina || 100}%`, height: "100%", background: "#38bdf8" }} />
-                        </div>
-                        <span style={{ color: "var(--text-muted)", fontSize: "0.65rem", width: "24px" }}>{player.stamina || 100}%</span>
+                        <span style={{ color: "var(--cds-text-muted)", fontSize: "10px", width: "22px", textAlign: "right" }}>{player.health || 100}%</span>
                       </div>
                     </div>
                   </td>
 
                   {/* Transfer Value */}
-                  <td style={{ padding: "10px 8px", textAlign: "center", fontWeight: "800", color: "#10b981", fontSize: "0.85rem" }}>
+                  <td style={{ textAlign: "center", fontWeight: "700", color: "var(--cds-green-primary)", fontSize: "11px" }}>
                     £{player.transferValue || 12}M
                   </td>
 
                   {/* Tactical Mastery */}
-                  <td style={{ padding: "10px 6px", textAlign: "center" }}>
+                  <td style={{ textAlign: "center" }}>
                     <span
                       style={{
-                        fontSize: "0.72rem",
-                        fontWeight: "800",
-                        padding: "2px 6px",
-                        borderRadius: "4px",
-                        background: "rgba(16, 185, 129, 0.15)",
-                        color: "#34d399",
-                        border: "1px solid rgba(16, 185, 129, 0.3)",
+                        fontSize: "10px",
+                        fontWeight: "700",
+                        padding: "1px 4px",
+                        borderRadius: "3px",
+                        background: "#e6f4ea",
+                        color: "#0F6B45",
+                        border: "1px solid #b7e1cd",
                       }}
-                      title="Tactical Mastery % (Learned from manager directives and match experience)"
+                      title="Tactical Mastery %"
                     >
                       {player.tacticalMastery || 75}%
                     </span>
                   </td>
 
                   {/* Stats */}
-                  <td style={{ padding: "10px 6px", textAlign: "center", fontWeight: "700", color: player.goals ? "#fbbf24" : "var(--text-muted)" }}>
+                  <td style={{ textAlign: "center", fontWeight: "700", color: player.goals ? "var(--cds-green-primary)" : "var(--cds-text-muted)" }}>
                     {player.goals || 0}
                   </td>
-                  <td style={{ padding: "10px 6px", textAlign: "center", fontWeight: "700", color: player.assists ? "#38bdf8" : "var(--text-muted)" }}>
+                  <td style={{ textAlign: "center", fontWeight: "700", color: player.assists ? "#0284c7" : "var(--cds-text-muted)" }}>
                     {player.assists || 0}
                   </td>
-                  <td style={{ padding: "10px 6px", textAlign: "center", color: "var(--text-muted)" }}>
+                  <td style={{ textAlign: "center", color: "var(--cds-text-muted)" }}>
                     {player.shots || 0}
                   </td>
-                  <td style={{ padding: "10px 6px", textAlign: "center", color: "var(--text-muted)" }}>
+                  <td style={{ textAlign: "center", color: "var(--cds-text-muted)" }}>
                     {player.tackles || 0}
                   </td>
-                  <td style={{ padding: "10px 6px", textAlign: "center", color: "var(--text-muted)" }}>
+                  <td style={{ textAlign: "center", color: "var(--cds-text-muted)" }}>
                     {player.saves || 0}
                   </td>
 
-                  {/* Manager Action Buttons */}
-                  <td style={{ padding: "10px 10px", textAlign: "right" }}>
-                    <div style={{ display: "inline-flex", gap: "6px", alignItems: "center" }}>
-                      {/* Chat Drawer trigger */}
+                  {/* Actions */}
+                  <td style={{ textAlign: "right" }}>
+                    <div style={{ display: "inline-flex", gap: "4px", alignItems: "center" }}>
                       <button
+                        type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           onChatWithPlayer(player);
                         }}
-                        className="btn"
+                        className="btn btn-secondary"
                         style={{
-                          padding: "5px 10px",
-                          fontSize: "0.72rem",
-                          fontWeight: "700",
-                          borderRadius: "6px",
-                          background: "rgba(0, 229, 255, 0.15)",
-                          color: "#00E5FF",
-                          border: "1px solid rgba(0, 229, 255, 0.3)",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "4px",
-                          cursor: "pointer",
+                          padding: "2px 6px",
+                          fontSize: "11px",
+                          height: "22px",
+                          gap: "3px",
                         }}
                         title={`1-on-1 Touchline Chat with ${player.name}`}
                       >
-                        <MessageSquare size={12} />
+                        <MessageSquare size={11} />
                         <span>Chat</span>
                       </button>
 
-                      {/* Substitution / Swap Trigger (Available whenever user manages this team) */}
                       {isUserTeam && (
                         <button
+                          type="button"
                           onClick={(e) => {
                             e.stopPropagation();
                             if (isLiveMatch && subsLeft <= 0) return;
                             setActiveSubbingTargetId((prev) => (prev === player.id ? null : player.id));
                           }}
                           disabled={isLiveMatch && subsLeft <= 0}
-                          className="btn"
+                          className={`btn ${isSubbingThis ? "btn-primary" : "btn-secondary"}`}
                           style={{
-                            padding: "5px 10px",
-                            fontSize: "0.72rem",
-                            fontWeight: "800",
-                            borderRadius: "6px",
-                            background: isSubbingThis
-                              ? "rgba(234, 179, 8, 0.35)"
-                              : isLowRating
-                              ? "rgba(239, 68, 68, 0.25)"
-                              : "rgba(255, 255, 255, 0.08)",
-                            color: isSubbingThis ? "#fbbf24" : isLowRating ? "#f87171" : "#fff",
-                            border: `1px solid ${
-                              isSubbingThis
-                                ? "#fbbf24"
-                                : isLowRating
-                                ? "#ef444488"
-                                : "rgba(255, 255, 255, 0.18)"
-                            }`,
-                            cursor: isLiveMatch && subsLeft <= 0 ? "not-allowed" : "pointer",
-                            opacity: isLiveMatch && subsLeft <= 0 ? 0.4 : 1,
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "4px",
-                            boxShadow: isSubbingThis ? "0 0 10px rgba(234, 179, 8, 0.3)" : "none",
+                            padding: "2px 6px",
+                            fontSize: "11px",
+                            height: "22px",
+                            gap: "3px",
                           }}
                           title={
                             isLiveMatch
                               ? subsLeft > 0
                                 ? `Sub off ${player.name}`
                                 : "No substitutions remaining"
-                              : `Select ${player.name} to swap with bench substitute`
+                              : `Select ${player.name} to swap`
                           }
                         >
-                          <RefreshCw size={12} />
-                          <span>{isSubbingThis ? "Cancel Sub" : "Sub Off"}</span>
+                          <RefreshCw size={11} />
+                          <span>{isSubbingThis ? "Cancel" : "Sub"}</span>
                         </button>
                       )}
                     </div>
@@ -699,53 +641,50 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
       {/* Available Bench Substitutes Tray */}
       <div
         style={{
-          borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-          paddingTop: "14px",
+          borderTop: "1px solid var(--cds-border)",
+          paddingTop: "10px",
           display: "flex",
           flexDirection: "column",
-          gap: "10px",
+          gap: "8px",
         }}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span style={{ fontSize: "0.75rem", fontWeight: "800", color: "#fbbf24", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-              Available Bench Substitutes (3 Tactical Replacements)
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "6px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            <span style={{ fontSize: "11px", fontWeight: "700", color: "var(--cds-text-primary)", textTransform: "uppercase", letterSpacing: "0.03em" }}>
+              Bench Substitutes (3 Tactical Replacements)
             </span>
             {activeSubbingTargetId && activeTargetPlayer && (
               <span
                 style={{
-                  fontSize: "0.72rem",
-                  padding: "2px 8px",
-                  borderRadius: "6px",
-                  background: "rgba(234, 179, 8, 0.2)",
-                  border: "1px solid #fbbf24",
-                  color: "#fbbf24",
-                  fontWeight: "800",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "4px",
+                  fontSize: "11px",
+                  padding: "1px 6px",
+                  borderRadius: "3px",
+                  background: "#fef3c7",
+                  border: "1px solid #fde68a",
+                  color: "#b45309",
+                  fontWeight: "700",
                 }}
               >
-                <span>Target: #{activeTargetPlayer.number} {activeTargetPlayer.name} ({activeTargetPlayer.role})</span>
+                Target: #{activeTargetPlayer.number} {activeTargetPlayer.name} ({activeTargetPlayer.role})
               </span>
             )}
           </div>
           <span
             style={{
-              fontSize: "0.74rem",
-              color: activeSubbingTargetId ? "#34d399" : "#38bdf8",
-              fontWeight: activeSubbingTargetId ? "800" : "600",
+              fontSize: "11px",
+              color: activeSubbingTargetId ? "var(--cds-green-primary)" : "var(--cds-text-secondary)",
+              fontWeight: activeSubbingTargetId ? "700" : "500",
             }}
           >
             {activeSubbingTargetId
               ? isLiveMatch
-                ? `⚡ Subbing off ${activeTargetPlayer?.name || "player"} — click any substitute below to deploy!`
-                : `⇄ Swapping ${activeTargetPlayer?.name || "player"} — click any substitute below to deploy to Starting 11!`
-              : "Select any pitch player above and click 'Sub Off' to deploy"}
+                ? `⚡ Select a bench substitute below to deploy!`
+                : `⇄ Select a bench substitute below to swap into Starting 11!`
+              : "Click 'Sub' on any player above to replace"}
           </span>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "10px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "8px" }}>
           {displayBench.map((sub: any, idx: number) => {
             const isUsed = sub.used;
             const canDeploy = isUserTeam && activeSubbingTargetId && !isUsed && (!isLiveMatch || subsLeft > 0);
@@ -759,59 +698,56 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
                   }
                 }}
                 style={{
-                  padding: "12px 14px",
-                  borderRadius: "8px",
+                  padding: "8px 12px",
+                  borderRadius: "4px",
                   background: isUsed
-                    ? "rgba(0, 0, 0, 0.3)"
+                    ? "var(--cds-layer)"
                     : canDeploy
-                    ? "rgba(234, 179, 8, 0.1)"
-                    : "rgba(255, 255, 255, 0.03)",
+                    ? "#fef3c7"
+                    : "var(--cds-surface)",
                   border: `1px solid ${
                     canDeploy
-                      ? "#fbbf24"
-                      : isUsed
-                      ? "rgba(255, 255, 255, 0.04)"
-                      : "rgba(255, 255, 255, 0.08)"
+                      ? "#fde68a"
+                      : "var(--cds-border)"
                   }`,
-                  boxShadow: canDeploy ? "0 0 15px rgba(234, 179, 8, 0.25)" : "none",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
                   opacity: isUsed ? 0.4 : 1,
-                  transition: "all 0.2s ease",
                   cursor: canDeploy ? "pointer" : "default",
-                  transform: canDeploy ? "translateY(-1px)" : "none",
+                  transition: "all 0.15s ease",
                 }}
               >
                 <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                    <span style={{ fontWeight: "800", color: "#fbbf24", fontSize: "0.85rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                    <span style={{ fontWeight: "700", color: "var(--cds-text-primary)", fontSize: "12px" }}>
                       #{sub.number || 12 + idx}
                     </span>
-                    <span style={{ fontWeight: "700", fontSize: "0.88rem", color: "#fff" }}>
+                    <span style={{ fontWeight: "700", fontSize: "12px", color: "var(--cds-text-primary)" }}>
                       {sub.name}
                     </span>
                     <span
                       style={{
-                        fontSize: "0.68rem",
-                        padding: "2px 6px",
-                        borderRadius: "4px",
-                        background: "rgba(255, 255, 255, 0.08)",
-                        color: "var(--accent-cyan)",
+                        fontSize: "10px",
+                        padding: "1px 5px",
+                        borderRadius: "3px",
+                        background: "var(--cds-layer)",
+                        color: "var(--cds-text-secondary)",
                         fontWeight: "700",
+                        border: "1px solid var(--cds-border-subtle)",
                       }}
                     >
                       {sub.role}
                     </span>
                   </div>
-                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: "3px" }}>
-                    Val: <strong style={{ color: "#10b981" }}>£{sub.transferValue || 6}M</strong> • Stamina: 100% (Fresh)
+                  <div style={{ fontSize: "11px", color: "var(--cds-text-secondary)", marginTop: "2px" }}>
+                    Val: <strong style={{ color: "var(--cds-green-primary)" }}>£{sub.transferValue || 6}M</strong> • Fresh (100%)
                   </div>
                 </div>
 
-                {/* Sub Action Button */}
                 {isUserTeam && (
                   <button
+                    type="button"
                     disabled={!canDeploy}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -819,36 +755,19 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
                         handleDeployOrSwapSub(sub, idx);
                       }
                     }}
+                    className={`btn ${canDeploy ? "btn-primary" : "btn-secondary"}`}
                     style={{
-                      padding: "6px 14px",
-                      borderRadius: "6px",
-                      border: "none",
-                      fontSize: "0.75rem",
-                      fontWeight: "800",
-                      cursor: canDeploy ? "pointer" : "not-allowed",
-                      background: canDeploy
-                        ? isLiveMatch
-                          ? "linear-gradient(135deg, #10b981, #059669)"
-                          : "linear-gradient(135deg, #fbbf24, #d97706)"
-                        : "rgba(255, 255, 255, 0.05)",
-                      color: canDeploy ? "#000" : "var(--text-muted)",
-                      boxShadow: canDeploy
-                        ? isLiveMatch
-                          ? "0 0 10px rgba(16, 185, 129, 0.4)"
-                          : "0 0 10px rgba(251, 191, 36, 0.4)"
-                        : "none",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                      transition: "all 0.2s ease",
+                      padding: "3px 8px",
+                      fontSize: "11px",
+                      height: "24px",
                     }}
                   >
                     {isUsed
                       ? "Deployed"
                       : canDeploy
                       ? isLiveMatch
-                        ? "Deploy Sub 🔄"
-                        : "Deploy to 11 ⇄"
+                        ? "Deploy"
+                        : "Swap"
                       : "Standby"}
                   </button>
                 )}

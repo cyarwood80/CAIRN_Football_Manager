@@ -30,7 +30,7 @@ export const EmbeddedPlayerChat: React.FC<EmbeddedPlayerChatProps> = ({
   onSelectPlayer,
   onSendDirective,
   chatHistory,
-  teamColor = "#00f2fe",
+  teamColor = "var(--cds-green-primary)",
   fanFeedback,
   chairpersonFeedback,
   activeModel = "llama3.2:1b",
@@ -54,60 +54,46 @@ export const EmbeddedPlayerChat: React.FC<EmbeddedPlayerChatProps> = ({
 
   return (
     <div
-      className="glass-panel"
+      className="carbon-card"
       style={{
-        borderRadius: "14px",
-        padding: "16px 18px",
-        background: "linear-gradient(180deg, rgba(17, 24, 39, 0.95) 0%, rgba(10, 15, 28, 0.98) 100%)",
-        border: "1px solid rgba(0, 242, 254, 0.2)",
-        boxShadow: "0 10px 30px rgba(0, 0, 0, 0.4)",
+        padding: "14px 16px",
+        background: "var(--cds-surface)",
+        border: "1px solid var(--cds-border)",
         display: "flex",
         flexDirection: "column",
-        gap: "12px",
+        gap: "10px",
       }}
     >
-      {/* Sub-Tabs: 1-on-1 Player Touchline Chat vs Club Dynamics (Fan & Chairperson) */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255, 255, 255, 0.08)", paddingBottom: "10px" }}>
+      {/* Sub-Tabs: 1-on-1 Player Touchline Chat vs Club Dynamics */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--cds-border-subtle)", paddingBottom: "8px" }}>
         <div style={{ display: "flex", gap: "6px" }}>
           <button
             type="button"
             onClick={() => setActiveSubTab("chat")}
+            className={`btn ${activeSubTab === "chat" ? "btn-primary" : "btn-secondary"}`}
             style={{
-              padding: "5px 12px",
-              borderRadius: "8px",
-              fontSize: "0.76rem",
-              fontWeight: "800",
-              cursor: "pointer",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-              background: activeSubTab === "chat" ? "rgba(0, 242, 254, 0.18)" : "transparent",
-              color: activeSubTab === "chat" ? "var(--accent-cyan)" : "var(--text-secondary)",
-              border: activeSubTab === "chat" ? "1px solid rgba(0, 242, 254, 0.4)" : "1px solid transparent",
+              padding: "4px 10px",
+              fontSize: "11px",
+              fontWeight: "700",
+              height: "28px",
             }}
           >
-            <MessageSquare size={13} />
+            <MessageSquare size={12} />
             <span>1-on-1 Touchline Chat</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveSubTab("dynamics")}
+            className={`btn ${activeSubTab === "dynamics" ? "btn-primary" : "btn-secondary"}`}
             style={{
-              padding: "5px 12px",
-              borderRadius: "8px",
-              fontSize: "0.76rem",
-              fontWeight: "800",
-              cursor: "pointer",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-              background: activeSubTab === "dynamics" ? "rgba(234, 179, 8, 0.18)" : "transparent",
-              color: activeSubTab === "dynamics" ? "var(--accent-gold)" : "var(--text-secondary)",
-              border: activeSubTab === "dynamics" ? "1px solid rgba(234, 179, 8, 0.4)" : "1px solid transparent",
+              padding: "4px 10px",
+              fontSize: "11px",
+              fontWeight: "700",
+              height: "28px",
             }}
           >
-            <Building2 size={13} />
+            <Building2 size={12} />
             <span>Club Pulse & Board</span>
           </button>
         </div>
@@ -117,23 +103,17 @@ export const EmbeddedPlayerChat: React.FC<EmbeddedPlayerChatProps> = ({
           <button
             type="button"
             onClick={onOpenLLMStudio}
+            className="btn btn-secondary"
             title="Inspect Prompt Telemetry & Switch Local Model"
             style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "5px",
-              fontSize: "0.68rem",
-              padding: "3px 8px",
-              borderRadius: "6px",
-              background: "rgba(255, 255, 255, 0.05)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              color: "#94a3b8",
-              cursor: "pointer",
-              transition: "all 0.15s ease",
+              height: "26px",
+              padding: "0 8px",
+              fontSize: "11px",
+              gap: "4px",
             }}
           >
-            <Sparkles size={11} color="var(--accent-cyan)" />
-            <span style={{ fontFamily: "var(--font-mono)", color: "#38bdf8" }}>{activeModel}</span>
+            <Sparkles size={11} color="var(--cds-green-primary)" />
+            <span style={{ fontFamily: "var(--font-mono)", color: "var(--cds-green-primary)", fontWeight: "700" }}>{activeModel}</span>
           </button>
         )}
       </div>
@@ -142,7 +122,7 @@ export const EmbeddedPlayerChat: React.FC<EmbeddedPlayerChatProps> = ({
         <>
           {/* Player Quick Selector Ribbon */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
-            <span style={{ fontSize: "0.72rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            <span style={{ fontSize: "11px", fontWeight: "700", color: "var(--cds-text-muted)", textTransform: "uppercase" }}>
               Target Player:
             </span>
             <select
@@ -151,17 +131,14 @@ export const EmbeddedPlayerChat: React.FC<EmbeddedPlayerChatProps> = ({
                 const p = homeStarters.find((item) => item.id === e.target.value);
                 if (p) onSelectPlayer(p);
               }}
+              className="carbon-input"
               style={{
                 flex: 1,
                 maxWidth: "240px",
-                background: "rgba(15, 23, 42, 0.9)",
-                border: "1px solid rgba(0, 242, 254, 0.3)",
-                borderRadius: "6px",
-                padding: "4px 8px",
-                color: "#fff",
-                fontSize: "0.75rem",
-                fontWeight: "700",
-                outline: "none",
+                height: "30px",
+                padding: "2px 8px",
+                fontSize: "12px",
+                fontWeight: "600",
               }}
             >
               {homeStarters.map((p) => (
@@ -176,10 +153,10 @@ export const EmbeddedPlayerChat: React.FC<EmbeddedPlayerChatProps> = ({
           {currentPlayer && (
             <div
               style={{
-                padding: "8px 12px",
-                borderRadius: "8px",
-                background: "rgba(0, 0, 0, 0.3)",
-                border: "1px solid rgba(255, 255, 255, 0.06)",
+                padding: "8px 10px",
+                borderRadius: "4px",
+                background: "var(--cds-layer)",
+                border: "1px solid var(--cds-border)",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
@@ -188,35 +165,35 @@ export const EmbeddedPlayerChat: React.FC<EmbeddedPlayerChatProps> = ({
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <div
                   style={{
-                    width: "28px",
-                    height: "28px",
-                    borderRadius: "6px",
+                    width: "24px",
+                    height: "24px",
+                    borderRadius: "4px",
                     background: teamColor,
-                    color: "#000",
-                    fontWeight: "900",
+                    color: "#fff",
+                    fontWeight: "800",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: "0.85rem",
+                    fontSize: "11px",
                   }}
                 >
                   {currentPlayer.number}
                 </div>
                 <div>
-                  <div style={{ fontWeight: "800", fontSize: "0.82rem", color: "#fff" }}>
+                  <div style={{ fontWeight: "700", fontSize: "12px", color: "var(--cds-text-primary)" }}>
                     {currentPlayer.name}
                   </div>
-                  <div style={{ fontSize: "0.68rem", color: "var(--text-muted)" }}>
+                  <div style={{ fontSize: "11px", color: "var(--cds-text-muted)" }}>
                     {currentPlayer.role} • Stamina {currentPlayer.stamina}% • TM {currentPlayer.tacticalMastery || 75}%
                   </div>
                 </div>
               </div>
 
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: "1.1rem", fontWeight: "900", color: "#34d399", fontFamily: "var(--font-mono)" }}>
+                <div style={{ fontSize: "15px", fontWeight: "800", color: "var(--cds-green-primary)", fontFamily: "var(--font-mono)", lineHeight: 1.1 }}>
                   {currentPlayer.rating.toFixed(1)}
                 </div>
-                <div style={{ fontSize: "0.62rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Rating</div>
+                <div style={{ fontSize: "9px", color: "var(--cds-text-muted)", textTransform: "uppercase", fontWeight: "700" }}>Rating</div>
               </div>
             </div>
           )}
@@ -224,27 +201,27 @@ export const EmbeddedPlayerChat: React.FC<EmbeddedPlayerChatProps> = ({
           {/* Chat Messages Stream */}
           <div
             style={{
-              height: "140px",
+              height: "120px",
               overflowY: "auto",
               display: "flex",
               flexDirection: "column",
-              gap: "8px",
-              padding: "8px",
-              background: "rgba(0, 0, 0, 0.2)",
-              borderRadius: "8px",
-              border: "1px solid rgba(255, 255, 255, 0.04)",
+              gap: "6px",
+              padding: "6px 8px",
+              background: "var(--cds-layer)",
+              borderRadius: "4px",
+              border: "1px solid var(--cds-border)",
             }}
           >
             {playerChats.length === 0 ? (
-              <div style={{ margin: "auto", textAlign: "center", color: "var(--text-muted)", fontSize: "0.75rem", fontStyle: "italic" }}>
+              <div style={{ margin: "auto", textAlign: "center", color: "var(--cds-text-muted)", fontSize: "11px", fontStyle: "italic" }}>
                 Shout tactical instructions to #{currentPlayer?.number} {currentPlayer?.name}...
               </div>
             ) : (
               playerChats.map((msg, idx) => (
-                <div key={idx} style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
+                <div key={idx} style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
                   {/* Manager Shout Bubble */}
-                  <div style={{ alignSelf: "flex-end", maxWidth: "85%", background: "rgba(0, 242, 254, 0.15)", border: "1px solid rgba(0, 242, 254, 0.3)", padding: "5px 10px", borderRadius: "10px 10px 2px 10px", fontSize: "0.75rem", color: "#e2e8f0" }}>
-                    <span style={{ fontSize: "0.65rem", color: "var(--accent-cyan)", fontWeight: "800", display: "block", marginBottom: "1px" }}>
+                  <div style={{ alignSelf: "flex-end", maxWidth: "85%", background: "var(--cds-green-light)", border: "1px solid var(--cds-green-primary)", padding: "4px 8px", borderRadius: "4px", fontSize: "11px", color: "var(--cds-text-primary)" }}>
+                    <span style={{ fontSize: "10px", color: "var(--cds-green-primary)", fontWeight: "800", display: "block" }}>
                       Boss:
                     </span>
                     {msg.message}
@@ -252,18 +229,18 @@ export const EmbeddedPlayerChat: React.FC<EmbeddedPlayerChatProps> = ({
 
                   {/* Player Reply Bubble */}
                   {msg.response && (
-                    <div style={{ alignSelf: "flex-start", maxWidth: "88%", background: "rgba(255, 255, 255, 0.05)", border: "1px solid rgba(255, 255, 255, 0.1)", padding: "5px 10px", borderRadius: "10px 10px 10px 2px", fontSize: "0.75rem", color: "#fff" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "6px", marginBottom: "1px" }}>
-                        <span style={{ fontSize: "0.65rem", color: "#34d399", fontWeight: "800" }}>
+                    <div style={{ alignSelf: "flex-start", maxWidth: "88%", background: "var(--cds-surface)", border: "1px solid var(--cds-border)", padding: "4px 8px", borderRadius: "4px", fontSize: "11px", color: "var(--cds-text-primary)" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "6px" }}>
+                        <span style={{ fontSize: "10px", color: "var(--cds-green-primary)", fontWeight: "800" }}>
                           {msg.playerName || currentPlayer?.name}:
                         </span>
-                        <span style={{ fontSize: "0.6rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                        <span style={{ fontSize: "9px", color: "var(--cds-text-muted)", fontFamily: "var(--font-mono)" }}>
                           {activeModel}
                         </span>
                       </div>
-                      <p style={{ margin: 0, fontStyle: "italic" }}>"{msg.response}"</p>
+                      <p style={{ margin: "2px 0 0 0", fontStyle: "italic", color: "var(--cds-text-secondary)" }}>"{msg.response}"</p>
                       {msg.actionTaken && (
-                        <span style={{ fontSize: "0.62rem", color: "#38bdf8", display: "block", marginTop: "3px", fontWeight: "700" }}>
+                        <span style={{ fontSize: "10px", color: "var(--cds-blue)", display: "block", marginTop: "2px", fontWeight: "600" }}>
                           ⚡ {msg.actionTaken}
                         </span>
                       )}
@@ -281,19 +258,13 @@ export const EmbeddedPlayerChat: React.FC<EmbeddedPlayerChatProps> = ({
                 key={qIdx}
                 type="button"
                 onClick={() => handleSend(qs.text)}
+                className="btn btn-secondary"
                 style={{
-                  padding: "3px 8px",
-                  borderRadius: "6px",
-                  background: "rgba(255, 255, 255, 0.04)",
-                  border: "1px solid rgba(255, 255, 255, 0.08)",
-                  color: "#cbd5e1",
-                  fontSize: "0.68rem",
+                  padding: "2px 8px",
+                  fontSize: "10px",
                   fontWeight: "600",
-                  cursor: "pointer",
                   whiteSpace: "nowrap",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "4px",
+                  height: "24px",
                 }}
               >
                 <span>{qs.label}</span>
@@ -314,92 +285,74 @@ export const EmbeddedPlayerChat: React.FC<EmbeddedPlayerChatProps> = ({
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               placeholder={`Shout directive to ${currentPlayer?.name || "player"}...`}
+              className="carbon-input"
               style={{
                 flex: 1,
-                background: "rgba(15, 23, 42, 0.9)",
-                border: "1px solid rgba(255, 255, 255, 0.12)",
-                borderRadius: "8px",
-                padding: "6px 10px",
-                color: "#fff",
-                fontSize: "0.78rem",
-                outline: "none",
+                height: "32px",
+                fontSize: "12px",
+                padding: "4px 8px",
               }}
             />
             <button
               type="submit"
               disabled={!inputText.trim()}
+              className="btn btn-primary"
               style={{
-                padding: "6px 14px",
-                borderRadius: "8px",
-                background: inputText.trim() ? "var(--accent-cyan)" : "rgba(255, 255, 255, 0.08)",
-                border: "none",
-                color: inputText.trim() ? "#000" : "var(--text-muted)",
-                fontWeight: "800",
-                fontSize: "0.75rem",
-                cursor: inputText.trim() ? "pointer" : "default",
-                display: "inline-flex",
-                alignItems: "center",
+                height: "32px",
+                padding: "0 12px",
+                fontSize: "12px",
+                fontWeight: "600",
                 gap: "4px",
               }}
             >
-              <Send size={12} />
+              <Send size={11} />
               <span>Shout</span>
             </button>
           </form>
         </>
       ) : (
         /* Club Dynamics View: Fan Feedback & Chairperson Boardroom */
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px", minHeight: "240px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           {/* Fan Feedback Card */}
           <div
             style={{
               padding: "10px 12px",
-              borderRadius: "10px",
-              background: "rgba(0, 0, 0, 0.3)",
-              border: "1px solid rgba(0, 242, 254, 0.2)",
+              borderRadius: "4px",
+              background: "var(--cds-layer)",
+              border: "1px solid var(--cds-border)",
               display: "flex",
               flexDirection: "column",
-              gap: "6px",
+              gap: "4px",
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.75rem", fontWeight: "800", color: "var(--accent-cyan)", textTransform: "uppercase" }}>
-                <Heart size={14} color="#f43f5e" />
-                <span>Supporters Sentiment & Stadium Roar</span>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", fontWeight: "700", color: "var(--cds-text-primary)", textTransform: "uppercase" }}>
+                <Heart size={12} color="var(--cds-red)" />
+                <span>Supporters Sentiment & Roar</span>
               </div>
-              <span
-                style={{
-                  fontSize: "0.68rem",
-                  fontWeight: "800",
-                  padding: "1px 8px",
-                  borderRadius: "12px",
-                  background: (fanFeedback?.sentiment ?? 65) >= 65 ? "rgba(16, 185, 129, 0.2)" : "rgba(239, 68, 68, 0.2)",
-                  color: (fanFeedback?.sentiment ?? 65) >= 65 ? "#34d399" : "#f87171",
-                  border: (fanFeedback?.sentiment ?? 65) >= 65 ? "1px solid rgba(16, 185, 129, 0.4)" : "1px solid rgba(239, 68, 68, 0.4)",
-                }}
-              >
+              <span className="badge badge-success" style={{ fontSize: "10px", padding: "1px 6px" }}>
                 {fanFeedback?.status || "Optimistic"} ({fanFeedback?.sentiment ?? 65}%)
               </span>
             </div>
 
             {/* Sentiment Progress Bar */}
-            <div style={{ height: "6px", borderRadius: "3px", background: "rgba(255, 255, 255, 0.08)", overflow: "hidden" }}>
+            <div style={{ height: "4px", borderRadius: "2px", background: "var(--cds-border)", overflow: "hidden" }}>
               <div
                 style={{
                   height: "100%",
                   width: `${fanFeedback?.sentiment ?? 65}%`,
-                  background: (fanFeedback?.sentiment ?? 65) >= 65 ? "linear-gradient(90deg, #10b981, #06b6d4)" : "linear-gradient(90deg, #f59e0b, #ef4444)",
+                  background: "var(--cds-green-primary)",
                   transition: "width 0.4s ease",
                 }}
               />
             </div>
 
-            <div style={{ fontSize: "0.78rem", color: "#e2e8f0", fontStyle: "italic", lineHeight: "1.3", margin: "2px 0" }}>
+            <div style={{ fontSize: "12px", color: "var(--cds-text-secondary)", fontStyle: "italic", lineHeight: "1.3", margin: "2px 0" }}>
               "{fanFeedback?.chant || "Come on boys, let's play our football!"}"
             </div>
 
-            <div style={{ fontSize: "0.68rem", color: "#94a3b8", borderTop: "1px solid rgba(255, 255, 255, 0.06)", paddingTop: "4px" }}>
-              <strong style={{ color: "var(--accent-cyan)" }}>Influence: </strong>
+            <div style={{ fontSize: "11px", color: "var(--cds-text-muted)", borderTop: "1px solid var(--cds-border-subtle)", paddingTop: "4px" }}>
+              <strong style={{ color: "var(--cds-text-primary)" }}>Influence: </strong>
               {fanFeedback?.moraleEffect || "Neutral crowd atmosphere"}
             </div>
           </div>
@@ -408,52 +361,42 @@ export const EmbeddedPlayerChat: React.FC<EmbeddedPlayerChatProps> = ({
           <div
             style={{
               padding: "10px 12px",
-              borderRadius: "10px",
-              background: "rgba(0, 0, 0, 0.3)",
-              border: "1px solid rgba(234, 179, 8, 0.25)",
+              borderRadius: "4px",
+              background: "var(--cds-layer)",
+              border: "1px solid var(--cds-border)",
               display: "flex",
               flexDirection: "column",
-              gap: "6px",
+              gap: "4px",
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.75rem", fontWeight: "800", color: "var(--accent-gold)", textTransform: "uppercase" }}>
-                <Building2 size={14} color="var(--accent-gold)" />
-                <span>Chairperson & Boardroom Verdict</span>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", fontWeight: "700", color: "var(--cds-text-primary)", textTransform: "uppercase" }}>
+                <Building2 size={12} color="var(--cds-blue)" />
+                <span>Chairperson & Board Verdict</span>
               </div>
-              <span
-                style={{
-                  fontSize: "0.68rem",
-                  fontWeight: "800",
-                  padding: "1px 8px",
-                  borderRadius: "12px",
-                  background: (chairpersonFeedback?.boardConfidence ?? 75) >= 65 ? "rgba(234, 179, 8, 0.2)" : "rgba(239, 68, 68, 0.2)",
-                  color: (chairpersonFeedback?.boardConfidence ?? 75) >= 65 ? "#facc15" : "#f87171",
-                  border: (chairpersonFeedback?.boardConfidence ?? 75) >= 65 ? "1px solid rgba(234, 179, 8, 0.4)" : "1px solid rgba(239, 68, 68, 0.4)",
-                }}
-              >
+              <span className="badge badge-info" style={{ fontSize: "10px", padding: "1px 6px" }}>
                 {chairpersonFeedback?.status || "Satisfied"} ({chairpersonFeedback?.boardConfidence ?? 75}%)
               </span>
             </div>
 
             {/* Board Confidence Bar */}
-            <div style={{ height: "6px", borderRadius: "3px", background: "rgba(255, 255, 255, 0.08)", overflow: "hidden" }}>
+            <div style={{ height: "4px", borderRadius: "2px", background: "var(--cds-border)", overflow: "hidden" }}>
               <div
                 style={{
                   height: "100%",
                   width: `${chairpersonFeedback?.boardConfidence ?? 75}%`,
-                  background: "linear-gradient(90deg, #ca8a04, #eab308)",
+                  background: "var(--cds-blue)",
                   transition: "width 0.4s ease",
                 }}
               />
             </div>
 
-            <div style={{ fontSize: "0.76rem", color: "#e2e8f0", lineHeight: "1.35", margin: "2px 0" }}>
+            <div style={{ fontSize: "12px", color: "var(--cds-text-secondary)", lineHeight: "1.35", margin: "2px 0" }}>
               {chairpersonFeedback?.message || "The Board expects tactical excellence and high discipline today."}
             </div>
 
-            <div style={{ fontSize: "0.68rem", color: "#94a3b8", borderTop: "1px solid rgba(255, 255, 255, 0.06)", paddingTop: "4px" }}>
-              <strong style={{ color: "var(--accent-gold)" }}>Board Impact: </strong>
+            <div style={{ fontSize: "11px", color: "var(--cds-text-muted)", borderTop: "1px solid var(--cds-border-subtle)", paddingTop: "4px" }}>
+              <strong style={{ color: "var(--cds-text-primary)" }}>Board Impact: </strong>
               {chairpersonFeedback?.influence || "Standard board backing"}
             </div>
           </div>

@@ -422,7 +422,7 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
         }
       });
 
-      // Active Agent Thought Bubble
+      // Active Agent Thought Bubble (High-contrast Carbon style)
       if (gameState.activeThought) {
         const thought = gameState.activeThought;
         const icon = thought.personalityIcon || "💭";
@@ -432,12 +432,12 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
         const bx = Math.max(10, Math.min(PITCH_W - bubbleW - 10, thought.x - bubbleW / 2));
         const by = Math.max(15, thought.y - 42);
 
-        ctx.fillStyle = "rgba(11, 15, 25, 0.92)";
-        ctx.strokeStyle = thought.team === "home" ? gameState.homeTeam.color : gameState.awayTeam.color;
-        ctx.lineWidth = 1.5;
+        ctx.fillStyle = "#FFFFFF";
+        ctx.strokeStyle = thought.team === "home" ? (gameState.homeTeam.color || "#0F6B45") : (gameState.awayTeam.color || "#DA1E28");
+        ctx.lineWidth = 2;
 
         ctx.beginPath();
-        ctx.roundRect(bx, by, bubbleW, bubbleH, 8);
+        ctx.roundRect(bx, by, bubbleW, bubbleH, 4);
         ctx.fill();
         ctx.stroke();
 
@@ -446,29 +446,29 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
         ctx.lineTo(thought.x, by + bubbleH + 6);
         ctx.lineTo(thought.x + 4, by + bubbleH);
         ctx.closePath();
-        ctx.fillStyle = "rgba(11, 15, 25, 0.92)";
+        ctx.fillStyle = "#FFFFFF";
         ctx.fill();
+        ctx.stroke();
 
-        ctx.fillStyle = "#f8fafc";
-        ctx.font = "500 10.5px Outfit, sans-serif";
+        ctx.fillStyle = "#161616";
+        ctx.font = "600 10.5px 'IBM Plex Sans', sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(bubbleText, bx + bubbleW / 2, by + bubbleH / 2);
       }
 
-
       // Goal celebration overlay
       if (gameState.phase === "goal") {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
         ctx.fillRect(0, 0, PITCH_W, PITCH_H);
 
-        ctx.fillStyle = "#ffd700";
-        ctx.font = "900 48px Outfit, sans-serif";
+        ctx.fillStyle = "#F1C21B";
+        ctx.font = "900 44px 'IBM Plex Sans', sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText("⚽ GOOOAAALLL! ⚽", PITCH_W / 2, PITCH_H / 2 - 20);
+        ctx.fillText("⚽ GOAL! ⚽", PITCH_W / 2, PITCH_H / 2 - 16);
 
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "700 24px Outfit, sans-serif";
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = "700 22px 'IBM Plex Sans', sans-serif";
         ctx.fillText(`${gameState.score.home}  —  ${gameState.score.away}`, PITCH_W / 2, PITCH_H / 2 + 25);
       }
     } else {
@@ -484,7 +484,7 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
       ctx.fill();
 
       // Home Team Formation Preview (Left Half)
-      const hColor = homeTeam?.color || "#00f2fe";
+      const hColor = homeTeam?.color || "#0F6B45";
       const hFormation = homeTeam?.formation || "4-3-3";
       const hAnchors = getPreMatchAnchors(hFormation, true);
       const hPlayers = homeTeam?.starting11 || [];
@@ -494,12 +494,12 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
         const pRole = hPlayers[idx]?.role || (idx === 0 ? "GK" : idx < 5 ? "DEF" : idx < 8 ? "MID" : "FWD");
         const isGK = pRole === "GK" || idx === 0;
 
-        ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
         ctx.beginPath();
         ctx.ellipse(pos.x, pos.y + 11, 13, 6, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = isGK ? "#facc15" : hColor;
+        ctx.fillStyle = isGK ? "#F1C21B" : hColor;
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, 13, 0, Math.PI * 2);
         ctx.fill();
@@ -508,19 +508,19 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        ctx.fillStyle = "#030712";
-        ctx.font = "bold 11px Outfit, sans-serif";
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = "bold 11px 'IBM Plex Sans', sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(`${pNum}`, pos.x, pos.y);
 
-        ctx.fillStyle = "rgba(248, 250, 252, 0.85)";
-        ctx.font = "600 8.5px Outfit, sans-serif";
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = "600 9px 'IBM Plex Sans', sans-serif";
         ctx.fillText(pRole, pos.x, pos.y + 22);
       });
 
       // Away Team Formation Preview (Right Half)
-      const aColorRaw = awayTeam?.color || "#ff3366";
+      const aColorRaw = awayTeam?.color || "#DA1E28";
       const { kitColor: effectiveAwayColor } = resolveEffectiveAwayKit(hColor, aColorRaw);
       const aFormation = awayTeam?.formation || "4-3-3";
       const aAnchors = getPreMatchAnchors(aFormation, false);
@@ -529,47 +529,47 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
         const pNum = idx + 1;
         const isGK = idx === 0;
 
-        ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+        ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
         ctx.beginPath();
         ctx.ellipse(pos.x, pos.y + 11, 13, 6, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = isGK ? "#a855f7" : effectiveAwayColor;
+        ctx.fillStyle = isGK ? "#8A3FFC" : effectiveAwayColor;
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, 13, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.strokeStyle = "#0f172a";
+        ctx.strokeStyle = "#FFFFFF";
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        ctx.fillStyle = isGK ? "#030712" : getContrastingTextColor(effectiveAwayColor);
-        ctx.font = "bold 11px Outfit, sans-serif";
+        ctx.fillStyle = isGK ? "#FFFFFF" : getContrastingTextColor(effectiveAwayColor);
+        ctx.font = "bold 11px 'IBM Plex Sans', sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(`${pNum}`, pos.x, pos.y);
 
-        ctx.fillStyle = "rgba(248, 250, 252, 0.85)";
-        ctx.font = "600 8.5px Outfit, sans-serif";
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = "600 9px 'IBM Plex Sans', sans-serif";
         ctx.fillText(idx === 0 ? "GK" : idx < 5 ? "DEF" : idx < 8 ? "MID" : "FWD", pos.x, pos.y + 22);
       });
 
       // Stadium Center Ready Badge
-      ctx.fillStyle = "rgba(11, 15, 25, 0.85)";
-      ctx.strokeStyle = "rgba(0, 242, 254, 0.5)";
+      ctx.fillStyle = "rgba(15, 107, 69, 0.95)";
+      ctx.strokeStyle = "#FFFFFF";
       ctx.lineWidth = 1.5;
       const bW = 340;
-      const bH = 34;
+      const bH = 32;
       ctx.beginPath();
-      ctx.roundRect(PITCH_W / 2 - bW / 2, 45, bW, bH, 10);
+      ctx.roundRect(PITCH_W / 2 - bW / 2, 45, bW, bH, 4);
       ctx.fill();
       ctx.stroke();
 
-      ctx.fillStyle = "#00f2fe";
-      ctx.font = "800 12px Outfit, sans-serif";
+      ctx.fillStyle = "#FFFFFF";
+      ctx.font = "700 11px 'IBM Plex Sans', sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("⚡ STADIUM READY • PRESS QUICK KICKOFF TO PLAY", PITCH_W / 2, 45 + bH / 2);
+      ctx.fillText("⚡ MATCH READY • KICK OFF TO START SIMULATION", PITCH_W / 2, 45 + bH / 2);
     }
 
     ctx.restore();
@@ -591,7 +591,18 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
   };
 
   return (
-    <div style={{ position: "relative", width: "100%", aspectRatio: "1000 / 640" }}>
+    <div
+      style={{
+        position: "relative",
+        width: "100%",
+        maxHeight: "260px",
+        aspectRatio: "1000 / 640",
+        margin: "0 auto",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <canvas
         ref={canvasRef}
         onMouseMove={handleMouseMove}
@@ -600,39 +611,38 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
         style={{
           width: "100%",
           height: "100%",
+          maxHeight: "260px",
           display: "block",
-          borderRadius: "16px",
+          borderRadius: "4px",
           cursor: hoveredPlayer ? "pointer" : "default",
-          boxShadow: "0 20px 40px -10px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.1)",
+          boxShadow: "0 4px 16px rgba(0, 0, 0, 0.12)",
+          border: "1px solid var(--cds-border)",
         }}
       />
 
-      {/* Hover Card */}
+      {/* Hover Card (Clean Carbon Light Style) */}
       {hoveredPlayer && (
         <div
+          className="carbon-card"
           style={{
             position: "absolute",
-            bottom: "16px",
-            right: "16px",
-            background: "rgba(11, 15, 25, 0.92)",
-            backdropFilter: "blur(12px)",
-            border: "1px solid rgba(255, 255, 255, 0.15)",
-            borderRadius: "12px",
-            padding: "10px 14px",
-            fontSize: "0.85rem",
-            color: "#fff",
+            bottom: "12px",
+            right: "12px",
+            padding: "8px 12px",
+            fontSize: "12px",
             zIndex: 10,
-            maxWidth: "280px",
+            maxWidth: "260px",
+            boxShadow: "0 6px 18px rgba(0,0,0,0.15)",
           }}
         >
-          <div style={{ fontWeight: "700", display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+          <div style={{ fontWeight: "700", display: "flex", justifyContent: "space-between", marginBottom: "2px" }}>
             <span>{hoveredPlayer.name} (#{hoveredPlayer.number})</span>
-            <span style={{ color: "var(--accent-cyan)" }}>{hoveredPlayer.role}</span>
+            <span style={{ color: "var(--cds-green-primary)", fontWeight: "700" }}>{hoveredPlayer.role}</span>
           </div>
-          <div style={{ color: "var(--text-secondary)", fontSize: "0.78rem" }}>
-            Stamina: {hoveredPlayer.stamina}% | State: {hoveredPlayer.state}
+          <div style={{ color: "var(--cds-text-secondary)", fontSize: "11px" }}>
+            Stamina: {hoveredPlayer.stamina}% | Rating: {hoveredPlayer.rating?.toFixed(1) || 6.0} ★
           </div>
-          <div style={{ marginTop: "6px", fontStyle: "italic", color: "var(--accent-gold)", fontSize: "0.8rem" }}>
+          <div style={{ marginTop: "4px", fontStyle: "italic", color: "var(--cds-text-primary)", fontSize: "11px" }}>
             "{hoveredPlayer.thought}"
           </div>
         </div>

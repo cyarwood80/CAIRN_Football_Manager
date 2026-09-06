@@ -160,6 +160,7 @@ export const App: React.FC = () => {
   const [showLLMStudioModal, setShowLLMStudioModal] = useState<boolean>(false);
   const [showAssistantManagerDrawer, setShowAssistantManagerDrawer] = useState<boolean>(false);
   const [showAIInferenceModal, setShowAIInferenceModal] = useState<boolean>(false);
+  const [matchdayRightTab, setMatchdayRightTab] = useState<"squad" | "chat">("squad");
 
   const [inboxMessages, setInboxMessages] = useState<ClubMessage[]>([
     {
@@ -978,92 +979,157 @@ export const App: React.FC = () => {
             />
           )}
         {activeTab === "matchday" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            {/* Top Match Arena: Pitch + Controls on Left, MatchHUD on Right */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 440px", gap: "24px", alignItems: "start" }}>
-              {/* Left Column: Pitch Canvas, Controls & Dugout */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                <PitchCanvas
-                  gameState={gameState}
-                  homeTeam={teamConfig}
-                  awayTeam={awayTeam || { name: "Liverpool", color: "#C8102E", formation: "4-3-3" }}
-                  onPlayerClick={handlePlayerClick}
-                />
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(420px, 1.05fr) minmax(500px, 1.25fr)", gap: "16px", alignItems: "start" }}>
+            {/* Left Column: Pitch + Dugout + Match Commentary */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <PitchCanvas
+                gameState={gameState}
+                homeTeam={teamConfig}
+                awayTeam={awayTeam || { name: "FC Halifax Town", color: "#C8102E", formation: "4-3-3" }}
+                onPlayerClick={(player) => {
+                  handlePlayerClick(player);
+                  setMatchdayRightTab("chat");
+                }}
+              />
 
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
-                  <span style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
-                    💡 Click on any player on the pitch to launch 1-on-1 Touchline Chat & adjust their individual tactical focus.
-                  </span>
-                  {!gameState && (
-                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center" }}>
-                      {calendarState?.isMatchday ? (
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
+                <span style={{ fontSize: "11px", color: "var(--cds-text-secondary)" }}>
+                  💡 Click any player on the pitch for 1-on-1 Touchline Chat.
+                </span>
+                {!gameState && (
+                  <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
+                    {calendarState?.isMatchday ? (
+                      <button
+                        className="btn btn-primary"
+                        onClick={handlePlayScheduledMatch}
+                        style={{
+                          padding: "6px 14px",
+                          fontWeight: "700",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          fontSize: "12px",
+                        }}
+                      >
+                        <Trophy size={14} />
+                        <span>Kick Off Matchday #{calendarState?.currentGameweek ?? 1}: vs {nextOpponentName}</span>
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          className="btn btn-secondary"
+                          onClick={() => setActiveTab("calendar")}
+                          style={{ padding: "6px 10px", fontWeight: "700", gap: "4px", fontSize: "11px" }}
+                        >
+                          <Calendar size={13} />
+                          <span>Calendar</span>
+                        </button>
                         <button
                           className="btn btn-primary"
-                          onClick={handlePlayScheduledMatch}
-                          style={{
-                            padding: "8px 18px",
-                            fontWeight: "900",
-                            background: "linear-gradient(135deg, #10b981, #059669)",
-                            boxShadow: "0 0 20px rgba(16, 185, 129, 0.4)",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "6px",
-                          }}
+                          onClick={() => handleAdvanceToMatchday()}
+                          style={{ padding: "6px 12px", fontWeight: "700", gap: "4px", fontSize: "11px" }}
                         >
-                          <Trophy size={16} />
-                          <span>Kick Off Matchday #{calendarState?.currentGameweek ?? 1}: vs {nextOpponentName}</span>
+                          <FastForward size={13} />
+                          <span>Advance</span>
                         </button>
-                      ) : (
-                        <>
-                          <button
-                            className="btn btn-secondary"
-                            onClick={() => setActiveTab("calendar")}
-                            style={{ padding: "8px 14px", fontWeight: "700", gap: "6px" }}
-                          >
-                            <Calendar size={14} color="var(--accent-cyan)" />
-                            <span>Calendar & Drills ({calendarState?.date?.split(",")[0] || "Training"})</span>
-                          </button>
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => handleAdvanceToMatchday()}
-                            style={{ padding: "8px 16px", fontWeight: "800", gap: "6px" }}
-                          >
-                            <FastForward size={14} />
-                            <span>Advance to Matchday</span>
-                          </button>
-                        </>
-                      )}
-                      <button
-                        className="btn btn-secondary"
-                        onClick={() => setShowFriendlyModal(true)}
-                        style={{ padding: "8px 14px", fontWeight: "700", gap: "6px" }}
-                        title="Play friendly exhibition scrimmage match without league points impact"
-                      >
-                        <Swords size={14} color="var(--accent-cyan)" />
-                        <span>Friendly Exhibition</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                {/* Manager Technical Area / Live Dugout */}
-                <LiveTacticsDugout
-                  gameState={gameState}
-                  onMakeSubstitution={handleMakeSubstitution}
-                  onUpdateTacticsLive={handleUpdateTacticsLive}
-                  userTeamType={clientRole === "guest" ? "away" : "home"}
-                />
+                      </>
+                    )}
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => setShowFriendlyModal(true)}
+                      style={{ padding: "6px 10px", fontWeight: "700", gap: "4px", fontSize: "11px" }}
+                      title="Play friendly exhibition match"
+                    >
+                      <Swords size={13} />
+                      <span>Friendly</span>
+                    </button>
+                  </div>
+                )}
               </div>
 
-              {/* Right Column: Scoreboard & Opta Matchday Stats + Embedded Player Chat (White Circle Slot) */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                <MatchHUD
-                  gameState={gameState}
-                  currentPace={matchPace}
-                  onSetMatchPace={handleSetMatchPace}
-                />
+              {/* Manager Technical Area / Live Dugout */}
+              <LiveTacticsDugout
+                gameState={gameState}
+                onMakeSubstitution={handleMakeSubstitution}
+                onUpdateTacticsLive={handleUpdateTacticsLive}
+                userTeamType={clientRole === "guest" ? "away" : "home"}
+              />
 
-                {/* Embedded 1-on-1 Player Touchline Chat & Club Pulse */}
+              {/* Real-time Matchday Commentary */}
+              <MatchCommentary
+                events={gameState?.events || []}
+                homeTeamColor={gameState?.homeTeam?.color || teamConfig.color}
+                awayTeamColor={gameState?.awayTeam?.color || "#ef4444"}
+                crowdAtmosphere={gameState?.crowdAtmosphere}
+              />
+            </div>
+
+            {/* Right Column: Scoreboard, Live Ratings Squad Sheet & Touchline Chat */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <MatchHUD
+                gameState={gameState}
+                currentPace={matchPace}
+                onSetMatchPace={handleSetMatchPace}
+              />
+
+              {/* Sub-tab switcher between Live Squad Sheet & 1-on-1 Touchline Chat */}
+              <div style={{ display: "flex", gap: "6px", borderBottom: "1px solid var(--cds-border)", paddingBottom: "6px" }}>
+                <button
+                  type="button"
+                  onClick={() => setMatchdayRightTab("squad")}
+                  className={`btn ${matchdayRightTab === "squad" ? "btn-primary" : "btn-secondary"}`}
+                  style={{ fontSize: "11px", height: "26px", padding: "0 10px", fontWeight: "700" }}
+                >
+                  Live Squad & Ratings ({(teamConfig.starting11?.length || 11) + (teamConfig.benchSubs?.length || 3)})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMatchdayRightTab("chat")}
+                  className={`btn ${matchdayRightTab === "chat" ? "btn-primary" : "btn-secondary"}`}
+                  style={{ fontSize: "11px", height: "26px", padding: "0 10px", fontWeight: "700" }}
+                >
+                  1-on-1 Touchline Chat {activeChatPlayer ? `(${activeChatPlayer.name})` : ""}
+                </button>
+              </div>
+
+              {/* Tab Content 1: Live Championship Manager Squad Sheet */}
+              {matchdayRightTab === "squad" && (
+                <PlayerSquadCM
+                  players={gameState?.players || []}
+                  benchSubs={gameState?.benchSubs}
+                  subsRemaining={gameState?.subsRemaining || { home: 3, away: 3 }}
+                  homeTeam={{
+                    name: gameState?.homeTeam?.name || teamConfig.name,
+                    color: gameState?.homeTeam?.color || teamConfig.color,
+                    formation: gameState?.homeTeam?.formation || teamConfig.formation,
+                  }}
+                  awayTeam={{
+                    name: gameState?.awayTeam?.name || awayTeam?.name || "FC Halifax Town",
+                    color: gameState?.awayTeam?.color || awayTeam?.color || "#FF3366",
+                    formation: gameState?.awayTeam?.formation || awayTeam?.formation || "4-3-3",
+                  }}
+                  userTeamKey={clientRole === "guest" ? "away" : "home"}
+                  onChatWithPlayer={(player) => {
+                    setActiveChatPlayer(player);
+                    setMatchdayRightTab("chat");
+                  }}
+                  onSubstitutePlayer={handleSubstituteWithBench}
+                  onSwapSquadPlayers={handleSwapSquadPlayers}
+                  onFormationChange={(newF) => {
+                    const updated = { ...teamConfig, formation: newF };
+                    setTeamConfig(updated);
+                    localStorage.setItem("afc_team_config", JSON.stringify(updated));
+                  }}
+                  fallbackSquad={teamConfig.starting11}
+                  fallbackBench={teamConfig.benchSubs}
+                  squadHarmony={squadHarmony}
+                  transferBudget={transferBudget}
+                  totalSquadValue={teamConfig.totalSquadValue}
+                />
+              )}
+
+              {/* Tab Content 2: Embedded 1-on-1 Player Touchline Chat & Club Dynamics */}
+              {matchdayRightTab === "chat" && (
                 <EmbeddedPlayerChat
                   players={gameState?.players || []}
                   selectedPlayer={activeChatPlayer}
@@ -1076,47 +1142,8 @@ export const App: React.FC = () => {
                   activeModel={activeLLMModel}
                   onOpenLLMStudio={() => setShowLLMStudioModal(true)}
                 />
-              </div>
+              )}
             </div>
-
-            {/* Middle Full-Width Row Under Pitch: Live Commentary & Event Ticker */}
-            <MatchCommentary
-              events={gameState?.events || []}
-              homeTeamColor={gameState?.homeTeam?.color || teamConfig.color}
-              awayTeamColor={gameState?.awayTeam?.color || "#ef4444"}
-              crowdAtmosphere={gameState?.crowdAtmosphere}
-            />
-
-            {/* Bottom Row: Championship Manager Squad Sheet with live ratings & sub triggers */}
-            <PlayerSquadCM
-              players={gameState?.players || []}
-              benchSubs={gameState?.benchSubs}
-              subsRemaining={gameState?.subsRemaining || { home: 3, away: 3 }}
-              homeTeam={{
-                name: gameState?.homeTeam?.name || teamConfig.name,
-                color: gameState?.homeTeam?.color || teamConfig.color,
-                formation: gameState?.homeTeam?.formation || teamConfig.formation,
-              }}
-              awayTeam={{
-                name: gameState?.awayTeam?.name || awayTeam?.name || "AI FC",
-                color: gameState?.awayTeam?.color || awayTeam?.color || "#FF3366",
-                formation: gameState?.awayTeam?.formation || awayTeam?.formation || "4-3-3",
-              }}
-              userTeamKey={clientRole === "guest" ? "away" : "home"}
-              onChatWithPlayer={(player) => setActiveChatPlayer(player)}
-              onSubstitutePlayer={handleSubstituteWithBench}
-              onSwapSquadPlayers={handleSwapSquadPlayers}
-              onFormationChange={(newF) => {
-                const updated = { ...teamConfig, formation: newF };
-                setTeamConfig(updated);
-                localStorage.setItem("afc_team_config", JSON.stringify(updated));
-              }}
-              fallbackSquad={teamConfig.starting11}
-              fallbackBench={teamConfig.benchSubs}
-              squadHarmony={squadHarmony}
-              transferBudget={transferBudget}
-              totalSquadValue={teamConfig.totalSquadValue}
-            />
           </div>
         )}
 
