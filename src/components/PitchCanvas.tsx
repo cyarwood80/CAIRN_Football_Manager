@@ -595,7 +595,7 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
       style={{
         position: "relative",
         width: "100%",
-        maxHeight: "260px",
+        maxHeight: "440px",
         aspectRatio: "1000 / 640",
         margin: "0 auto",
         display: "flex",
@@ -611,7 +611,7 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
         style={{
           width: "100%",
           height: "100%",
-          maxHeight: "260px",
+          maxHeight: "440px",
           display: "block",
           borderRadius: "4px",
           cursor: hoveredPlayer ? "pointer" : "default",

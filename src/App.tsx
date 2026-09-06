@@ -160,7 +160,6 @@ export const App: React.FC = () => {
   const [showLLMStudioModal, setShowLLMStudioModal] = useState<boolean>(false);
   const [showAssistantManagerDrawer, setShowAssistantManagerDrawer] = useState<boolean>(false);
   const [showAIInferenceModal, setShowAIInferenceModal] = useState<boolean>(false);
-  const [matchdayRightTab, setMatchdayRightTab] = useState<"squad" | "chat">("squad");
 
   const [inboxMessages, setInboxMessages] = useState<ClubMessage[]>([
     {
@@ -979,22 +978,19 @@ export const App: React.FC = () => {
             />
           )}
         {activeTab === "matchday" && (
-          <div style={{ display: "grid", gridTemplateColumns: "minmax(420px, 1.05fr) minmax(500px, 1.25fr)", gap: "16px", alignItems: "start" }}>
-            {/* Left Column: Pitch + Dugout + Match Commentary */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.9fr) minmax(380px, 1fr)", gap: "20px", alignItems: "start" }}>
+            {/* Left 2/3 Column: Large Pitch Canvas + Action Bar + Full Squad Details & Bench */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               <PitchCanvas
                 gameState={gameState}
                 homeTeam={teamConfig}
                 awayTeam={awayTeam || { name: "FC Halifax Town", color: "#C8102E", formation: "4-3-3" }}
-                onPlayerClick={(player) => {
-                  handlePlayerClick(player);
-                  setMatchdayRightTab("chat");
-                }}
+                onPlayerClick={handlePlayerClick}
               />
 
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
                 <span style={{ fontSize: "11px", color: "var(--cds-text-secondary)" }}>
-                  💡 Click any player on the pitch for 1-on-1 Touchline Chat.
+                  💡 Click any player on the pitch to focus their 1-on-1 Touchline Chat in the sidebar.
                 </span>
                 {!gameState && (
                   <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
@@ -1047,7 +1043,48 @@ export const App: React.FC = () => {
                 )}
               </div>
 
-              {/* Manager Technical Area / Live Dugout */}
+              {/* Championship Manager Squad Details & Bench Directly Under Pitch */}
+              <PlayerSquadCM
+                players={gameState?.players || []}
+                benchSubs={gameState?.benchSubs}
+                subsRemaining={gameState?.subsRemaining || { home: 4, away: 4 }}
+                homeTeam={{
+                  name: gameState?.homeTeam?.name || teamConfig.name,
+                  color: gameState?.homeTeam?.color || teamConfig.color,
+                  formation: gameState?.homeTeam?.formation || teamConfig.formation,
+                }}
+                awayTeam={{
+                  name: gameState?.awayTeam?.name || awayTeam?.name || "FC Halifax Town",
+                  color: gameState?.awayTeam?.color || awayTeam?.color || "#FF3366",
+                  formation: gameState?.awayTeam?.formation || awayTeam?.formation || "4-3-3",
+                }}
+                userTeamKey={clientRole === "guest" ? "away" : "home"}
+                onChatWithPlayer={(player) => setActiveChatPlayer(player)}
+                onSubstitutePlayer={handleSubstituteWithBench}
+                onSwapSquadPlayers={handleSwapSquadPlayers}
+                onFormationChange={(newF) => {
+                  const updated = { ...teamConfig, formation: newF };
+                  setTeamConfig(updated);
+                  localStorage.setItem("afc_team_config", JSON.stringify(updated));
+                }}
+                fallbackSquad={teamConfig.starting11}
+                fallbackBench={teamConfig.benchSubs}
+                squadHarmony={squadHarmony}
+                transferBudget={transferBudget}
+                totalSquadValue={teamConfig.totalSquadValue}
+              />
+            </div>
+
+            {/* Right 1/3 Column: Scoreboard, Opta Stats, Monologue, Dugout, Touchline Chat & Commentary */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+              {/* Scoreboard, Pace Controls, Clock, Opta Stats & Inner-Monologue */}
+              <MatchHUD
+                gameState={gameState}
+                currentPace={matchPace}
+                onSetMatchPace={handleSetMatchPace}
+              />
+
+              {/* Live Technical Dugout (Substitutions & Macro Shouts) */}
               <LiveTacticsDugout
                 gameState={gameState}
                 onMakeSubstitution={handleMakeSubstitution}
@@ -1055,94 +1092,27 @@ export const App: React.FC = () => {
                 userTeamType={clientRole === "guest" ? "away" : "home"}
               />
 
-              {/* Real-time Matchday Commentary */}
+              {/* 1-on-1 Player Touchline Chat & Club Pulse */}
+              <EmbeddedPlayerChat
+                players={gameState?.players || []}
+                selectedPlayer={activeChatPlayer}
+                onSelectPlayer={(p) => setActiveChatPlayer(p)}
+                onSendDirective={handleSendAgentDirective}
+                chatHistory={chatHistory}
+                teamColor={gameState?.homeTeam?.color || teamConfig.color}
+                fanFeedback={gameState?.fanFeedback}
+                chairpersonFeedback={gameState?.chairpersonFeedback}
+                activeModel={activeLLMModel}
+                onOpenLLMStudio={() => setShowLLMStudioModal(true)}
+              />
+
+              {/* Real-time Matchday Commentary Event Feed */}
               <MatchCommentary
                 events={gameState?.events || []}
                 homeTeamColor={gameState?.homeTeam?.color || teamConfig.color}
                 awayTeamColor={gameState?.awayTeam?.color || "#ef4444"}
                 crowdAtmosphere={gameState?.crowdAtmosphere}
               />
-            </div>
-
-            {/* Right Column: Scoreboard, Live Ratings Squad Sheet & Touchline Chat */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              <MatchHUD
-                gameState={gameState}
-                currentPace={matchPace}
-                onSetMatchPace={handleSetMatchPace}
-              />
-
-              {/* Sub-tab switcher between Live Squad Sheet & 1-on-1 Touchline Chat */}
-              <div style={{ display: "flex", gap: "6px", borderBottom: "1px solid var(--cds-border)", paddingBottom: "6px" }}>
-                <button
-                  type="button"
-                  onClick={() => setMatchdayRightTab("squad")}
-                  className={`btn ${matchdayRightTab === "squad" ? "btn-primary" : "btn-secondary"}`}
-                  style={{ fontSize: "11px", height: "26px", padding: "0 10px", fontWeight: "700" }}
-                >
-                  Live Squad & Ratings ({(teamConfig.starting11?.length || 11) + (teamConfig.benchSubs?.length || 4)})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMatchdayRightTab("chat")}
-                  className={`btn ${matchdayRightTab === "chat" ? "btn-primary" : "btn-secondary"}`}
-                  style={{ fontSize: "11px", height: "26px", padding: "0 10px", fontWeight: "700" }}
-                >
-                  1-on-1 Touchline Chat {activeChatPlayer ? `(${activeChatPlayer.name})` : ""}
-                </button>
-              </div>
-
-              {/* Tab Content 1: Live Championship Manager Squad Sheet */}
-              {matchdayRightTab === "squad" && (
-                <PlayerSquadCM
-                  players={gameState?.players || []}
-                  benchSubs={gameState?.benchSubs}
-                  subsRemaining={gameState?.subsRemaining || { home: 4, away: 4 }}
-                  homeTeam={{
-                    name: gameState?.homeTeam?.name || teamConfig.name,
-                    color: gameState?.homeTeam?.color || teamConfig.color,
-                    formation: gameState?.homeTeam?.formation || teamConfig.formation,
-                  }}
-                  awayTeam={{
-                    name: gameState?.awayTeam?.name || awayTeam?.name || "FC Halifax Town",
-                    color: gameState?.awayTeam?.color || awayTeam?.color || "#FF3366",
-                    formation: gameState?.awayTeam?.formation || awayTeam?.formation || "4-3-3",
-                  }}
-                  userTeamKey={clientRole === "guest" ? "away" : "home"}
-                  onChatWithPlayer={(player) => {
-                    setActiveChatPlayer(player);
-                    setMatchdayRightTab("chat");
-                  }}
-                  onSubstitutePlayer={handleSubstituteWithBench}
-                  onSwapSquadPlayers={handleSwapSquadPlayers}
-                  onFormationChange={(newF) => {
-                    const updated = { ...teamConfig, formation: newF };
-                    setTeamConfig(updated);
-                    localStorage.setItem("afc_team_config", JSON.stringify(updated));
-                  }}
-                  fallbackSquad={teamConfig.starting11}
-                  fallbackBench={teamConfig.benchSubs}
-                  squadHarmony={squadHarmony}
-                  transferBudget={transferBudget}
-                  totalSquadValue={teamConfig.totalSquadValue}
-                />
-              )}
-
-              {/* Tab Content 2: Embedded 1-on-1 Player Touchline Chat & Club Dynamics */}
-              {matchdayRightTab === "chat" && (
-                <EmbeddedPlayerChat
-                  players={gameState?.players || []}
-                  selectedPlayer={activeChatPlayer}
-                  onSelectPlayer={(p) => setActiveChatPlayer(p)}
-                  onSendDirective={handleSendAgentDirective}
-                  chatHistory={chatHistory}
-                  teamColor={gameState?.homeTeam?.color || teamConfig.color}
-                  fanFeedback={gameState?.fanFeedback}
-                  chairpersonFeedback={gameState?.chairpersonFeedback}
-                  activeModel={activeLLMModel}
-                  onOpenLLMStudio={() => setShowLLMStudioModal(true)}
-                />
-              )}
             </div>
           </div>
         )}
