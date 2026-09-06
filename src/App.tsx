@@ -18,7 +18,7 @@ import { PlayerSquadCM } from "./components/PlayerSquadCM";
 import { EmbeddedPlayerChat } from "./components/EmbeddedPlayerChat";
 import { LLMStudioModal } from "./components/LLMStudioModal";
 import { PostMatchSummaryModal } from "./components/PostMatchSummaryModal";
-import { GuidedTeamSetupModal } from "./components/GuidedTeamSetupModal";
+import { FirstTimeSetupWizard } from "./components/FirstTimeSetupWizard";
 import { TransferMarket } from "./components/TransferMarket";
 import { FixtureList } from "./components/FixtureList";
 import { HalfTimeModal } from "./components/HalfTimeModal";
@@ -49,12 +49,13 @@ import type {
 } from "./types";
 
 const DEFAULT_HOME_TEAM: TeamConfig = {
-  name: "CAIRN FC",
+  name: "Cairn Athletic FC",
   color: "#0F6B45",
   secondaryColor: "#085C3B",
-  formation: "4-2-3-1",
-  squadHarmony: 88,
-  totalSquadValue: 42.3,
+  formation: "4-3-3",
+  squadHarmony: 82,
+  totalSquadValue: 3.5,
+  transferBudget: 1.5,
   prompt: "Organised high-tempo tactical possession, compact defensive lines, energetic wing transitions.",
   playerPrompts: {
     gk: "Conservative shot stopper, distribute accurately.",
@@ -76,15 +77,15 @@ export const App: React.FC = () => {
   const [selectedDossierPlayer, setSelectedDossierPlayer] = useState<SquadPlayerConfig | null>(null);
   const [globalSearch, setGlobalSearch] = useState<string>("");
 
-  // Transfer budget & Harmony persistent state
+  // Transfer budget & Harmony persistent state (Grassroots £1.5M default)
   const [transferBudget, setTransferBudget] = useState<number>(() => {
     const saved = localStorage.getItem("afc_transfer_budget");
-    return saved ? parseFloat(saved) : 18.0;
+    return saved ? parseFloat(saved) : 1.5;
   });
 
   const [squadHarmony, setSquadHarmony] = useState<number>(() => {
     const saved = localStorage.getItem("afc_squad_harmony");
-    return saved ? parseInt(saved, 10) : 85;
+    return saved ? parseInt(saved, 10) : 82;
   });
 
   const [showSetupModal, setShowSetupModal] = useState<boolean>(() => {
@@ -504,13 +505,14 @@ export const App: React.FC = () => {
     });
   };
 
-  const handleAdvanceDay = async (prompt?: string) => {
+  const handleAdvanceDay = async (prompt?: string | React.MouseEvent) => {
     try {
+      const promptText = typeof prompt === "string" && prompt.trim() ? prompt.trim() : (teamConfig.prompt || "Focus on pressing discipline and crisp passes");
       const res = await fetch("/api/calendar/advance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          managerPrompt: prompt || teamConfig.prompt || "Focus on pressing discipline and crisp passes",
+          managerPrompt: promptText,
           squad: teamConfig.starting11 || [],
         }),
       });
@@ -522,13 +524,14 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleAdvanceToMatchday = async (prompt?: string) => {
+  const handleAdvanceToMatchday = async (prompt?: string | React.MouseEvent) => {
     try {
+      const promptText = typeof prompt === "string" && prompt.trim() ? prompt.trim() : (teamConfig.prompt || "Focus on pressing discipline and crisp passes");
       const res = await fetch("/api/calendar/advance-matchday", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          managerPrompt: prompt || teamConfig.prompt || "Focus on pressing discipline and crisp passes",
+          managerPrompt: promptText,
           squad: teamConfig.starting11 || [],
         }),
       });
@@ -602,12 +605,30 @@ export const App: React.FC = () => {
   const handleCompleteSetup = (newTeam: TeamConfig, initialBudget: number) => {
     setTeamConfig(newTeam);
     setTransferBudget(initialBudget);
-    setSquadHarmony(newTeam.squadHarmony || 90);
+    setSquadHarmony(newTeam.squadHarmony || 82);
     localStorage.setItem("afc_team_config", JSON.stringify(newTeam));
     localStorage.setItem("afc_transfer_budget", `${initialBudget}`);
-    localStorage.setItem("afc_squad_harmony", `${newTeam.squadHarmony || 90}`);
+    localStorage.setItem("afc_squad_harmony", `${newTeam.squadHarmony || 82}`);
     localStorage.setItem("afc_club_setup_done", "true");
     setShowSetupModal(false);
+
+    // Register user club with backend fixture & league engine
+    fetch("/api/cm/register-user-club", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: newTeam.name,
+        color: newTeam.color,
+        secondaryColor: newTeam.secondaryColor,
+        tier: "tier_4",
+      }),
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.fixtures) setLeagueFixtures(d.fixtures);
+        if (d.standings) setLeagueStandings(d.standings);
+      })
+      .catch((e) => console.warn("Could not register club:", e));
 
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN && roomCode) {
       wsRef.current.send(JSON.stringify({ type: "UPDATE_TEAM", teamConfig: newTeam }));
@@ -972,6 +993,21 @@ export const App: React.FC = () => {
           />
         )}
 
+        {activeTab === "calendar" && (
+          <SeasonCalendar
+            calendar={calendarState}
+            schedule={schedule}
+            userTeamName={teamConfig.name}
+            nextOpponent={nextOpponentName}
+            isHomeFixture={isUserFixtureHome}
+            squad={teamConfig.starting11 || []}
+            onAdvanceDay={handleAdvanceDay}
+            onAdvanceToMatchday={() => handleAdvanceToMatchday()}
+            onPlayScheduledMatch={handlePlayScheduledMatch}
+            isMatchActive={!!gameState && gameState.phase !== "fulltime"}
+          />
+        )}
+
         {activeTab === "fixtures" && (
           <FixtureList
             currentGameweek={currentGameweek}
@@ -1035,12 +1071,14 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Guided Team Setup Modal */}
-      <GuidedTeamSetupModal
+      {/* First-Time Club & Manager Onboarding Setup Wizard */}
+      <FirstTimeSetupWizard
         isOpen={showSetupModal}
-        currentTeam={teamConfig}
-        onClose={() => setShowSetupModal(false)}
-        onCompleteSetup={handleCompleteSetup}
+        onComplete={(newTeam) => {
+          handleCompleteSetup(newTeam, 1.5);
+          setShowSetupModal(false);
+        }}
+        onCancel={() => setShowSetupModal(false)}
       />
 
       {/* AI Assistant Manager Drawer */}

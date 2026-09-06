@@ -73,6 +73,51 @@ agentic-football-cup/
 
 ---
 
+## 🦙 Local AI Models (Ollama) & Prompt Engineering Mastery
+
+### 🎯 Learn Prompt Engineering Through Football Simulation
+CAIRN FC is designed as an interactive learning laboratory for **AI prompt engineering**. Rather than manipulating abstract numeric sliders, managers coach autonomous player agents using plain-English natural language directives.
+
+```
+"Relentless high pressing, suffocate opponent in their half, blitz vertical counter-attacks immediately on turnover."
+  └── Parsed by Local LLM ──> [PressBias: 0.95, CounterSpeed: +25%, Resonates: Aggressive/Tenacious]
+```
+
+### 🔬 Key Educational AI Mechanics:
+1. **Prompt Quality Scoring**: Live real-time analysis categorizing directives from *Vague/Low Impact* to *Tactical Masterclass*, surfacing synergy bonuses and evolution multipliers.
+2. **Cognitive Trait Resonance**: Player personality archetypes (*Creative, Tenacious, Aggressive, Methodical, Flair, Leader, Sensitive*) respond differently to manager instructions.
+3. **Inference Telemetry & Token Inspection**: Inspect raw prompt tokens, latency (ms), token generation speeds, and system prompt contexts in the built-in **AI Inference Inspector**.
+4. **Autonomous Player Evolution**: Coaching precision directly governs player XP progression and tactical mastery breakthrough curves.
+
+---
+
+### ⚙️ Setting Up Ollama (100% Private Local Inference)
+
+CAIRN FC automatically discovers and connects to your local Ollama instance with zero setup required.
+
+#### 1. Install Ollama
+Download and install Ollama from [ollama.com](https://ollama.com/).
+
+#### 2. Pull a Recommended Model
+Open your terminal and run:
+
+```bash
+# Recommended lightweight & ultra-fast model (1.3GB)
+ollama run llama3.2:1b
+
+# Or balanced 3B / 7B reasoning models:
+ollama pull llama3.2:3b
+ollama pull mistral
+ollama pull qwen2.5:3b
+```
+
+#### 3. Launch CAIRN FC
+Run `npm run dev`. The top application bar will display `🟢 AI: llama3.2:1b (Connected)`.
+
+*(Note: If Ollama is not running, CAIRN FC smoothly falls back to its deterministic heuristic cognitive engine, so the game remains 100% functional).*
+
+---
+
 ## 🚀 Quick Start Guide
 
 ### Prerequisites

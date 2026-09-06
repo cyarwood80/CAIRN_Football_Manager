@@ -69,18 +69,22 @@ function generateTierFixtures(clubs, tierKey) {
   const teams = [...clubs];
   let fixtureId = 1;
 
+  // First half of season: (n - 1) rounds
   for (let round = 1; round < n; round++) {
     for (let i = 0; i < n / 2; i++) {
-      const home = teams[i];
-      const away = teams[n - 1 - i];
+      const teamA = teams[i];
+      const teamB = teams[n - 1 - i];
+      const isHome = (i + round) % 2 === 0;
+      const home = isHome ? teamA : teamB;
+      const away = isHome ? teamB : teamA;
       fixtures.push({
         id: `${tierKey}_fix_${fixtureId++}`,
         tier: tierKey,
         gameweek: round,
-        homeTeam: i % 2 === 0 ? home.name : away.name,
-        awayTeam: i % 2 === 0 ? away.name : home.name,
-        homeColor: i % 2 === 0 ? home.color : away.color,
-        awayColor: i % 2 === 0 ? away.color : home.color,
+        homeTeam: home.name,
+        awayTeam: away.name,
+        homeColor: home.color || "#0F6B45",
+        awayColor: away.color || "#0F62FE",
         played: false,
         homeScore: null,
         awayScore: null,
@@ -88,7 +92,53 @@ function generateTierFixtures(clubs, tierKey) {
     }
     teams.splice(1, 0, teams.pop());
   }
+
+  // Second half of season (Reverse fixtures): rounds n to 2*(n - 1)
+  const firstHalfCount = fixtures.length;
+  for (let idx = 0; idx < firstHalfCount; idx++) {
+    const f = fixtures[idx];
+    fixtures.push({
+      id: `${tierKey}_fix_${fixtureId++}`,
+      tier: tierKey,
+      gameweek: f.gameweek + (n - 1),
+      homeTeam: f.awayTeam,
+      awayTeam: f.homeTeam,
+      homeColor: f.awayColor,
+      awayColor: f.homeColor,
+      played: false,
+      homeScore: null,
+      awayScore: null,
+    });
+  }
+
   return fixtures;
+}
+
+export function registerUserClub(name, color = "#0F6B45", secondaryColor = "#085C3B", tier = "tier_4") {
+  userActiveTier = tier;
+  const list = tierStandings[tier];
+  if (list && list.length > 0) {
+    const existingIndex = list.findIndex(
+      (c) => c.name.toLowerCase() === name.toLowerCase() || c.id === "user_club"
+    );
+    if (existingIndex !== -1) {
+      list[existingIndex].name = name;
+      list[existingIndex].color = color;
+      list[existingIndex].secondaryColor = secondaryColor;
+      list[existingIndex].id = "user_club";
+    } else {
+      list[0] = {
+        ...list[0],
+        id: "user_club",
+        name: name,
+        shortName: name.slice(0, 3).toUpperCase(),
+        color: color,
+        secondaryColor: secondaryColor,
+      };
+    }
+    tierFixtures[tier] = generateTierFixtures(list, tier);
+  }
+  return { success: true, tier, standings: tierStandings[tier], fixtures: tierFixtures[tier] };
 }
 
 function initTierLeagues() {
@@ -96,11 +146,11 @@ function initTierLeagues() {
   tierKeys.forEach((tKey) => {
     const clubs = getClubsByTier(tKey);
     tierStandings[tKey] = clubs.map((c, idx) => ({
-      id: c.id,
-      name: c.name,
-      shortName: c.shortName || c.name.slice(0, 3).toUpperCase(),
-      color: c.color || "#00f2fe",
-      secondaryColor: c.secondaryColor || "#0A192F",
+      id: idx === 0 && tKey === "tier_4" ? "user_club" : c.id,
+      name: idx === 0 && tKey === "tier_4" ? "Cairn Athletic FC" : c.name,
+      shortName: idx === 0 && tKey === "tier_4" ? "CAI" : c.shortName || c.name.slice(0, 3).toUpperCase(),
+      color: idx === 0 && tKey === "tier_4" ? "#0F6B45" : c.color || "#00f2fe",
+      secondaryColor: idx === 0 && tKey === "tier_4" ? "#085C3B" : c.secondaryColor || "#0A192F",
       tier: tKey,
       played: 0,
       won: 0,
@@ -293,6 +343,13 @@ app.get("/api/presets", (req, res) => {
 
 app.get("/api/cm/tiers", (req, res) => {
   res.json({ tiers: getTiersInfo(), activeTier: userActiveTier });
+});
+
+app.post("/api/cm/register-user-club", (req, res) => {
+  const { name, color, secondaryColor, tier } = req.body || {};
+  if (!name) return res.status(400).json({ error: "Missing club name" });
+  const result = registerUserClub(name, color || "#0F6B45", secondaryColor || "#085C3B", tier || "tier_4");
+  res.json(result);
 });
 
 app.get("/api/cm/clubs", (req, res) => {

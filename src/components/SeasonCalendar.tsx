@@ -19,6 +19,7 @@ interface SeasonCalendarProps {
   schedule: CalendarScheduleItem[];
   userTeamName: string;
   nextOpponent?: string;
+  isHomeFixture?: boolean;
   squad?: SquadPlayerConfig[];
   onAdvanceDay: (prompt?: string) => Promise<void>;
   onAdvanceToMatchday: (prompt?: string) => Promise<void>;
@@ -31,6 +32,7 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
   schedule,
   userTeamName,
   nextOpponent = "Chesterfield",
+  isHomeFixture = true,
   squad = [],
   onAdvanceDay,
   onAdvanceToMatchday,
@@ -496,8 +498,19 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span style={{ fontSize: "0.72rem", fontWeight: "800", color: "var(--accent-gold)", textTransform: "uppercase" }}>
-                Next League Fixture
+              <span
+                style={{
+                  fontSize: "0.72rem",
+                  fontWeight: "800",
+                  padding: "2px 8px",
+                  borderRadius: "4px",
+                  background: isHomeFixture ? "rgba(16, 185, 129, 0.2)" : "rgba(138, 63, 252, 0.2)",
+                  color: isHomeFixture ? "#10b981" : "#c084fc",
+                  border: `1px solid ${isHomeFixture ? "rgba(16, 185, 129, 0.4)" : "rgba(138, 63, 252, 0.4)"}`,
+                  textTransform: "uppercase",
+                }}
+              >
+                {isHomeFixture ? "🏟️ HOME FIXTURE" : "✈️ AWAY FIXTURE"}
               </span>
               <span style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
                 Matchday #{calendar?.currentGameweek ?? 1}
@@ -506,14 +519,37 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0" }}>
               <div style={{ textAlign: "left" }}>
-                <div style={{ fontWeight: "900", fontSize: "1rem", color: "#00E5FF" }}>{userTeamName}</div>
-                <div style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>Home Club</div>
+                <div style={{ fontWeight: "900", fontSize: "1rem", color: isHomeFixture ? "#00E5FF" : "#fff" }}>
+                  {isHomeFixture ? userTeamName : nextOpponent}
+                </div>
+                <div style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>
+                  {isHomeFixture ? "Home Club (Your Team)" : "Host Club"}
+                </div>
               </div>
               <div style={{ fontWeight: "900", fontSize: "0.9rem", color: "var(--accent-gold)" }}>VS</div>
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontWeight: "900", fontSize: "1rem", color: "#fff" }}>{nextOpponent}</div>
-                <div style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>Challenger</div>
+                <div style={{ fontWeight: "900", fontSize: "1rem", color: !isHomeFixture ? "#00E5FF" : "#fff" }}>
+                  {isHomeFixture ? nextOpponent : userTeamName}
+                </div>
+                <div style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>
+                  {!isHomeFixture ? "Away Club (Your Team)" : "Visiting Challenger"}
+                </div>
               </div>
+            </div>
+
+            <div
+              style={{
+                fontSize: "0.74rem",
+                color: isHomeFixture ? "var(--accent-green)" : "var(--accent-cyan)",
+                background: "rgba(255, 255, 255, 0.04)",
+                padding: "6px 10px",
+                borderRadius: "6px",
+                border: "1px solid rgba(255, 255, 255, 0.06)",
+              }}
+            >
+              {isHomeFixture
+                ? "🏟️ Home Roar Advantage: Morale is boosted by loyal home supporters."
+                : "✈️ Hostile Away Match: Crowd pressure increases, requiring tactical discipline."}
             </div>
 
             {isMatchday ? (
@@ -522,7 +558,7 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
                 onClick={onPlayScheduledMatch}
                 style={{ width: "100%", padding: "10px", fontSize: "0.88rem", fontWeight: "900" }}
               >
-                🏟️ Kick Off Match Now
+                {isHomeFixture ? "🏟️ Kick Off Home Match Now" : "✈️ Kick Off Away Match Now"}
               </button>
             ) : (
               <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.74rem", color: "var(--text-secondary)" }}>

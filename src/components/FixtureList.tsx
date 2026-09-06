@@ -156,7 +156,24 @@ export const FixtureList: React.FC<FixtureListProps> = ({
             >
               {/* Top metadata */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.72rem", color: "var(--text-muted)" }}>
-                <span>Gameweek #{fix.gameweek}</span>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span>Gameweek #{fix.gameweek}</span>
+                  {isUserMatch && (
+                    <span
+                      style={{
+                        fontSize: "0.68rem",
+                        fontWeight: "800",
+                        padding: "1px 6px",
+                        borderRadius: "3px",
+                        background: isUserHome ? "rgba(16, 185, 129, 0.2)" : "rgba(138, 63, 252, 0.2)",
+                        color: isUserHome ? "#10b981" : "#c084fc",
+                        border: `1px solid ${isUserHome ? "rgba(16, 185, 129, 0.4)" : "rgba(138, 63, 252, 0.4)"}`,
+                      }}
+                    >
+                      {isUserHome ? "🏟️ HOME" : "✈️ AWAY"}
+                    </span>
+                  )}
+                </div>
                 {fix.played ? (
                   <span style={{ color: "#10b981", fontWeight: "700", display: "flex", alignItems: "center", gap: "4px" }}>
                     <CheckCircle2 size={12} /> Full-Time

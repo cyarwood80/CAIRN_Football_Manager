@@ -11,9 +11,11 @@ import {
   Dices,
   Zap,
   Sliders,
+  Cpu,
 } from "lucide-react";
 import { PlayerAvatar } from "./PlayerAvatar";
-import type { TeamConfig, Formation, SquadPlayerConfig } from "../types";
+import { PromptQualityAnalyzer } from "./PromptQualityAnalyzer";
+import type { TeamConfig, Formation, SquadPlayerConfig, LLMModelInfo } from "../types";
 
 interface FirstTimeSetupWizardProps {
   isOpen: boolean;
@@ -98,6 +100,9 @@ export const FirstTimeSetupWizard: React.FC<FirstTimeSetupWizardProps> = ({
   const [tacticalPrompt, setTacticalPrompt] = useState(
     "Relentless high pressing, suffocate opponent in their half, blitz vertical counter-attacks immediately on turnover."
   );
+  const [isOllamaConnected, setIsOllamaConnected] = useState<boolean>(false);
+  const [activeModel, setActiveModel] = useState<string>("llama3.2:1b");
+  const [availableModels, setAvailableModels] = useState<LLMModelInfo[]>([]);
 
   // Step 4: Grassroots Squad
   const [draftSquad, setDraftSquad] = useState<{ starting11: SquadPlayerConfig[]; benchSubs: SquadPlayerConfig[] } | null>(null);
@@ -105,6 +110,18 @@ export const FirstTimeSetupWizard: React.FC<FirstTimeSetupWizardProps> = ({
 
   useEffect(() => {
     if (isOpen) {
+      // Check Ollama Local Models connection
+      fetch("/api/llm/models")
+        .then((r) => r.json())
+        .then((data) => {
+          if (data) {
+            setIsOllamaConnected(!!data.connected);
+            if (data.activeModel) setActiveModel(data.activeModel);
+            if (data.models) setAvailableModels(data.models);
+          }
+        })
+        .catch(() => setIsOllamaConnected(false));
+
       // Fetch initial draft squad
       setIsLoadingSquad(true);
       fetch(`/api/cm/draft?name=${encodeURIComponent(clubName)}&tier=tier_4`)
@@ -149,6 +166,18 @@ export const FirstTimeSetupWizard: React.FC<FirstTimeSetupWizardProps> = ({
       transferBudget: 1.5, // £1.5M grassroots budget
       totalSquadValue: 3.5,
     };
+
+    // Register with server to generate accurate Tier 4 fixtures & standings
+    fetch("/api/cm/register-user-club", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: compiledTeam.name,
+        color: compiledTeam.color,
+        secondaryColor: compiledTeam.secondaryColor,
+        tier: "tier_4",
+      }),
+    }).catch((e) => console.warn("Could not register club with server:", e));
 
     localStorage.setItem("afc_club_setup_done", "true");
     localStorage.setItem("afc_manager_name", managerName.trim() || "Chris");
@@ -524,6 +553,46 @@ export const FirstTimeSetupWizard: React.FC<FirstTimeSetupWizardProps> = ({
               </div>
             </div>
 
+            {/* Ollama Local Engine Status & Setup Guidance */}
+            <div
+              style={{
+                padding: "12px 16px",
+                borderRadius: "4px",
+                background: isOllamaConnected ? "rgba(15, 107, 69, 0.08)" : "var(--cds-layer)",
+                border: `1px solid ${isOllamaConnected ? "#A7F0BA" : "var(--cds-border)"}`,
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Cpu size={16} color={isOllamaConnected ? "var(--cds-green-primary)" : "var(--cds-blue)"} />
+                  <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--cds-text-primary)" }}>
+                    {isOllamaConnected ? `Local Ollama Active (${availableModels.length} Models Detected)` : "Local AI Engine: Standalone Cognitive Mode"}
+                  </span>
+                </div>
+                <span
+                  style={{
+                    fontSize: "11px",
+                    fontWeight: "700",
+                    padding: "2px 8px",
+                    borderRadius: "2px",
+                    background: isOllamaConnected ? "#DEFBE6" : "#FEF7E0",
+                    color: isOllamaConnected ? "var(--cds-green-primary)" : "#8E6A00",
+                    border: `1px solid ${isOllamaConnected ? "#A7F0BA" : "#F1C21B"}`,
+                  }}
+                >
+                  {isOllamaConnected ? `Model: ${activeModel}` : "Ollama Standalone"}
+                </span>
+              </div>
+              <p style={{ margin: 0, fontSize: "12px", color: "var(--cds-text-secondary)", lineHeight: 1.4 }}>
+                {isOllamaConnected
+                  ? "Local Ollama LLM is running on localhost:11434. Matchday agent cognition, press conferences, and touchline dialogue run privately on your device."
+                  : "Optional: Run 'ollama run llama3.2' in your terminal for real-time local neural inferences, or continue with built-in heuristic agent cognition."}
+              </p>
+            </div>
+
             {/* Formation & Initial Philosophy */}
             <div>
               <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "var(--cds-text-secondary)", marginBottom: "6px" }}>
@@ -561,8 +630,10 @@ export const FirstTimeSetupWizard: React.FC<FirstTimeSetupWizardProps> = ({
                 value={tacticalPrompt}
                 onChange={(e) => setTacticalPrompt(e.target.value)}
                 className="carbon-input"
-                style={{ width: "100%", lineHeight: 1.5, resize: "vertical" }}
+                style={{ width: "100%", lineHeight: 1.5, resize: "vertical", marginBottom: "10px" }}
               />
+              {/* Live Real-Time Prompt Quality Scoring */}
+              <PromptQualityAnalyzer promptText={tacticalPrompt} compact={false} />
             </div>
           </div>
         )}
