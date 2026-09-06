@@ -14,6 +14,7 @@ interface PitchCanvasProps {
 const PITCH_W = 1000;
 const PITCH_H = 640;
 const MARGIN = 20;
+const PLAYER_RADIUS = 17;
 
 // Color clash resolution helpers
 function parseColorToRgb(colorStr: string): [number, number, number] {
@@ -49,7 +50,7 @@ function getColorDistance(colorA: string, colorB: string): number {
 export function getContrastingTextColor(bgColor: string): string {
   const [r, g, b] = parseColorToRgb(bgColor);
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.55 ? "#0a0e1a" : "#ffffff";
+  return luminance > 0.55 ? "#161616" : "#FFFFFF";
 }
 
 export function resolveEffectiveAwayKit(
@@ -63,16 +64,13 @@ export function resolveEffectiveAwayKit(
       return { kitColor: awaySecondaryColor, isAwayStrip: true };
     }
     const [r, g, b] = parseColorToRgb(homeColor);
-    // If home is reddish
     if (r > 150 && g < 90 && b < 90) {
-      return { kitColor: "#facc15", isAwayStrip: true }; // High contrast yellow away kit
+      return { kitColor: "#F1C21B", isAwayStrip: true };
     }
-    // If home is blueish
     if (b > 140 && r < 90) {
-      return { kitColor: "#ffffff", isAwayStrip: true }; // High contrast white away kit
+      return { kitColor: "#FFFFFF", isAwayStrip: true };
     }
-    // Default high contrast away strip
-    return { kitColor: "#f8fafc", isAwayStrip: true };
+    return { kitColor: "#F4F4F4", isAwayStrip: true };
   }
   return { kitColor: awayColor, isAwayStrip: false };
 }
@@ -161,7 +159,6 @@ const DEFAULT_ANCHORS_HOME: Record<string, { x: number; y: number }[]> = {
 function getPreMatchAnchors(formation = "4-3-3", isHome = true): { x: number; y: number }[] {
   const template = DEFAULT_ANCHORS_HOME[formation] || DEFAULT_ANCHORS_HOME["4-3-3"];
   return template.map((pos) => {
-    // Keep on own half before kickoff
     const scaledX = isHome
       ? Math.min(460, pos.x * 0.55 + 20)
       : Math.max(540, PITCH_W - (pos.x * 0.55 + 20));
@@ -179,6 +176,15 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
   const [hoveredPlayer, setHoveredPlayer] = useState<PlayerState | null>(null);
   const prevPhaseRef = useRef<string>("");
 
+  // Smooth 60fps interpolation state refs
+  const interpPlayersRef = useRef<Map<string, { x: number; y: number; vx: number; vy: number }>>(new Map());
+  const interpBallRef = useRef<{ x: number; y: number; vx: number; vy: number }>({ x: 500, y: 320, vx: 0, vy: 0 });
+  const animFrameIdRef = useRef<number | null>(null);
+
+  // Keep latest game snapshot in ref for the 60fps RAF render loop
+  const latestGameStateRef = useRef<GameSnapshot | null>(gameState);
+  latestGameStateRef.current = gameState;
+
   // Goal confetti trigger
   useEffect(() => {
     if (gameState?.phase === "goal" && prevPhaseRef.current !== "goal") {
@@ -186,7 +192,7 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
         particleCount: 120,
         spread: 80,
         origin: { y: 0.6 },
-        colors: [gameState.homeTeam.color, gameState.awayTeam.color, "#00f2fe", "#ffffff", "#ffd700"],
+        colors: [gameState.homeTeam.color, gameState.awayTeam.color, "#0F6B45", "#FFFFFF", "#F1C21B"],
       });
     }
     if (gameState) {
@@ -194,386 +200,537 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
     }
   }, [gameState?.phase, gameState?.homeTeam?.color, gameState?.awayTeam?.color]);
 
+  // Main 60 FPS RequestAnimationFrame Canvas Render Loop
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    let isRunning = true;
 
-    // High DPI scaling
-    const rect = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
+    const renderLoop = () => {
+      if (!isRunning) return;
 
-    ctx.save();
-    ctx.scale((rect.width / PITCH_W) * dpr, (rect.height / PITCH_H) * dpr);
-
-    // ==========================================
-    // 1. Draw Pitch Turf & Alternating Grass Stripes
-    // ==========================================
-    const stripeCount = 12;
-    const stripeW = PITCH_W / stripeCount;
-    for (let i = 0; i < stripeCount; i++) {
-      ctx.fillStyle = i % 2 === 0 ? "#0d3b22" : "#0a301b";
-      ctx.fillRect(i * stripeW, 0, stripeW, PITCH_H);
-    }
-
-    // Outer subtle pitch vignette
-    const vignette = ctx.createRadialGradient(PITCH_W / 2, PITCH_H / 2, 200, PITCH_W / 2, PITCH_H / 2, 600);
-    vignette.addColorStop(0, "rgba(0,0,0,0)");
-    vignette.addColorStop(1, "rgba(0,0,0,0.38)");
-    ctx.fillStyle = vignette;
-    ctx.fillRect(0, 0, PITCH_W, PITCH_H);
-
-    // ==========================================
-    // 2. Draw Crisp White Pitch Markings
-    // ==========================================
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.78)";
-    ctx.lineWidth = 3;
-
-    // Outer boundary line
-    ctx.strokeRect(MARGIN, MARGIN, PITCH_W - 2 * MARGIN, PITCH_H - 2 * MARGIN);
-
-    // Halfway line
-    ctx.beginPath();
-    ctx.moveTo(PITCH_W / 2, MARGIN);
-    ctx.lineTo(PITCH_W / 2, PITCH_H - MARGIN);
-    ctx.stroke();
-
-    // Center circle
-    ctx.beginPath();
-    ctx.arc(PITCH_W / 2, PITCH_H / 2, 75, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Center spot
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.arc(PITCH_W / 2, PITCH_H / 2, 4.5, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Left Penalty Area (Home)
-    ctx.strokeRect(MARGIN, 170, 150, 300);
-    // Left 6-Yard Box
-    ctx.strokeRect(MARGIN, 240, 55, 160);
-    // Left Penalty Spot
-    ctx.beginPath();
-    ctx.arc(MARGIN + 105, PITCH_H / 2, 4, 0, Math.PI * 2);
-    ctx.fill();
-    // Left Penalty Arc
-    ctx.beginPath();
-    ctx.arc(MARGIN + 105, PITCH_H / 2, 65, -0.65, 0.65);
-    ctx.stroke();
-
-    // Right Penalty Area (Away)
-    ctx.strokeRect(PITCH_W - MARGIN - 150, 170, 150, 300);
-    // Right 6-Yard Box
-    ctx.strokeRect(PITCH_W - MARGIN - 55, 240, 55, 160);
-    // Right Penalty Spot
-    ctx.beginPath();
-    ctx.arc(PITCH_W - MARGIN - 105, PITCH_H / 2, 4, 0, Math.PI * 2);
-    ctx.fill();
-    // Right Penalty Arc
-    ctx.beginPath();
-    ctx.arc(PITCH_W - MARGIN - 105, PITCH_H / 2, 65, Math.PI - 0.65, Math.PI + 0.65);
-    ctx.stroke();
-
-    // Corner Arcs
-    const cornerR = 18;
-    ctx.beginPath();
-    ctx.arc(MARGIN, MARGIN, cornerR, 0, Math.PI / 2);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(MARGIN, PITCH_H - MARGIN, cornerR, -Math.PI / 2, 0);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(PITCH_W - MARGIN, MARGIN, cornerR, Math.PI / 2, Math.PI);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(PITCH_W - MARGIN, PITCH_H - MARGIN, cornerR, Math.PI, -Math.PI / 2);
-    ctx.stroke();
-
-    // Goals & Net
-    const goalYMin = 260;
-    const goalYMax = 380;
-    const goalH = goalYMax - goalYMin;
-
-    // Left Goal
-    ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
-    ctx.fillRect(MARGIN - 18, goalYMin, 18, goalH);
-    ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 4;
-    ctx.strokeRect(MARGIN - 18, goalYMin, 18, goalH);
-
-    // Right Goal
-    ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
-    ctx.fillRect(PITCH_W - MARGIN, goalYMin, 18, goalH);
-    ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 4;
-    ctx.strokeRect(PITCH_W - MARGIN, goalYMin, 18, goalH);
-
-    // ==========================================
-    // 3. Draw Players & Ball (Live OR Pre-Match)
-    // ==========================================
-    if (gameState && gameState.players && gameState.players.length > 0) {
-      // --- LIVE MATCH PLAYERS ---
-      // Ball
-      const ball = gameState.ball;
-      if (ball) {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
-        ctx.beginPath();
-        ctx.ellipse(ball.x, ball.y + 6, 8, 4, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        if (ball.isShot || ball.speed > 12) {
-          ctx.strokeStyle = "rgba(255, 235, 59, 0.7)";
-          ctx.lineWidth = 4;
-          ctx.beginPath();
-          ctx.moveTo(ball.x, ball.y);
-          ctx.lineTo(ball.x - ball.vx * 3.5, ball.y - ball.vy * 3.5);
-          ctx.stroke();
-        }
-
-        const ballGrad = ctx.createRadialGradient(ball.x - 2, ball.y - 2, 1, ball.x, ball.y, 8);
-        ballGrad.addColorStop(0, "#ffffff");
-        ballGrad.addColorStop(0.7, "#f1f5f9");
-        ballGrad.addColorStop(1, "#cbd5e1");
-        ctx.fillStyle = ballGrad;
-        ctx.beginPath();
-        ctx.arc(ball.x, ball.y, 8, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = "#334155";
-        ctx.lineWidth = 1.2;
-        ctx.beginPath();
-        ctx.arc(ball.x, ball.y, 4, 0, Math.PI * 2);
-        ctx.stroke();
+      const canvas = canvasRef.current;
+      if (!canvas) {
+        animFrameIdRef.current = requestAnimationFrame(renderLoop);
+        return;
       }
 
-      // Resolve effective away kit color to avoid color clash
-      const effectiveHomeColor = gameState.homeTeam.color || "#00f2fe";
-      const effectiveAwayInfo = resolveEffectiveAwayKit(
-        effectiveHomeColor,
-        gameState.awayTeam.color || "#ff3366",
-        gameState.awayTeam.secondaryColor
-      );
-      const effectiveAwayColor = effectiveAwayInfo.kitColor;
-
-      // Players
-      gameState.players.forEach((player) => {
-        const isHome = player.team === "home";
-        const isGK = player.role === "GK";
-        const teamColor = isHome ? effectiveHomeColor : effectiveAwayColor;
-        const playerColor = isGK ? (isHome ? "#facc15" : "#a855f7") : teamColor;
-
-        // Shadow
-        ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
-        ctx.beginPath();
-        ctx.ellipse(player.x, player.y + 11, 13, 6, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Selection / Hover Ring
-        if (hoveredPlayer?.id === player.id) {
-          ctx.strokeStyle = "#ffffff";
-          ctx.lineWidth = 2.5;
-          ctx.beginPath();
-          ctx.arc(player.x, player.y, 19, 0, Math.PI * 2);
-          ctx.stroke();
-        }
-
-        // Stamina Arc
-        const staminaAngle = ((player.stamina || 100) / 100) * Math.PI * 2;
-        ctx.strokeStyle = player.stamina > 50 ? "rgba(16, 185, 129, 0.7)" : "rgba(239, 68, 68, 0.7)";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(player.x, player.y, 16, -Math.PI / 2, -Math.PI / 2 + staminaAngle);
-        ctx.stroke();
-
-        // Player Circle
-        ctx.fillStyle = playerColor;
-        ctx.beginPath();
-        ctx.arc(player.x, player.y, 13, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = isHome ? "#ffffff" : "#0f172a";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        // Number
-        ctx.fillStyle = isGK ? "#030712" : getContrastingTextColor(teamColor);
-        ctx.font = "bold 11px Outfit, sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(`${player.number}`, player.x, player.y);
-
-        // Role tag
-        ctx.fillStyle = "rgba(248, 250, 252, 0.9)";
-        ctx.font = "600 9px Outfit, sans-serif";
-        ctx.fillText(player.role, player.x, player.y + 23);
-
-        // Personality trait badge / state indicator
-        if (player.state && player.state !== "idle" && player.state !== "running") {
-          ctx.fillStyle = player.state === "shoot" ? "#ef4444" : player.state === "save" ? "#f59e0b" : "#00f2fe";
-          ctx.font = "bold 8px Outfit, sans-serif";
-          ctx.fillText(player.state.toUpperCase(), player.x, player.y - 18);
-        } else if (player.personalityIcon) {
-          ctx.font = "9px Outfit, sans-serif";
-          ctx.fillText(player.personalityIcon, player.x, player.y - 18);
-        }
-      });
-
-      // Active Agent Thought Bubble (High-contrast Carbon style)
-      if (gameState.activeThought) {
-        const thought = gameState.activeThought;
-        const icon = thought.personalityIcon || "💭";
-        const bubbleText = `${icon} ${thought.playerName}: "${thought.text}"`;
-        const bubbleW = Math.min(360, Math.max(140, bubbleText.length * 6.2 + 24));
-        const bubbleH = 26;
-        const bx = Math.max(10, Math.min(PITCH_W - bubbleW - 10, thought.x - bubbleW / 2));
-        const by = Math.max(15, thought.y - 42);
-
-        ctx.fillStyle = "#FFFFFF";
-        ctx.strokeStyle = thought.team === "home" ? (gameState.homeTeam.color || "#0F6B45") : (gameState.awayTeam.color || "#DA1E28");
-        ctx.lineWidth = 2;
-
-        ctx.beginPath();
-        ctx.roundRect(bx, by, bubbleW, bubbleH, 4);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(thought.x - 4, by + bubbleH);
-        ctx.lineTo(thought.x, by + bubbleH + 6);
-        ctx.lineTo(thought.x + 4, by + bubbleH);
-        ctx.closePath();
-        ctx.fillStyle = "#FFFFFF";
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = "#161616";
-        ctx.font = "600 10.5px 'IBM Plex Sans', sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(bubbleText, bx + bubbleW / 2, by + bubbleH / 2);
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        animFrameIdRef.current = requestAnimationFrame(renderLoop);
+        return;
       }
 
-      // Goal celebration overlay
-      if (gameState.phase === "goal") {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
-        ctx.fillRect(0, 0, PITCH_W, PITCH_H);
+      // High DPI scaling
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const targetW = Math.round(rect.width * dpr);
+      const targetH = Math.round(rect.height * dpr);
 
-        ctx.fillStyle = "#F1C21B";
-        ctx.font = "900 44px 'IBM Plex Sans', sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText("⚽ GOAL! ⚽", PITCH_W / 2, PITCH_H / 2 - 16);
-
-        ctx.fillStyle = "#FFFFFF";
-        ctx.font = "700 22px 'IBM Plex Sans', sans-serif";
-        ctx.fillText(`${gameState.score.home}  —  ${gameState.score.away}`, PITCH_W / 2, PITCH_H / 2 + 25);
+      if (canvas.width !== targetW || canvas.height !== targetH) {
+        canvas.width = targetW;
+        canvas.height = targetH;
       }
-    } else {
-      // --- PRE-MATCH PERSISTENT STADIUM VIEW ---
-      // Place match ball on the center spot
-      const ballGrad = ctx.createRadialGradient(PITCH_W / 2 - 2, PITCH_H / 2 - 2, 1, PITCH_W / 2, PITCH_H / 2, 8);
-      ballGrad.addColorStop(0, "#ffffff");
-      ballGrad.addColorStop(0.7, "#f1f5f9");
-      ballGrad.addColorStop(1, "#cbd5e1");
-      ctx.fillStyle = ballGrad;
+
+      ctx.save();
+      ctx.scale((rect.width / PITCH_W) * dpr, (rect.height / PITCH_H) * dpr);
+
+      // ==========================================
+      // 1. Draw Pitch Turf & Alternating Grass Stripes
+      // ==========================================
+      const stripeCount = 12;
+      const stripeW = PITCH_W / stripeCount;
+      for (let i = 0; i < stripeCount; i++) {
+        ctx.fillStyle = i % 2 === 0 ? "#0d3b22" : "#09301b";
+        ctx.fillRect(i * stripeW, 0, stripeW, PITCH_H);
+      }
+
+      // Subtle pitch vignette
+      const vignette = ctx.createRadialGradient(PITCH_W / 2, PITCH_H / 2, 200, PITCH_W / 2, PITCH_H / 2, 600);
+      vignette.addColorStop(0, "rgba(0,0,0,0)");
+      vignette.addColorStop(1, "rgba(0,0,0,0.42)");
+      ctx.fillStyle = vignette;
+      ctx.fillRect(0, 0, PITCH_W, PITCH_H);
+
+      // ==========================================
+      // 2. Draw Crisp White Pitch Markings
+      // ==========================================
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+      ctx.lineWidth = 3;
+
+      // Outer boundary line
+      ctx.strokeRect(MARGIN, MARGIN, PITCH_W - 2 * MARGIN, PITCH_H - 2 * MARGIN);
+
+      // Halfway line
       ctx.beginPath();
-      ctx.arc(PITCH_W / 2, PITCH_H / 2, 8, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Home Team Formation Preview (Left Half)
-      const hColor = homeTeam?.color || "#0F6B45";
-      const hFormation = homeTeam?.formation || "4-3-3";
-      const hAnchors = getPreMatchAnchors(hFormation, true);
-      const hPlayers = homeTeam?.starting11 || [];
-
-      hAnchors.forEach((pos, idx) => {
-        const pNum = hPlayers[idx]?.number || idx + 1;
-        const pRole = hPlayers[idx]?.role || (idx === 0 ? "GK" : idx < 5 ? "DEF" : idx < 8 ? "MID" : "FWD");
-        const isGK = pRole === "GK" || idx === 0;
-
-        ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
-        ctx.beginPath();
-        ctx.ellipse(pos.x, pos.y + 11, 13, 6, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = isGK ? "#F1C21B" : hColor;
-        ctx.beginPath();
-        ctx.arc(pos.x, pos.y, 13, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        ctx.fillStyle = "#FFFFFF";
-        ctx.font = "bold 11px 'IBM Plex Sans', sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(`${pNum}`, pos.x, pos.y);
-
-        ctx.fillStyle = "#FFFFFF";
-        ctx.font = "600 9px 'IBM Plex Sans', sans-serif";
-        ctx.fillText(pRole, pos.x, pos.y + 22);
-      });
-
-      // Away Team Formation Preview (Right Half)
-      const aColorRaw = awayTeam?.color || "#DA1E28";
-      const { kitColor: effectiveAwayColor } = resolveEffectiveAwayKit(hColor, aColorRaw);
-      const aFormation = awayTeam?.formation || "4-3-3";
-      const aAnchors = getPreMatchAnchors(aFormation, false);
-
-      aAnchors.forEach((pos, idx) => {
-        const pNum = idx + 1;
-        const isGK = idx === 0;
-
-        ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
-        ctx.beginPath();
-        ctx.ellipse(pos.x, pos.y + 11, 13, 6, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = isGK ? "#8A3FFC" : effectiveAwayColor;
-        ctx.beginPath();
-        ctx.arc(pos.x, pos.y, 13, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = "#FFFFFF";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        ctx.fillStyle = isGK ? "#FFFFFF" : getContrastingTextColor(effectiveAwayColor);
-        ctx.font = "bold 11px 'IBM Plex Sans', sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(`${pNum}`, pos.x, pos.y);
-
-        ctx.fillStyle = "#FFFFFF";
-        ctx.font = "600 9px 'IBM Plex Sans', sans-serif";
-        ctx.fillText(idx === 0 ? "GK" : idx < 5 ? "DEF" : idx < 8 ? "MID" : "FWD", pos.x, pos.y + 22);
-      });
-
-      // Stadium Center Ready Badge
-      ctx.fillStyle = "rgba(15, 107, 69, 0.95)";
-      ctx.strokeStyle = "#FFFFFF";
-      ctx.lineWidth = 1.5;
-      const bW = 340;
-      const bH = 32;
-      ctx.beginPath();
-      ctx.roundRect(PITCH_W / 2 - bW / 2, 45, bW, bH, 4);
-      ctx.fill();
+      ctx.moveTo(PITCH_W / 2, MARGIN);
+      ctx.lineTo(PITCH_W / 2, PITCH_H - MARGIN);
       ctx.stroke();
 
-      ctx.fillStyle = "#FFFFFF";
-      ctx.font = "700 11px 'IBM Plex Sans', sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("⚡ MATCH READY • KICK OFF TO START SIMULATION", PITCH_W / 2, 45 + bH / 2);
-    }
+      // Center circle
+      ctx.beginPath();
+      ctx.arc(PITCH_W / 2, PITCH_H / 2, 75, 0, Math.PI * 2);
+      ctx.stroke();
 
-    ctx.restore();
-  }, [gameState, hoveredPlayer, homeTeam, awayTeam]);
+      // Center spot
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.arc(PITCH_W / 2, PITCH_H / 2, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Left Penalty Area (Home)
+      ctx.strokeRect(MARGIN, 170, 150, 300);
+      // Left 6-Yard Box
+      ctx.strokeRect(MARGIN, 240, 55, 160);
+      // Left Penalty Spot
+      ctx.beginPath();
+      ctx.arc(MARGIN + 105, PITCH_H / 2, 4, 0, Math.PI * 2);
+      ctx.fill();
+      // Left Penalty Arc
+      ctx.beginPath();
+      ctx.arc(MARGIN + 105, PITCH_H / 2, 65, -0.65, 0.65);
+      ctx.stroke();
+
+      // Right Penalty Area (Away)
+      ctx.strokeRect(PITCH_W - MARGIN - 150, 170, 150, 300);
+      // Right 6-Yard Box
+      ctx.strokeRect(PITCH_W - MARGIN - 55, 240, 55, 160);
+      // Right Penalty Spot
+      ctx.beginPath();
+      ctx.arc(PITCH_W - MARGIN - 105, PITCH_H / 2, 4, 0, Math.PI * 2);
+      ctx.fill();
+      // Right Penalty Arc
+      ctx.beginPath();
+      ctx.arc(PITCH_W - MARGIN - 105, PITCH_H / 2, 65, Math.PI - 0.65, Math.PI + 0.65);
+      ctx.stroke();
+
+      // Corner Arcs
+      const cornerR = 18;
+      ctx.beginPath();
+      ctx.arc(MARGIN, MARGIN, cornerR, 0, Math.PI / 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(MARGIN, PITCH_H - MARGIN, cornerR, -Math.PI / 2, 0);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(PITCH_W - MARGIN, MARGIN, cornerR, Math.PI / 2, Math.PI);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(PITCH_W - MARGIN, PITCH_H - MARGIN, cornerR, Math.PI, -Math.PI / 2);
+      ctx.stroke();
+
+      // Goals & Net
+      const goalYMin = 260;
+      const goalYMax = 380;
+      const goalH = goalYMax - goalYMin;
+
+      // Left Goal
+      ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
+      ctx.fillRect(MARGIN - 18, goalYMin, 18, goalH);
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(MARGIN - 18, goalYMin, 18, goalH);
+
+      // Right Goal
+      ctx.fillStyle = "rgba(255, 255, 255, 0.12)";
+      ctx.fillRect(PITCH_W - MARGIN, goalYMin, 18, goalH);
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(PITCH_W - MARGIN, goalYMin, 18, goalH);
+
+      const state = latestGameStateRef.current;
+
+      // ==========================================
+      // 3. Draw Players & Ball (Live OR Pre-Match)
+      // ==========================================
+      if (state && state.players && state.players.length > 0) {
+        // --- 60 FPS LERP INTERPOLATION ---
+        const playerMap = interpPlayersRef.current;
+
+        // Update / Lerp Ball
+        const targetBall = state.ball || { x: 500, y: 320, vx: 0, vy: 0, isShot: false, speed: 0 };
+        const interpBall = interpBallRef.current;
+        interpBall.x += (targetBall.x - interpBall.x) * 0.35;
+        interpBall.y += (targetBall.y - interpBall.y) * 0.35;
+        interpBall.vx = targetBall.vx;
+        interpBall.vy = targetBall.vy;
+
+        // Draw Ball Shadow
+        ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+        ctx.beginPath();
+        ctx.ellipse(interpBall.x, interpBall.y + 7, 9, 4.5, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Shot tracer line
+        if (targetBall.isShot || targetBall.speed > 12) {
+          ctx.strokeStyle = "rgba(241, 194, 27, 0.85)";
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.moveTo(interpBall.x, interpBall.y);
+          ctx.lineTo(interpBall.x - interpBall.vx * 3.5, interpBall.y - interpBall.vy * 3.5);
+          ctx.stroke();
+        }
+
+        // Ball Body
+        const ballGrad = ctx.createRadialGradient(interpBall.x - 2, interpBall.y - 2, 1, interpBall.x, interpBall.y, 8);
+        ballGrad.addColorStop(0, "#ffffff");
+        ballGrad.addColorStop(0.7, "#f1f5f9");
+        ballGrad.addColorStop(1, "#94a3b8");
+        ctx.fillStyle = ballGrad;
+        ctx.beginPath();
+        ctx.arc(interpBall.x, interpBall.y, 8.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = "#0f172a";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(interpBall.x, interpBall.y, 4, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Resolve effective team colors
+        const effectiveHomeColor = state.homeTeam.color || "#0F6B45";
+        const effectiveAwayInfo = resolveEffectiveAwayKit(
+          effectiveHomeColor,
+          state.awayTeam.color || "#DA1E28",
+          state.awayTeam.secondaryColor
+        );
+        const effectiveAwayColor = effectiveAwayInfo.kitColor;
+
+        // Render each player with smooth 60fps position lerping
+        state.players.forEach((player) => {
+          let interp = playerMap.get(player.id);
+          if (!interp) {
+            interp = { x: player.x, y: player.y, vx: player.vx || 0, vy: player.vy || 0 };
+            playerMap.set(player.id, interp);
+          } else {
+            // Smooth lerp towards target engine coordinates
+            interp.x += (player.x - interp.x) * 0.28;
+            interp.y += (player.y - interp.y) * 0.28;
+            interp.vx = player.vx || 0;
+            interp.vy = player.vy || 0;
+          }
+
+          const px = interp.x;
+          const py = interp.y;
+          const isHome = player.team === "home";
+          const isGK = player.role === "GK";
+          const teamColor = isHome ? effectiveHomeColor : effectiveAwayColor;
+          const playerColor = isGK ? (isHome ? "#F1C21B" : "#8A3FFC") : teamColor;
+
+          // Player Ground Shadow
+          ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
+          ctx.beginPath();
+          ctx.ellipse(px, py + 13, 16, 7, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Selection / Hover Ring
+          if (hoveredPlayer?.id === player.id) {
+            ctx.strokeStyle = "#FFFFFF";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(px, py, PLAYER_RADIUS + 7, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+
+          // Stamina Ring (Encircling outer circle)
+          const staminaAngle = ((player.stamina || 100) / 100) * Math.PI * 2;
+          ctx.strokeStyle = player.stamina > 50 ? "rgba(15, 107, 69, 0.9)" : "rgba(218, 30, 40, 0.9)";
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.arc(px, py, PLAYER_RADIUS + 3.5, -Math.PI / 2, -Math.PI / 2 + staminaAngle);
+          ctx.stroke();
+
+          // Player Main Node Circle
+          ctx.fillStyle = playerColor;
+          ctx.beginPath();
+          ctx.arc(px, py, PLAYER_RADIUS, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = isHome ? "#FFFFFF" : "#161616";
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+
+          // Player Number (Bold, Crisp & High Contrast)
+          const numberColor = isGK ? "#161616" : getContrastingTextColor(teamColor);
+          ctx.fillStyle = numberColor;
+          ctx.font = "bold 13px 'IBM Plex Sans', -apple-system, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(`${player.number}`, px, py);
+
+          // Role Tag Pill (Below circle in protected dark background)
+          const roleText = player.role || "MID";
+          const pillW = 28;
+          const pillH = 14;
+          const pillX = px - pillW / 2;
+          const pillY = py + PLAYER_RADIUS + 7;
+
+          ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.roundRect(pillX, pillY, pillW, pillH, 3);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = "#FFFFFF";
+          ctx.font = "700 9px 'IBM Plex Sans', -apple-system, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(roleText, px, pillY + pillH / 2);
+
+          // Tactical State Badge (Above circle if active)
+          if (player.state && player.state !== "idle" && player.state !== "running") {
+            const stateKey = player.state.toLowerCase();
+            let badgeBg = "#0F62FE"; // Default blue
+            let badgeLabel = player.state.toUpperCase();
+
+            if (stateKey === "shoot") {
+              badgeBg = "#DA1E28";
+              badgeLabel = "⚡ SHOOT";
+            } else if (stateKey === "save") {
+              badgeBg = "#F1C21B";
+              badgeLabel = "🧤 SAVE";
+            } else if (stateKey === "press") {
+              badgeBg = "#0043CE";
+              badgeLabel = "⚔️ PRESS";
+            } else if (stateKey === "pass") {
+              badgeBg = "#0F6B45";
+              badgeLabel = "🎯 PASS";
+            } else if (stateKey === "tackle") {
+              badgeBg = "#FF832B";
+              badgeLabel = "🛡️ TACKLE";
+            }
+
+            const stateW = Math.max(38, badgeLabel.length * 6.5 + 8);
+            const stateH = 15;
+            const stateX = px - stateW / 2;
+            const stateY = py - PLAYER_RADIUS - 17;
+
+            ctx.fillStyle = badgeBg;
+            ctx.strokeStyle = "#FFFFFF";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.roundRect(stateX, stateY, stateW, stateH, 3);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = stateKey === "save" ? "#161616" : "#FFFFFF";
+            ctx.font = "bold 8.5px 'IBM Plex Sans', -apple-system, sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(badgeLabel, px, stateY + stateH / 2);
+          } else if (player.personalityIcon) {
+            ctx.font = "11px 'IBM Plex Sans', sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(player.personalityIcon, px, py - PLAYER_RADIUS - 9);
+          }
+
+          // Active Thought Pulse on Thinking Player
+          if (state.activeThought && state.activeThought.playerId === player.id) {
+            ctx.strokeStyle = "rgba(15, 107, 69, 0.85)";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.arc(px, py, PLAYER_RADIUS + 11, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+        });
+
+        // Live Agent Thought Top HUD Banner (Clean, centered, unblocking central play)
+        if (state.activeThought) {
+          const thought = state.activeThought;
+          const icon = thought.personalityIcon || "💭";
+          const thoughtBannerText = `${icon} ${thought.playerName}: "${thought.text}"`;
+          const tbW = Math.min(520, Math.max(260, thoughtBannerText.length * 6.8 + 28));
+          const tbH = 26;
+          const tbX = PITCH_W / 2 - tbW / 2;
+          const tbY = 28;
+
+          ctx.fillStyle = "rgba(22, 22, 22, 0.92)";
+          ctx.strokeStyle = thought.team === "home" ? (state.homeTeam.color || "#0F6B45") : (state.awayTeam.color || "#DA1E28");
+          ctx.lineWidth = 1.8;
+
+          ctx.beginPath();
+          ctx.roundRect(tbX, tbY, tbW, tbH, 4);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = "#FFFFFF";
+          ctx.font = "600 11px 'IBM Plex Sans', -apple-system, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(thoughtBannerText, PITCH_W / 2, tbY + tbH / 2);
+        }
+
+        // Goal celebration overlay
+        if (state.phase === "goal") {
+          ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+          ctx.fillRect(0, 0, PITCH_W, PITCH_H);
+
+          ctx.fillStyle = "#F1C21B";
+          ctx.font = "900 46px 'IBM Plex Sans', sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("⚽ GOAL! ⚽", PITCH_W / 2, PITCH_H / 2 - 16);
+
+          ctx.fillStyle = "#FFFFFF";
+          ctx.font = "700 24px 'IBM Plex Sans', sans-serif";
+          ctx.fillText(`${state.score.home}  —  ${state.score.away}`, PITCH_W / 2, PITCH_H / 2 + 25);
+        }
+      } else {
+        // --- PRE-MATCH PERSISTENT STADIUM VIEW ---
+        // Place match ball on the center spot
+        const ballGrad = ctx.createRadialGradient(PITCH_W / 2 - 2, PITCH_H / 2 - 2, 1, PITCH_W / 2, PITCH_H / 2, 8);
+        ballGrad.addColorStop(0, "#ffffff");
+        ballGrad.addColorStop(0.7, "#f1f5f9");
+        ballGrad.addColorStop(1, "#94a3b8");
+        ctx.fillStyle = ballGrad;
+        ctx.beginPath();
+        ctx.arc(PITCH_W / 2, PITCH_H / 2, 8.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Home Team Formation Preview (Left Half)
+        const hColor = homeTeam?.color || "#0F6B45";
+        const hFormation = homeTeam?.formation || "4-3-3";
+        const hAnchors = getPreMatchAnchors(hFormation, true);
+        const hPlayers = homeTeam?.starting11 || [];
+
+        hAnchors.forEach((pos, idx) => {
+          const pNum = hPlayers[idx]?.number || idx + 1;
+          const pRole = hPlayers[idx]?.role || (idx === 0 ? "GK" : idx < 5 ? "DEF" : idx < 8 ? "MID" : "FWD");
+          const isGK = pRole === "GK" || idx === 0;
+
+          // Shadow
+          ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
+          ctx.beginPath();
+          ctx.ellipse(pos.x, pos.y + 13, 16, 7, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Circle
+          ctx.fillStyle = isGK ? "#F1C21B" : hColor;
+          ctx.beginPath();
+          ctx.arc(pos.x, pos.y, PLAYER_RADIUS, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = "#FFFFFF";
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+
+          // Number
+          ctx.fillStyle = isGK ? "#161616" : getContrastingTextColor(hColor);
+          ctx.font = "bold 13px 'IBM Plex Sans', -apple-system, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(`${pNum}`, pos.x, pos.y);
+
+          // Role Tag Pill
+          const pillW = 28;
+          const pillH = 14;
+          const pillX = pos.x - pillW / 2;
+          const pillY = pos.y + PLAYER_RADIUS + 7;
+
+          ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.roundRect(pillX, pillY, pillW, pillH, 3);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = "#FFFFFF";
+          ctx.font = "700 9px 'IBM Plex Sans', -apple-system, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(pRole, pos.x, pillY + pillH / 2);
+        });
+
+        // Away Team Formation Preview (Right Half)
+        const aColorRaw = awayTeam?.color || "#DA1E28";
+        const { kitColor: effectiveAwayColor } = resolveEffectiveAwayKit(hColor, aColorRaw);
+        const aFormation = awayTeam?.formation || "4-3-3";
+        const aAnchors = getPreMatchAnchors(aFormation, false);
+
+        aAnchors.forEach((pos, idx) => {
+          const pNum = idx + 1;
+          const pRole = idx === 0 ? "GK" : idx < 5 ? "DEF" : idx < 8 ? "MID" : "FWD";
+          const isGK = idx === 0;
+
+          // Shadow
+          ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
+          ctx.beginPath();
+          ctx.ellipse(pos.x, pos.y + 13, 16, 7, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Circle
+          ctx.fillStyle = isGK ? "#8A3FFC" : effectiveAwayColor;
+          ctx.beginPath();
+          ctx.arc(pos.x, pos.y, PLAYER_RADIUS, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = "#FFFFFF";
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+
+          // Number
+          ctx.fillStyle = isGK ? "#FFFFFF" : getContrastingTextColor(effectiveAwayColor);
+          ctx.font = "bold 13px 'IBM Plex Sans', -apple-system, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(`${pNum}`, pos.x, pos.y);
+
+          // Role Tag Pill
+          const pillW = 28;
+          const pillH = 14;
+          const pillX = pos.x - pillW / 2;
+          const pillY = pos.y + PLAYER_RADIUS + 7;
+
+          ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.roundRect(pillX, pillY, pillW, pillH, 3);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = "#FFFFFF";
+          ctx.font = "700 9px 'IBM Plex Sans', -apple-system, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(pRole, pos.x, pillY + pillH / 2);
+        });
+
+        // Stadium Center Ready Badge
+        ctx.fillStyle = "rgba(15, 107, 69, 0.95)";
+        ctx.strokeStyle = "#FFFFFF";
+        ctx.lineWidth = 1.5;
+        const bW = 360;
+        const bH = 32;
+        ctx.beginPath();
+        ctx.roundRect(PITCH_W / 2 - bW / 2, 45, bW, bH, 4);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = "700 11px 'IBM Plex Sans', sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("⚡ MATCH READY • KICK OFF TO START SIMULATION", PITCH_W / 2, 45 + bH / 2);
+      }
+
+      ctx.restore();
+
+      animFrameIdRef.current = requestAnimationFrame(renderLoop);
+    };
+
+    animFrameIdRef.current = requestAnimationFrame(renderLoop);
+
+    return () => {
+      isRunning = false;
+      if (animFrameIdRef.current) {
+        cancelAnimationFrame(animFrameIdRef.current);
+      }
+    };
+  }, [homeTeam, awayTeam, hoveredPlayer]);
 
   // Handle canvas mouse move for player tooltips
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -585,7 +742,7 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
     const mouseY = (e.clientY - rect.top) * scaleY;
 
     if (gameState && gameState.players) {
-      const hit = gameState.players.find((p) => Math.hypot(p.x - mouseX, p.y - mouseY) < 22);
+      const hit = gameState.players.find((p) => Math.hypot(p.x - mouseX, p.y - mouseY) < PLAYER_RADIUS + 6);
       setHoveredPlayer(hit || null);
     }
   };

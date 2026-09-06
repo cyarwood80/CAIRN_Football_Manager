@@ -1475,30 +1475,35 @@ export class PitchEngine {
 
   updatePlayerMovement() {
     const isHomeVenue = this.venue === "home";
+    const playerCount = this.players.length;
+
+    // 1. Calculate desired velocities with smooth steering
     this.players.forEach((player) => {
       const dx = player.targetX - player.x;
       const dy = player.targetY - player.y;
       const dist = Math.hypot(dx, dy);
 
-      if (dist > 3) {
-        let speed = player.speed * (player.stamina / 100);
+      if (dist > 2) {
+        let maxSpeed = player.speed * (player.stamina / 100);
 
         // Home crowd boost & away grit
         if (isHomeVenue && player.team === "home" && !this.crowdAtmosphere.homeExpectationPenalty) {
-          speed *= 1.05; // Home crowd roar boost (+5%)
+          maxSpeed *= 1.05; // Home crowd roar boost (+5%)
         } else if (isHomeVenue && player.team === "away") {
-          speed *= 1.02; // Underdog counter grit
+          maxSpeed *= 1.02; // Underdog counter grit
         }
 
-        player.vx = (dx / dist) * Math.min(speed, dist);
-        player.vy = (dy / dist) * Math.min(speed, dist);
-        player.x += player.vx;
-        player.y += player.vy;
+        const desiredVx = (dx / dist) * Math.min(maxSpeed, dist * 0.5);
+        const desiredVy = (dy / dist) * Math.min(maxSpeed, dist * 0.5);
+
+        // Smooth velocity transition (natural steering & inertia)
+        player.vx = (player.vx || 0) * 0.65 + desiredVx * 0.35;
+        player.vy = (player.vy || 0) * 0.65 + desiredVy * 0.35;
 
         // Stamina & health decay (affected by crowd pressure)
         if (player.state === "press" || player.state === "shoot") {
           const drain = (isHomeVenue && player.team === "home" && this.crowdAtmosphere.homeExpectationPenalty)
-            ? 0.055 // Heavy stamina drain when failing home expectations
+            ? 0.055
             : 0.04;
           player.stamina = Math.max(25, player.stamina - drain);
           player.health = Math.max(50, player.health - 0.008);
@@ -1506,13 +1511,41 @@ export class PitchEngine {
           player.stamina = Math.min(100, player.stamina + 0.02);
         }
       } else {
-        player.vx *= 0.5;
-        player.vy *= 0.5;
+        player.vx = (player.vx || 0) * 0.4;
+        player.vy = (player.vy || 0) * 0.4;
       }
+    });
 
-      // Keep players within pitch boundaries
-      player.x = Math.max(25, Math.min(this.width - 25, player.x));
-      player.y = Math.max(25, Math.min(this.height - 25, player.y));
+    // 2. Soft Player-to-Player Repulsion (prevents overlapping/stacking)
+    const minDistance = 32; // Minimum spacing between players
+    for (let i = 0; i < playerCount; i++) {
+      for (let j = i + 1; j < playerCount; j++) {
+        const p1 = this.players[i];
+        const p2 = this.players[j];
+        const sepX = p1.x - p2.x;
+        const sepY = p1.y - p2.y;
+        const sepDist = Math.hypot(sepX, sepY);
+
+        if (sepDist > 0 && sepDist < minDistance) {
+          const overlap = (minDistance - sepDist) * 0.18;
+          const nx = sepX / sepDist;
+          const ny = sepY / sepDist;
+
+          p1.x += nx * overlap;
+          p1.y += ny * overlap;
+          p2.x -= nx * overlap;
+          p2.y -= ny * overlap;
+        }
+      }
+    }
+
+    // 3. Integrate position & clamp within pitch boundaries
+    this.players.forEach((player) => {
+      player.x += player.vx;
+      player.y += player.vy;
+
+      player.x = Math.max(30, Math.min(this.width - 30, player.x));
+      player.y = Math.max(30, Math.min(this.height - 30, player.y));
     });
   }
 
