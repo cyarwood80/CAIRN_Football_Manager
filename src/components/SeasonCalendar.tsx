@@ -94,87 +94,64 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
   ];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "1240px", margin: "0 auto", width: "100%" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "24px", maxWidth: "1240px", margin: "0 auto", width: "100%" }}>
       {/* Top Banner: Date, Calendar Rhythm, and Advance Controls */}
       <div
-        className="glass-panel"
+        className="carbon-card"
         style={{
           padding: "24px 28px",
-          borderRadius: "16px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           flexWrap: "wrap",
           gap: "20px",
-          background: isMatchday
-            ? "linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(15, 23, 42, 0.95) 100%)"
-            : activityType === "rest"
-            ? "linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(15, 23, 42, 0.95) 100%)"
-            : "linear-gradient(135deg, rgba(0, 229, 255, 0.15) 0%, rgba(15, 23, 42, 0.95) 100%)",
-          border: isMatchday
-            ? "1px solid rgba(239, 68, 68, 0.4)"
-            : activityType === "rest"
-            ? "1px solid rgba(16, 185, 129, 0.4)"
-            : "1px solid rgba(0, 229, 255, 0.3)",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+          borderLeft: isMatchday ? "4px solid var(--cds-red)" : "4px solid var(--cds-green-primary)",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
           <div
             style={{
-              width: "54px",
-              height: "54px",
-              borderRadius: "14px",
+              width: "48px",
+              height: "48px",
+              borderRadius: "4px",
               background: isMatchday
-                ? "linear-gradient(135deg, #ef4444, #b91c1c)"
+                ? "var(--cds-red-light)"
                 : activityType === "rest"
-                ? "linear-gradient(135deg, #10b981, #059669)"
-                : "linear-gradient(135deg, #00E5FF, #0284c7)",
+                ? "var(--cds-layer)"
+                : "var(--cds-green-light)",
+              border: `1px solid ${isMatchday ? "var(--cds-red)" : "var(--cds-green-primary)"}`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: isMatchday
-                ? "0 0 20px rgba(239, 68, 68, 0.5)"
-                : "0 0 20px rgba(0, 229, 255, 0.4)",
+              color: isMatchday ? "var(--cds-red)" : "var(--cds-green-primary)",
             }}
           >
             {isMatchday ? (
-              <Trophy size={28} color="#fff" />
+              <Trophy size={24} />
             ) : activityType === "rest" ? (
-              <BatteryCharging size={28} color="#fff" />
+              <BatteryCharging size={24} />
             ) : (
-              <Zap size={28} color="#030712" />
+              <Zap size={24} />
             )}
           </div>
 
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-              <span
-                style={{
-                  fontSize: "0.75rem",
-                  fontWeight: "900",
-                  textTransform: "uppercase",
-                  padding: "3px 8px",
-                  borderRadius: "6px",
-                  background: isMatchday ? "rgba(239, 68, 68, 0.2)" : "rgba(0, 229, 255, 0.15)",
-                  color: isMatchday ? "#ef4444" : "#00E5FF",
-                  border: `1px solid ${isMatchday ? "rgba(239, 68, 68, 0.4)" : "rgba(0, 229, 255, 0.3)"}`,
-                }}
-              >
+              <span className={isMatchday ? "badge badge-error" : "badge badge-success"} style={{ fontSize: "11px" }}>
                 {calendar?.activeTier ? calendar.activeTier.replace("_", " ").toUpperCase() : "TIER 4 NATIONAL LEAGUE"}
               </span>
-              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>•</span>
-              <span style={{ fontSize: "0.75rem", color: "var(--accent-gold)", fontWeight: "700" }}>
+              <span style={{ fontSize: "12px", color: "var(--cds-text-muted)" }}>•</span>
+              <span style={{ fontSize: "12px", color: "var(--cds-text-secondary)", fontWeight: "600" }}>
                 ROUND / GAMEWEEK #{calendar?.currentGameweek ?? 1}
               </span>
             </div>
 
-            <h1 style={{ margin: 0, fontSize: "1.6rem", fontWeight: "900", color: "#fff", letterSpacing: "-0.02em" }}>
+            <h1 style={{ margin: 0, fontSize: "22px", fontWeight: "700", color: "var(--cds-text-primary)", letterSpacing: "-0.01em" }}>
               {calendar?.date ?? "Saturday, 9 Aug 2025"}
             </h1>
 
-            <div style={{ fontSize: "0.85rem", color: "#e2e8f0", marginTop: "4px", display: "flex", alignItems: "center", gap: "6px" }}>
-              <strong style={{ color: isMatchday ? "#ef4444" : activityType === "rest" ? "#10b981" : "#00E5FF" }}>
+            <div style={{ fontSize: "13px", color: "var(--cds-text-secondary)", marginTop: "3px", display: "flex", alignItems: "center", gap: "6px" }}>
+              <strong style={{ color: isMatchday ? "var(--cds-red)" : "var(--cds-green-primary)" }}>
                 {calendar?.dayName ?? "Matchday Fixture"}
               </strong>
               <span>— {calendar?.activityDesc ?? "Matchday in progress."}</span>
@@ -190,19 +167,17 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
               onClick={onPlayScheduledMatch}
               disabled={isMatchActive}
               style={{
-                padding: "12px 24px",
-                fontSize: "1rem",
-                fontWeight: "900",
-                background: "linear-gradient(135deg, #10b981, #059669)",
-                boxShadow: "0 0 25px rgba(16, 185, 129, 0.5)",
-                border: "none",
-                display: "flex",
-                alignItems: "center",
+                height: "40px",
+                padding: "0 20px",
+                fontSize: "14px",
+                fontWeight: "600",
+                background: "var(--cds-red)",
+                borderColor: "var(--cds-red)",
                 gap: "8px",
               }}
             >
-              <Trophy size={18} />
-              <span>{isMatchActive ? "Match In Progress..." : `🏟️ KICK OFF MATCHDAY #${calendar?.currentGameweek ?? 1}`}</span>
+              <Trophy size={16} />
+              <span>{isMatchActive ? "Match In Progress..." : `PLAY MATCHDAY #${calendar?.currentGameweek ?? 1}`}</span>
             </button>
           ) : (
             <>
@@ -210,36 +185,20 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
                 className="btn btn-secondary"
                 onClick={handleAdvanceOneDay}
                 disabled={isAdvancing}
-                style={{
-                  padding: "10px 18px",
-                  fontSize: "0.88rem",
-                  fontWeight: "800",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  background: "rgba(255, 255, 255, 0.08)",
-                }}
+                style={{ height: "38px", padding: "0 16px", fontSize: "13px", fontWeight: "600", gap: "6px" }}
               >
-                <Play size={16} color="var(--accent-cyan)" />
-                <span>{isAdvancing ? "Advancing..." : "▶ Advance Day"}</span>
+                <Play size={14} color="var(--cds-green-primary)" />
+                <span>{isAdvancing ? "Advancing..." : "Advance Day"}</span>
               </button>
 
               <button
                 className="btn btn-primary"
                 onClick={handleFastForwardToMatch}
                 disabled={isAdvancing}
-                style={{
-                  padding: "10px 20px",
-                  fontSize: "0.88rem",
-                  fontWeight: "900",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  background: "linear-gradient(135deg, #00E5FF, #0284c7)",
-                }}
+                style={{ height: "38px", padding: "0 18px", fontSize: "13px", fontWeight: "600", gap: "6px" }}
               >
-                <FastForward size={16} color="#030712" />
-                <span>{isAdvancing ? "Simulating Days..." : "⏭ Advance To Matchday"}</span>
+                <FastForward size={14} />
+                <span>{isAdvancing ? "Simulating Days..." : "Fast Forward to Matchday"}</span>
               </button>
             </>
           )}
@@ -247,29 +206,21 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
       </div>
 
       {/* 14-Day Calendar Strip */}
-      <div
-        className="glass-panel"
-        style={{
-          borderRadius: "14px",
-          padding: "16px 20px",
-          background: "rgba(11, 15, 25, 0.8)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "0.82rem", fontWeight: "800", color: "#fff" }}>
-            <Calendar size={16} color="var(--accent-cyan)" />
+      <div className="carbon-card" style={{ padding: "18px 24px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", fontWeight: "600", color: "var(--cds-text-primary)" }}>
+            <Calendar size={16} color="var(--cds-green-primary)" />
             <span>Season Schedule Horizon (Next 14 Days)</span>
           </div>
-          <span style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
-            CM Calendar Rhythm: Mon/Tue/Thu/Fri Training • Sun/Wed Rest • Sat Matchday
+          <span style={{ fontSize: "12px", color: "var(--cds-text-muted)" }}>
+            Calendar Rhythm: Mon/Tue/Thu/Fri Training • Sun/Wed Rest • Sat Matchday
           </span>
         </div>
 
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(76px, 1fr))",
             gap: "8px",
             overflowX: "auto",
             paddingBottom: "4px",
@@ -283,32 +234,31 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
               <div
                 key={idx}
                 style={{
-                  borderRadius: "10px",
-                  padding: "10px 8px",
+                  borderRadius: "4px",
+                  padding: "10px 6px",
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
                   textAlign: "center",
                   border: item.isToday
-                    ? "2px solid #00E5FF"
+                    ? "2px solid var(--cds-green-primary)"
                     : isMatch
-                    ? "1px solid rgba(239, 68, 68, 0.4)"
-                    : "1px solid rgba(255, 255, 255, 0.06)",
+                    ? "1px solid var(--cds-red)"
+                    : "1px solid var(--cds-border)",
                   background: item.isToday
-                    ? "rgba(0, 229, 255, 0.15)"
+                    ? "var(--cds-layer-selected)"
                     : isMatch
-                    ? "rgba(239, 68, 68, 0.1)"
+                    ? "var(--cds-red-light)"
                     : isRest
-                    ? "rgba(16, 185, 129, 0.05)"
-                    : "rgba(15, 23, 42, 0.4)",
-                  boxShadow: item.isToday ? "0 0 15px rgba(0, 229, 255, 0.3)" : "none",
+                    ? "var(--cds-layer)"
+                    : "var(--cds-surface)",
                 }}
               >
                 <span
                   style={{
-                    fontSize: "0.68rem",
-                    fontWeight: "800",
-                    color: item.isToday ? "#00E5FF" : isMatch ? "#ef4444" : "var(--text-muted)",
+                    fontSize: "11px",
+                    fontWeight: "600",
+                    color: item.isToday ? "var(--cds-green-primary)" : isMatch ? "var(--cds-red)" : "var(--cds-text-secondary)",
                     marginBottom: "4px",
                   }}
                 >
@@ -319,32 +269,32 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
                   style={{
                     width: "24px",
                     height: "24px",
-                    borderRadius: "6px",
+                    borderRadius: "3px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     marginBottom: "4px",
                     background: isMatch
-                      ? "rgba(239, 68, 68, 0.2)"
+                      ? "rgba(218, 30, 40, 0.15)"
                       : isRest
-                      ? "rgba(16, 185, 129, 0.2)"
-                      : "rgba(0, 229, 255, 0.2)",
+                      ? "rgba(141, 141, 141, 0.15)"
+                      : "rgba(15, 107, 69, 0.15)",
                   }}
                 >
                   {isMatch ? (
-                    <Trophy size={13} color="#ef4444" />
+                    <Trophy size={13} color="var(--cds-red)" />
                   ) : isRest ? (
-                    <BatteryCharging size={13} color="#10b981" />
+                    <BatteryCharging size={13} color="var(--cds-text-muted)" />
                   ) : (
-                    <Zap size={13} color="#00E5FF" />
+                    <Zap size={13} color="var(--cds-green-primary)" />
                   )}
                 </div>
 
                 <span
                   style={{
-                    fontSize: "0.65rem",
-                    fontWeight: "700",
-                    color: item.isToday ? "#fff" : "var(--text-secondary)",
+                    fontSize: "11px",
+                    fontWeight: "600",
+                    color: item.isToday ? "var(--cds-green-primary)" : "var(--cds-text-primary)",
                     lineHeight: "1.1",
                   }}
                 >
@@ -354,11 +304,11 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
                 {item.isToday && (
                   <span
                     style={{
-                      fontSize: "0.58rem",
-                      fontWeight: "900",
-                      color: "#030712",
-                      background: "#00E5FF",
-                      borderRadius: "4px",
+                      fontSize: "9px",
+                      fontWeight: "700",
+                      color: "#fff",
+                      background: "var(--cds-green-primary)",
+                      borderRadius: "2px",
                       padding: "1px 4px",
                       marginTop: "4px",
                       textTransform: "uppercase",
@@ -377,39 +327,28 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
       <div style={{ display: "grid", gridTemplateColumns: "1fr 400px", gap: "20px", alignItems: "start" }}>
         {/* Left: Prompt Coaching Studio */}
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          <div
-            className="glass-panel"
-            style={{
-              borderRadius: "14px",
-              padding: "20px",
-              background: "rgba(11, 15, 25, 0.8)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "14px",
-            }}
-          >
+          <div className="carbon-card" style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <Sparkles size={18} color="var(--accent-cyan)" />
-                <h3 style={{ margin: 0, fontSize: "1.05rem", fontWeight: "800", color: "#fff" }}>
+                <Sparkles size={18} color="var(--cds-green-primary)" />
+                <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "var(--cds-text-primary)" }}>
                   Prompt Coaching & Superstar Development
-                </h3>
+                </h2>
               </div>
-              <span style={{ fontSize: "0.72rem", color: "var(--accent-cyan)", fontWeight: "700" }}>
-                ⭐ Grassroots to Superstar Evolution Engine
+              <span className="badge badge-success" style={{ fontSize: "11px" }}>
+                ⭐ Evolution Engine
               </span>
             </div>
 
-            <p style={{ margin: 0, fontSize: "0.8rem", color: "var(--text-secondary)", lineHeight: "1.4" }}>
+            <p style={{ margin: 0, fontSize: "13px", color: "var(--cds-text-secondary)", lineHeight: "1.5" }}>
               In the National League (Tier 4), players start with raw ratings (~5.8). High-quality prompt engineering during
               training days and matches unlocks their hidden potential (up to 8.5+), transforming grassroots players into
-              prized home-grown superstars with tens of millions in transfer market value!
+              prized home-grown superstars with millions in transfer market valuation.
             </p>
 
             {/* Prompt Input Area */}
             <div>
-              <label style={{ display: "block", fontSize: "0.78rem", fontWeight: "700", color: "var(--text-secondary)", marginBottom: "6px" }}>
+              <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "var(--cds-text-secondary)", marginBottom: "6px" }}>
                 Manager Training Directive Prompt:
               </label>
               <textarea
@@ -417,25 +356,21 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
                 value={trainingPrompt}
                 onChange={(e) => setTrainingPrompt(e.target.value)}
                 placeholder="Instruct the squad on tactical concepts, passing combinations, high-pressing aggression, or set-piece routines..."
+                className="carbon-input"
                 style={{
                   width: "100%",
                   padding: "12px",
-                  borderRadius: "10px",
-                  background: "rgba(0, 0, 0, 0.5)",
-                  border: "1px solid rgba(0, 229, 255, 0.3)",
-                  color: "#fff",
-                  fontSize: "0.86rem",
-                  fontFamily: "var(--font-sans)",
+                  fontSize: "13px",
+                  lineHeight: "1.45",
                   resize: "vertical",
-                  boxShadow: "inset 0 2px 6px rgba(0,0,0,0.5)",
                 }}
               />
             </div>
 
             {/* Quick Macro Buttons */}
             <div>
-              <span style={{ fontSize: "0.72rem", fontWeight: "700", color: "var(--text-muted)", display: "block", marginBottom: "8px" }}>
-                QUICK COACHING MACRO DRILLS:
+              <span style={{ fontSize: "11px", fontWeight: "700", color: "var(--cds-text-muted)", display: "block", marginBottom: "8px", textTransform: "uppercase" }}>
+                Quick Coaching Macro Drills:
               </span>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
                 {QUICK_DRILL_PROMPTS.map((macro, idx) => (
@@ -443,20 +378,15 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
                     key={idx}
                     type="button"
                     onClick={() => setTrainingPrompt(macro.prompt)}
+                    className="btn btn-secondary"
                     style={{
                       padding: "8px 12px",
-                      borderRadius: "8px",
-                      border: "1px solid rgba(255, 255, 255, 0.08)",
-                      background: "rgba(255, 255, 255, 0.03)",
-                      color: "#fff",
-                      fontSize: "0.78rem",
-                      fontWeight: "700",
+                      fontSize: "12px",
+                      fontWeight: "600",
                       textAlign: "left",
-                      cursor: "pointer",
-                      transition: "all 0.15s ease",
+                      justifyContent: "flex-start",
+                      height: "auto",
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--accent-cyan)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)")}
                   >
                     {macro.title}
                   </button>
@@ -465,17 +395,17 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
             </div>
 
             {/* Daily Execution Action */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255, 255, 255, 0.08)", paddingTop: "12px" }}>
-              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid var(--cds-border-subtle)", paddingTop: "14px" }}>
+              <span style={{ fontSize: "12px", color: "var(--cds-text-muted)" }}>
                 Tactical training days boost Tactical Mastery (+2% to +3%). Rest days restore +25% Stamina.
               </span>
               <button
-                className="btn btn-secondary"
+                className="btn btn-primary"
                 onClick={handleAdvanceOneDay}
                 disabled={isAdvancing || isMatchday}
-                style={{ padding: "8px 16px", fontSize: "0.82rem", fontWeight: "800", gap: "6px" }}
+                style={{ height: "36px", padding: "0 16px", fontSize: "13px", fontWeight: "600", gap: "6px" }}
               >
-                <Play size={14} color="var(--accent-cyan)" />
+                <Play size={14} />
                 <span>Run Drills & Advance</span>
               </button>
             </div>
@@ -485,53 +415,31 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
         {/* Right: Next Match Briefing & Last Training Activity Log */}
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           {/* Next Match Card */}
-          <div
-            className="glass-panel"
-            style={{
-              borderRadius: "14px",
-              padding: "20px",
-              background: "linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(10, 15, 26, 0.95) 100%)",
-              border: "1px solid rgba(255, 215, 0, 0.3)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "12px",
-            }}
-          >
+          <div className="carbon-card" style={{ padding: "20px", display: "flex", flexDirection: "column", gap: "14px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <span
-                style={{
-                  fontSize: "0.72rem",
-                  fontWeight: "800",
-                  padding: "2px 8px",
-                  borderRadius: "4px",
-                  background: isHomeFixture ? "rgba(16, 185, 129, 0.2)" : "rgba(138, 63, 252, 0.2)",
-                  color: isHomeFixture ? "#10b981" : "#c084fc",
-                  border: `1px solid ${isHomeFixture ? "rgba(16, 185, 129, 0.4)" : "rgba(138, 63, 252, 0.4)"}`,
-                  textTransform: "uppercase",
-                }}
-              >
+              <span className={isHomeFixture ? "badge badge-success" : "badge badge-info"} style={{ fontSize: "11px" }}>
                 {isHomeFixture ? "🏟️ HOME FIXTURE" : "✈️ AWAY FIXTURE"}
               </span>
-              <span style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+              <span style={{ fontSize: "12px", color: "var(--cds-text-muted)" }}>
                 Matchday #{calendar?.currentGameweek ?? 1}
               </span>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 0" }}>
               <div style={{ textAlign: "left" }}>
-                <div style={{ fontWeight: "900", fontSize: "1rem", color: isHomeFixture ? "#00E5FF" : "#fff" }}>
+                <div style={{ fontWeight: "700", fontSize: "15px", color: "var(--cds-text-primary)" }}>
                   {isHomeFixture ? userTeamName : nextOpponent}
                 </div>
-                <div style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>
+                <div style={{ fontSize: "11px", color: "var(--cds-text-muted)" }}>
                   {isHomeFixture ? "Home Club (Your Team)" : "Host Club"}
                 </div>
               </div>
-              <div style={{ fontWeight: "900", fontSize: "0.9rem", color: "var(--accent-gold)" }}>VS</div>
+              <div style={{ fontWeight: "800", fontSize: "13px", color: "var(--cds-text-muted)" }}>VS</div>
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontWeight: "900", fontSize: "1rem", color: !isHomeFixture ? "#00E5FF" : "#fff" }}>
+                <div style={{ fontWeight: "700", fontSize: "15px", color: "var(--cds-text-primary)" }}>
                   {isHomeFixture ? nextOpponent : userTeamName}
                 </div>
-                <div style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>
+                <div style={{ fontSize: "11px", color: "var(--cds-text-muted)" }}>
                   {!isHomeFixture ? "Away Club (Your Team)" : "Visiting Challenger"}
                 </div>
               </div>
@@ -539,12 +447,11 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
 
             <div
               style={{
-                fontSize: "0.74rem",
-                color: isHomeFixture ? "var(--accent-green)" : "var(--accent-cyan)",
-                background: "rgba(255, 255, 255, 0.04)",
-                padding: "6px 10px",
-                borderRadius: "6px",
-                border: "1px solid rgba(255, 255, 255, 0.06)",
+                fontSize: "12px",
+                color: isHomeFixture ? "var(--cds-green-primary)" : "#0F62FE",
+                background: isHomeFixture ? "var(--cds-green-light)" : "var(--cds-blue-light)",
+                padding: "8px 12px",
+                borderRadius: "4px",
               }}
             >
               {isHomeFixture
@@ -556,73 +463,52 @@ export const SeasonCalendar: React.FC<SeasonCalendarProps> = ({
               <button
                 className="btn btn-primary"
                 onClick={onPlayScheduledMatch}
-                style={{ width: "100%", padding: "10px", fontSize: "0.88rem", fontWeight: "900" }}
+                style={{ width: "100%", height: "38px", fontSize: "13px", fontWeight: "600", background: "var(--cds-red)", borderColor: "var(--cds-red)" }}
               >
                 {isHomeFixture ? "🏟️ Kick Off Home Match Now" : "✈️ Kick Off Away Match Now"}
               </button>
             ) : (
-              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.74rem", color: "var(--text-secondary)" }}>
-                <Clock size={13} color="var(--accent-gold)" />
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", color: "var(--cds-text-secondary)" }}>
+                <Clock size={14} color="var(--cds-text-muted)" />
                 <span>Advance days on the calendar to arrive at Saturday matchday.</span>
               </div>
             )}
           </div>
 
           {/* Last Activity / Training Log */}
-          <div
-            className="glass-panel"
-            style={{
-              borderRadius: "14px",
-              padding: "18px",
-              background: "rgba(11, 15, 25, 0.75)",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
-            }}
-          >
+          <div className="carbon-card" style={{ padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                <Activity size={16} color="var(--accent-cyan)" />
-                <h4 style={{ margin: 0, fontSize: "0.88rem", fontWeight: "800", color: "#fff" }}>
+                <Activity size={16} color="var(--cds-green-primary)" />
+                <h3 style={{ margin: 0, fontSize: "14px", fontWeight: "600", color: "var(--cds-text-primary)" }}>
                   Coach Activity Bulletin
-                </h4>
+                </h3>
               </div>
               {squad && squad.length > 0 && (
-                <span style={{ fontSize: "0.72rem", color: "var(--accent-cyan)", fontWeight: "700" }}>
+                <span style={{ fontSize: "11px", color: "var(--cds-text-muted)" }}>
                   {squad.length} Players Active
                 </span>
               )}
             </div>
 
             {lastActionFeedback && (
-              <div
-                style={{
-                  padding: "8px 10px",
-                  borderRadius: "6px",
-                  background: "rgba(0, 229, 255, 0.1)",
-                  border: "1px solid rgba(0, 229, 255, 0.3)",
-                  fontSize: "0.75rem",
-                  color: "#00E5FF",
-                  fontWeight: "700",
-                }}
-              >
+              <div className="badge badge-success" style={{ padding: "6px 10px", fontSize: "11px" }}>
                 {lastActionFeedback}
               </div>
             )}
 
             {calendar?.lastTrainingLog ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "0.76rem" }}>
-                <div style={{ color: "var(--text-muted)" }}>{calendar.lastTrainingLog.date}</div>
-                <div style={{ color: "#e2e8f0", background: "rgba(255, 255, 255, 0.04)", padding: "8px 10px", borderRadius: "6px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "12px" }}>
+                <div style={{ color: "var(--cds-text-muted)" }}>{calendar.lastTrainingLog.date}</div>
+                <div style={{ color: "var(--cds-text-primary)", background: "var(--cds-layer)", padding: "8px 12px", borderRadius: "4px" }}>
                   "{calendar.lastTrainingLog.prompt}"
                 </div>
-                <div style={{ color: "var(--accent-green)", fontWeight: "700", display: "flex", alignItems: "center", gap: "4px" }}>
+                <div style={{ color: "var(--cds-green-primary)", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}>
                   <CheckCircle2 size={13} /> {calendar.lastTrainingLog.result}
                 </div>
               </div>
             ) : (
-              <span style={{ fontSize: "0.76rem", color: "var(--text-muted)" }}>No recent training logs recorded.</span>
+              <span style={{ fontSize: "12px", color: "var(--cds-text-muted)" }}>No recent training logs recorded.</span>
             )}
           </div>
         </div>

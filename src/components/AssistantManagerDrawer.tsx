@@ -79,105 +79,89 @@ export const AssistantManagerDrawer: React.FC<AssistantManagerDrawerProps> = ({
       style={{
         position: "fixed",
         inset: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.85)",
-        backdropFilter: "blur(12px)",
+        backgroundColor: "rgba(22, 22, 22, 0.45)",
+        backdropFilter: "blur(4px)",
         display: "flex",
         justifyContent: "flex-end",
         zIndex: 99999,
       }}
     >
       <div
-        className="glass-panel"
         style={{
           width: "min(640px, 100vw)",
           height: "100%",
-          background: "linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(10, 15, 26, 0.99) 100%)",
-          borderLeft: "1px solid rgba(0, 229, 255, 0.3)",
-          boxShadow: "-15px 0 35px rgba(0, 0, 0, 0.8)",
+          background: "var(--cds-surface)",
+          borderLeft: "1px solid var(--cds-border)",
+          boxShadow: "-8px 0 24px rgba(0, 0, 0, 0.12)",
           display: "flex",
           flexDirection: "column",
-          padding: "24px",
-          gap: "18px",
+          padding: "28px",
+          gap: "20px",
           overflowY: "auto",
         }}
       >
         {/* Header */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid rgba(255, 255, 255, 0.08)", paddingBottom: "16px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid var(--cds-border)", paddingBottom: "16px" }}>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-              <span
-                style={{
-                  background: "rgba(0, 229, 255, 0.15)",
-                  color: "#00E5FF",
-                  padding: "2px 8px",
-                  borderRadius: "4px",
-                  fontSize: "0.72rem",
-                  fontWeight: "800",
-                }}
-              >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+              <span className="badge badge-success" style={{ fontSize: "11px" }}>
                 Backroom Staff
               </span>
-              <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "4px" }}>
-                <Cpu size={12} />
+              <span style={{ fontSize: "12px", color: "var(--cds-text-muted)", display: "flex", alignItems: "center", gap: "4px" }}>
+                <Cpu size={13} color="var(--cds-green-primary)" />
                 <span>AI Prompt Powered</span>
               </span>
             </div>
-            <h2 style={{ margin: 0, fontSize: "1.4rem", fontWeight: "900", color: "#fff" }}>
+            <h2 style={{ margin: 0, fontSize: "20px", fontWeight: "700", color: "var(--cds-text-primary)" }}>
               Assistant Manager Briefing
             </h2>
-            <div style={{ fontSize: "0.82rem", color: "var(--text-secondary)", marginTop: "2px" }}>
+            <div style={{ fontSize: "13px", color: "var(--cds-text-secondary)", marginTop: "3px" }}>
               Coach Roy Evans • Tactical Analyst & Squad Overseer
             </div>
           </div>
 
           <button
             onClick={onClose}
-            style={{
-              background: "rgba(255, 255, 255, 0.05)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              borderRadius: "8px",
-              padding: "6px 10px",
-              color: "var(--text-muted)",
-              cursor: "pointer",
-            }}
+            className="btn btn-secondary"
+            style={{ padding: "6px 8px", height: "auto" }}
           >
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
 
         {/* Coach Overview Card */}
         <div
           style={{
-            background: "rgba(255, 255, 255, 0.03)",
-            borderRadius: "12px",
-            padding: "14px 16px",
-            border: "1px solid rgba(255, 255, 255, 0.06)",
+            background: "var(--cds-layer)",
+            borderRadius: "4px",
+            padding: "14px 18px",
+            border: "1px solid var(--cds-border)",
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
             gap: "12px",
           }}
         >
           <div>
-            <div style={{ fontSize: "0.68rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>Club Tier</div>
-            <div style={{ fontSize: "0.95rem", fontWeight: "800", color: "#38bdf8" }}>National League</div>
+            <div style={{ fontSize: "11px", color: "var(--cds-text-muted)", textTransform: "uppercase", fontWeight: "600" }}>Club Tier</div>
+            <div style={{ fontSize: "14px", fontWeight: "700", color: "var(--cds-text-primary)" }}>National League</div>
           </div>
           <div>
-            <div style={{ fontSize: "0.68rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>Squad Harmony</div>
-            <div style={{ fontSize: "0.95rem", fontWeight: "800", color: "#c084fc" }}>{teamConfig.squadHarmony || 75}%</div>
+            <div style={{ fontSize: "11px", color: "var(--cds-text-muted)", textTransform: "uppercase", fontWeight: "600" }}>Squad Harmony</div>
+            <div style={{ fontSize: "14px", fontWeight: "700", color: "var(--cds-green-primary)" }}>{teamConfig.squadHarmony || 82}%</div>
           </div>
           <div>
-            <div style={{ fontSize: "0.68rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>Transfer Warchest</div>
-            <div style={{ fontSize: "0.95rem", fontWeight: "800", color: "#10b981" }}>£{(teamConfig.transferBudget || 1.5).toFixed(1)}M</div>
+            <div style={{ fontSize: "11px", color: "var(--cds-text-muted)", textTransform: "uppercase", fontWeight: "600" }}>Transfer Warchest</div>
+            <div style={{ fontSize: "14px", fontWeight: "700", color: "var(--cds-text-primary)" }}>£{(teamConfig.transferBudget || 1.5).toFixed(1)}M</div>
           </div>
           <div>
-            <div style={{ fontSize: "0.68rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700" }}>Model Provider</div>
-            <div style={{ fontSize: "0.85rem", fontWeight: "800", color: "#fbbf24" }}>{activeModel}</div>
+            <div style={{ fontSize: "11px", color: "var(--cds-text-muted)", textTransform: "uppercase", fontWeight: "600" }}>Active Model</div>
+            <div style={{ fontSize: "13px", fontWeight: "700", color: "#0F62FE", fontFamily: "var(--font-mono)" }}>{activeModel}</div>
           </div>
         </div>
 
         {/* Quick Managerial Directive Macro Buttons */}
         <div>
-          <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700", marginBottom: "8px" }}>
+          <div style={{ fontSize: "11px", color: "var(--cds-text-muted)", textTransform: "uppercase", fontWeight: "700", marginBottom: "8px" }}>
             Quick Coaching Directives
           </div>
           <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
@@ -188,12 +172,12 @@ export const AssistantManagerDrawer: React.FC<AssistantManagerDrawerProps> = ({
                 disabled={isLoading}
                 style={{
                   padding: "6px 12px",
-                  borderRadius: "6px",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
-                  background: "rgba(255, 255, 255, 0.04)",
-                  color: "var(--text-secondary)",
-                  fontSize: "0.75rem",
-                  fontWeight: "700",
+                  borderRadius: "3px",
+                  border: "1px solid var(--cds-border)",
+                  background: "var(--cds-layer)",
+                  color: "var(--cds-text-secondary)",
+                  fontSize: "12px",
+                  fontWeight: "500",
                   cursor: "pointer",
                 }}
               >
@@ -205,7 +189,7 @@ export const AssistantManagerDrawer: React.FC<AssistantManagerDrawerProps> = ({
 
         {/* Manager Directive Prompt Input Box */}
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <label style={{ fontSize: "0.8rem", fontWeight: "700", color: "#e2e8f0" }}>
+          <label style={{ fontSize: "12px", fontWeight: "600", color: "var(--cds-text-primary)" }}>
             Issue Managerial Directive to Assistant Coach
           </label>
           <div style={{ display: "flex", gap: "8px" }}>
@@ -214,32 +198,22 @@ export const AssistantManagerDrawer: React.FC<AssistantManagerDrawerProps> = ({
               value={directiveInput}
               onChange={(e) => setDirectiveInput(e.target.value)}
               placeholder="e.g. Give me a blunt tactical debrief on why we conceded, or recommend 2 realistic Tier 4 transfers..."
+              className="carbon-input"
               style={{
                 flex: 1,
-                background: "rgba(0, 0, 0, 0.4)",
-                border: "1px solid rgba(255, 255, 255, 0.15)",
-                borderRadius: "10px",
                 padding: "10px 12px",
-                color: "#fff",
-                fontSize: "0.85rem",
-                outline: "none",
+                fontSize: "13px",
                 resize: "none",
               }}
             />
             <button
+              className="btn btn-primary"
               onClick={() => handleSendDirective()}
               disabled={isLoading || !directiveInput.trim()}
               style={{
                 padding: "0 18px",
-                borderRadius: "10px",
-                border: "none",
-                background: directiveInput.trim() ? "linear-gradient(135deg, #00E5FF 0%, #0077FF 100%)" : "rgba(255, 255, 255, 0.08)",
-                color: directiveInput.trim() ? "#000" : "var(--text-muted)",
-                fontWeight: "800",
-                fontSize: "0.85rem",
-                cursor: directiveInput.trim() ? "pointer" : "not-allowed",
-                display: "flex",
-                alignItems: "center",
+                fontSize: "13px",
+                fontWeight: "600",
                 gap: "6px",
               }}
             >
@@ -247,7 +221,7 @@ export const AssistantManagerDrawer: React.FC<AssistantManagerDrawerProps> = ({
                 <span>Thinking...</span>
               ) : (
                 <>
-                  <Send size={16} />
+                  <Send size={15} />
                   <span>Direct</span>
                 </>
               )}
@@ -258,47 +232,45 @@ export const AssistantManagerDrawer: React.FC<AssistantManagerDrawerProps> = ({
         {/* Active Briefing Display */}
         {briefing ? (
           <div
-            className="glass-panel"
+            className="carbon-card"
             style={{
-              background: "linear-gradient(180deg, rgba(0, 229, 255, 0.05) 0%, rgba(15, 23, 42, 0.9) 100%)",
-              border: "1px solid rgba(0, 229, 255, 0.25)",
-              borderRadius: "14px",
               padding: "20px",
               display: "flex",
               flexDirection: "column",
               gap: "14px",
+              borderLeft: "3px solid var(--cds-green-primary)",
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <ClipboardList size={20} color="#00E5FF" />
-                <h3 style={{ margin: 0, fontSize: "1.1rem", fontWeight: "900", color: "#fff" }}>
+                <ClipboardList size={18} color="var(--cds-green-primary)" />
+                <h3 style={{ margin: 0, fontSize: "15px", fontWeight: "700", color: "var(--cds-text-primary)" }}>
                   {briefing.heading}
                 </h3>
               </div>
               {briefing.latencyMs && (
-                <span style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>
+                <span style={{ fontSize: "11px", color: "var(--cds-text-muted)" }}>
                   {briefing.latencyMs}ms • {briefing.modelUsed || activeModel}
                 </span>
               )}
             </div>
 
             {/* Tactical Analysis */}
-            <div style={{ background: "rgba(0, 0, 0, 0.3)", borderRadius: "8px", padding: "12px", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
-              <div style={{ fontSize: "0.72rem", color: "#38bdf8", fontWeight: "800", textTransform: "uppercase", marginBottom: "4px" }}>
+            <div style={{ background: "var(--cds-layer)", borderRadius: "4px", padding: "12px", border: "1px solid var(--cds-border)" }}>
+              <div style={{ fontSize: "11px", color: "var(--cds-green-primary)", fontWeight: "700", textTransform: "uppercase", marginBottom: "4px" }}>
                 Tactical Assessment
               </div>
-              <p style={{ margin: 0, fontSize: "0.85rem", color: "#e2e8f0", lineHeight: 1.45 }}>
+              <p style={{ margin: 0, fontSize: "13px", color: "var(--cds-text-primary)", lineHeight: 1.5 }}>
                 {briefing.analysis}
               </p>
             </div>
 
             {/* Action Plan */}
-            <div style={{ background: "rgba(16, 185, 129, 0.06)", borderRadius: "8px", padding: "12px", border: "1px solid rgba(16, 185, 129, 0.2)" }}>
-              <div style={{ fontSize: "0.72rem", color: "#10b981", fontWeight: "800", textTransform: "uppercase", marginBottom: "4px" }}>
+            <div style={{ background: "var(--cds-green-light)", borderRadius: "4px", padding: "12px", border: "1px solid var(--cds-green-primary)" }}>
+              <div style={{ fontSize: "11px", color: "var(--cds-green-primary)", fontWeight: "700", textTransform: "uppercase", marginBottom: "4px" }}>
                 Recommended Action Plan
               </div>
-              <p style={{ margin: 0, fontSize: "0.85rem", color: "#d1fae5", lineHeight: 1.45 }}>
+              <p style={{ margin: 0, fontSize: "13px", color: "var(--cds-text-primary)", lineHeight: 1.5 }}>
                 {briefing.actionPlan}
               </p>
             </div>
@@ -306,7 +278,7 @@ export const AssistantManagerDrawer: React.FC<AssistantManagerDrawerProps> = ({
             {/* Key Recommendations Checklist */}
             {briefing.recommendations && briefing.recommendations.length > 0 && (
               <div>
-                <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: "700", marginBottom: "6px" }}>
+                <div style={{ fontSize: "11px", color: "var(--cds-text-muted)", textTransform: "uppercase", fontWeight: "700", marginBottom: "6px" }}>
                   Staff Recommendations
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
@@ -317,14 +289,14 @@ export const AssistantManagerDrawer: React.FC<AssistantManagerDrawerProps> = ({
                         display: "flex",
                         alignItems: "flex-start",
                         gap: "8px",
-                        fontSize: "0.8rem",
-                        color: "var(--text-secondary)",
-                        background: "rgba(255, 255, 255, 0.02)",
+                        fontSize: "12px",
+                        color: "var(--cds-text-secondary)",
+                        background: "var(--cds-layer)",
                         padding: "8px 10px",
-                        borderRadius: "6px",
+                        borderRadius: "3px",
                       }}
                     >
-                      <CheckCircle2 size={15} color="#00E5FF" style={{ marginTop: "2px", flexShrink: 0 }} />
+                      <CheckCircle2 size={14} color="var(--cds-green-primary)" style={{ marginTop: "2px", flexShrink: 0 }} />
                       <span>{rec}</span>
                     </div>
                   ))}
@@ -335,36 +307,36 @@ export const AssistantManagerDrawer: React.FC<AssistantManagerDrawerProps> = ({
         ) : (
           <div
             style={{
-              padding: "40px 20px",
+              padding: "36px 20px",
               textAlign: "center",
-              borderRadius: "12px",
-              border: "1px dashed rgba(255, 255, 255, 0.1)",
-              color: "var(--text-muted)",
+              borderRadius: "4px",
+              border: "1px dashed var(--cds-border)",
+              color: "var(--cds-text-muted)",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               gap: "8px",
             }}
           >
-            <Compass size={28} color="var(--text-muted)" />
-            <span style={{ fontSize: "0.85rem" }}>
+            <Compass size={24} color="var(--cds-text-muted)" />
+            <span style={{ fontSize: "13px" }}>
               Click a quick directive above or issue custom prompt instructions to receive an Assistant Manager tactical briefing.
             </span>
           </div>
         )}
 
         {history.length > 1 && (
-          <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.08)", paddingTop: "12px" }}>
-            <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "6px" }}>Previous Directives:</div>
+          <div style={{ borderTop: "1px solid var(--cds-border)", paddingTop: "12px" }}>
+            <div style={{ fontSize: "11px", color: "var(--cds-text-muted)", marginBottom: "6px" }}>Previous Directives:</div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
               {history.map((h, idx) => (
                 <button
                   key={idx}
                   className="btn btn-secondary"
-                  style={{ fontSize: "0.72rem", padding: "4px 8px" }}
+                  style={{ fontSize: "11px", padding: "4px 8px", height: "auto" }}
                   onClick={() => setBriefing(h.briefing)}
                 >
-                  {h.directive.slice(0, 28)}...
+                  {h.directive.slice(0, 30)}...
                 </button>
               ))}
             </div>

@@ -27,6 +27,10 @@ import { SeasonCalendar } from "./components/SeasonCalendar";
 import { FriendlyExhibitionModal } from "./components/FriendlyExhibitionModal";
 import { AssistantManagerDrawer } from "./components/AssistantManagerDrawer";
 import { AIInferenceInspectorModal } from "./components/AIInferenceInspectorModal";
+import { ScoutingHub } from "./components/ScoutingHub";
+import { FinancesOverview } from "./components/FinancesOverview";
+import { ClubInbox } from "./components/ClubInbox";
+import type { ClubMessage } from "./components/ClubInbox";
 import { LeftRailNav } from "./components/LeftRailNav";
 import type { NavTabKey } from "./components/LeftRailNav";
 import { CarbonHeader } from "./components/CarbonHeader";
@@ -140,6 +144,81 @@ export const App: React.FC = () => {
   const [showLLMStudioModal, setShowLLMStudioModal] = useState<boolean>(false);
   const [showAssistantManagerDrawer, setShowAssistantManagerDrawer] = useState<boolean>(false);
   const [showAIInferenceModal, setShowAIInferenceModal] = useState<boolean>(false);
+
+  const [inboxMessages, setInboxMessages] = useState<ClubMessage[]>([
+    {
+      id: "msg_01",
+      sender: "Club Board of Directors",
+      senderRole: "Executive Chairman Sir Arthur Sterling",
+      senderAvatarEmoji: "🏛️",
+      subject: "Official Season Objectives & National League Charter (2026/27)",
+      date: "Today, 08:30",
+      unread: true,
+      category: "BOARD",
+      body: [
+        "Welcome to Cairn Athletic FC, Manager. The Board is pleased to formally ratify your appointment.",
+        "Our core operational mandate for Tier 4 National League is straightforward: ensure competitive stability, maintain strict Financial Fair Play discipline with our £1.5M warchest, and target a top-half finish with realistic playoff aspirations.",
+        "The Board guarantees 100% autonomy regarding starting formations and player prompt conditioning. We expect complete dedication to tactical excellence and squad harmony.",
+      ],
+      actionPrompt: "The Board requests your formal signature on the 2026/27 Club Charter.",
+      actionButtonText: "Sign Season Charter & Confirm",
+    },
+    {
+      id: "msg_02",
+      sender: "Malcolm Davies",
+      senderRole: "Chief Scout",
+      senderAvatarEmoji: "🧭",
+      subject: "Scout Alert: 19yo Striker Archie Vance Available for Trial",
+      date: "Yesterday, 14:15",
+      unread: false,
+      category: "SCOUT",
+      body: [
+        "Boss, our regional scout Peter Rawson has uncovered a gem at Halifax Town Youth — 19yo Archie 'The Rocket' Vance.",
+        "His raw sprint velocity (88) and direct hunter instinct fit our high-pressing transition philosophy like a glove. Halifax are willing to release his grassroots contract for under £180k.",
+        "I recommend reviewing his full dossier in the Scouting Hub before rival National League clubs submit an inquiry.",
+      ],
+      actionPrompt: "Chief Scout has added Archie Vance to your Shortlist.",
+      actionButtonText: "Open in Scouting Hub",
+    },
+    {
+      id: "msg_03",
+      sender: "Dr. Sarah Evans",
+      senderRole: "Head of Sports Science & Physio",
+      senderAvatarEmoji: "🩺",
+      subject: "Squad Energy & Training Recovery Status Report",
+      date: "Thursday, 11:00",
+      unread: false,
+      category: "PHYSIO",
+      body: [
+        "Good morning Boss. Squad medical checkups before the upcoming fixture are 100% clean with zero muscular strains reported.",
+        "Overall squad energy is currently sitting at an optimal 94%. We recommend maintaining the active 1-touch Gegenpress training drills while keeping Monday rest sessions intact to avoid hamstring fatigue.",
+      ],
+      actionPrompt: "Physio team recommends light recovery after Matchday.",
+      actionButtonText: "Acknowledge Medical Briefing",
+    },
+    {
+      id: "msg_04",
+      sender: "The Non-League Football Paper",
+      senderRole: "Senior Football Correspondent",
+      senderAvatarEmoji: "📰",
+      subject: "Media Interview Request: Pre-Season Hopes for Cairn Athletic",
+      date: "Wednesday, 16:45",
+      unread: false,
+      category: "PRESS",
+      body: [
+        "Hello Manager, with the National League opening round upon us, local supporters are buzzing with excitement about your tactical AI philosophy.",
+        "Would you describe your managerial style as aggressive high-pressing rock-and-roll football, or methodical patient possession?",
+      ],
+      actionPrompt: "Response will be published in tomorrow's matchday programme.",
+      actionButtonText: "Reply: 'High-Tempo Aggressive Gegenpress'",
+    },
+  ]);
+
+  const handleMarkInboxMessageAsRead = (msgId: string) => {
+    setInboxMessages((prev) =>
+      prev.map((m) => (m.id === msgId ? { ...m, unread: false } : m))
+    );
+  };
 
   const wsRef = useRef<WebSocket | null>(null);
   const clientRoleRef = useRef<"host" | "guest" | "spectator" | null>(null);
@@ -744,6 +823,7 @@ export const App: React.FC = () => {
         activeTab={activeTab}
         onSelectTab={(tab) => setActiveTab(tab)}
         teamConfig={teamConfig}
+        inboxUnreadCount={inboxMessages.filter((m) => m.unread).length}
         onOpenSettings={() => setShowSetupModal(true)}
       />
 
@@ -936,20 +1016,6 @@ export const App: React.FC = () => {
           </div>
         )}
 
-        {activeTab === "calendar" && (
-          <SeasonCalendar
-            calendar={calendarState}
-            schedule={schedule}
-            userTeamName={teamConfig.name}
-            nextOpponent={nextOpponentName}
-            squad={teamConfig.starting11}
-            onAdvanceDay={handleAdvanceDay}
-            onAdvanceToMatchday={handleAdvanceToMatchday}
-            onPlayScheduledMatch={handlePlayScheduledMatch}
-            isMatchActive={!!gameState && gameState.phase !== "fulltime"}
-          />
-        )}
-
         {activeTab === "squad" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <PlayerSquadCM
@@ -990,6 +1056,14 @@ export const App: React.FC = () => {
             budget={transferBudget}
             userActiveTier={activeTier}
             onUpdateSquadAndBudget={handleUpdateSquadAndBudget}
+          />
+        )}
+
+        {activeTab === "scouting" && (
+          <ScoutingHub
+            teamConfig={teamConfig}
+            budget={transferBudget}
+            onNavigateToTransfers={() => setActiveTab("market")}
           />
         )}
 
@@ -1034,6 +1108,22 @@ export const App: React.FC = () => {
             onSelectTier={handleSelectTier}
             onResetLeague={handleResetLeague}
             onQuickPlayMatch={(opponent) => handleStartScrimmage(undefined, opponent)}
+          />
+        )}
+
+        {activeTab === "finances" && (
+          <FinancesOverview
+            teamConfig={teamConfig}
+            budget={transferBudget}
+          />
+        )}
+
+        {activeTab === "inbox" && (
+          <ClubInbox
+            teamConfig={teamConfig}
+            messages={inboxMessages}
+            onMarkAsRead={handleMarkInboxMessageAsRead}
+            onNavigateTab={(t) => setActiveTab(t)}
           />
         )}
 
