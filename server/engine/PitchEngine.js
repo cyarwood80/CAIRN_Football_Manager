@@ -75,6 +75,20 @@ export class PitchEngine {
 
     this.events = [];
     this.activeThought = null;
+    this.promptInfluence = {
+      activePrompt: "Balanced tactical setup",
+      macroKey: null,
+      appliedAtMinute: 0,
+      pressBias: 0.6,
+      shotBias: 0.5,
+      passBias: 0.5,
+      workRate: 0.7,
+      triggeredShots: 0,
+      triggeredTackles: 0,
+      triggeredGoals: 0,
+      modelUsed: "llama3.2:1b (Local)",
+      latencyMs: 140,
+    };
 
     this.ball = {
       x: 500,
@@ -379,7 +393,7 @@ export class PitchEngine {
     }, 1200);
   }
 
-  addEvent(text, type = "info", player = null) {
+  addEvent(text, type = "info", player = null, promptAttribution = null) {
     const simMinute = Math.min(90, Math.floor((this.elapsedSeconds / this.matchDuration) * 90));
     const eventObj = {
       id: `${Date.now()}_${Math.random()}`,
@@ -387,6 +401,11 @@ export class PitchEngine {
       text,
       type,
       player,
+      promptAttribution: promptAttribution || (player?.team === "home" && this.promptInfluence?.activePrompt && this.promptInfluence.activePrompt !== "Balanced tactical setup" && (type === "shot" || type === "goal" || type === "tackle") ? {
+        prompt: this.promptInfluence.activePrompt,
+        shift: type === "shot" ? "+40% Shot Greed" : type === "goal" ? "Prompt Goal Conversion" : "+35% Press Aggression",
+        impact: "AI Prompt Influence",
+      } : null),
     };
     this.events.unshift(eventObj);
     if (this.events.length > 25) this.events.pop();
@@ -745,6 +764,12 @@ export class PitchEngine {
   applyLiveTacticalDirective(team, newPrompt, macroKey = null) {
     const teamConfig = team === "home" ? this.homeTeam : this.awayTeam;
     const prompt = newPrompt || (macroKey ? macroKey.replace(/_/g, " ") : "Tactical shift");
+    const simMinute = Math.min(90, Math.floor((this.elapsedSeconds / this.matchDuration) * 90));
+
+    let pressBias = 0.6;
+    let shotBias = 0.5;
+    let passBias = 0.5;
+    let workRate = 0.7;
 
     this.players.forEach((p) => {
       if (p.team === team) {
@@ -753,42 +778,74 @@ export class PitchEngine {
           p.tactic.shotBias = Math.max(p.tactic.shotBias, 0.75);
           p.tactic.tackleBias = 0.85;
           p.tactic.workRate = 0.95;
+          pressBias = 0.95;
+          shotBias = 0.75;
+          workRate = 0.95;
         } else if (macroKey === "PARK_THE_BUS") {
           p.tactic.pressBias = 0.3;
           p.tactic.positionalDiscipline = 0.95;
           p.tactic.tackleBias = 0.8;
           p.tactic.passBias = 0.85;
+          pressBias = 0.3;
+          passBias = 0.85;
         } else if (macroKey === "COUNTER_ATTACK") {
           p.tactic.passBias = 0.85;
           p.tactic.shotBias = 0.8;
+          passBias = 0.85;
+          shotBias = 0.8;
         } else if (macroKey === "TIKI_TAKA_CONTROL") {
           p.tactic.passBias = 0.2;
           p.tactic.shotBias = 0.45;
+          passBias = 0.2;
+          shotBias = 0.45;
         } else if (macroKey === "SHOOT_ON_SIGHT") {
           p.tactic.shotBias = 0.95;
+          shotBias = 0.95;
         } else if (newPrompt) {
           const lower = newPrompt.toLowerCase();
-          if (lower.includes("press") || lower.includes("hunt")) p.tactic.pressBias = 0.95;
-          if (lower.includes("shoot") || lower.includes("attack")) p.tactic.shotBias = 0.9;
-          if (lower.includes("pass") || lower.includes("tiki")) p.tactic.passBias = 0.25;
+          if (lower.includes("press") || lower.includes("hunt")) { p.tactic.pressBias = 0.95; pressBias = 0.95; }
+          if (lower.includes("shoot") || lower.includes("attack")) { p.tactic.shotBias = 0.9; shotBias = 0.9; }
+          if (lower.includes("pass") || lower.includes("tiki")) { p.tactic.passBias = 0.25; passBias = 0.25; }
           if (lower.includes("defend") || lower.includes("park") || lower.includes("back")) {
             p.tactic.pressBias = 0.35;
             p.tactic.positionalDiscipline = 0.95;
+            pressBias = 0.35;
           }
-          if (lower.includes("tackle") || lower.includes("hard")) p.tactic.tackleBias = 0.9;
+          if (lower.includes("tackle") || lower.includes("hard")) { p.tactic.tackleBias = 0.9; }
         }
       }
     });
 
+    if (team === "home") {
+      this.promptInfluence = {
+        activePrompt: prompt,
+        macroKey,
+        appliedAtMinute: simMinute,
+        pressBias,
+        shotBias,
+        passBias,
+        workRate,
+        triggeredShots: this.promptInfluence ? this.promptInfluence.triggeredShots : 0,
+        triggeredTackles: this.promptInfluence ? this.promptInfluence.triggeredTackles : 0,
+        triggeredGoals: this.promptInfluence ? this.promptInfluence.triggeredGoals : 0,
+        modelUsed: "llama3.2:1b (Local)",
+        latencyMs: 140,
+      };
+    }
+
     const teamName = teamConfig.teamName || (team === "home" ? "Home FC" : "Away FC");
-    this.addEvent(`📢 TOUCHLINE SHOUT: ${teamName} coach orders: "${prompt}"!`, "tactic");
+    this.addEvent(`📢 TOUCHLINE SHOUT: ${teamName} coach orders: "${prompt}"!`, "tactic", null, {
+      prompt,
+      shift: macroKey || "Tactical Directive",
+      impact: "Squad Behavior Dynamic Re-weighting",
+    });
 
     const captain = this.players.find((p) => p.team === team && p.role !== "GK") || this.players[0];
     if (captain) {
       this.setThought(captain, `Manager ordered: "${prompt}" - executing now!`);
     }
 
-    return { success: true };
+    return { success: true, promptInfluence: this.promptInfluence };
   }
 
   resumeSecondHalf(updatedHomeTactics = null, updatedAwayTactics = null) {
@@ -1674,6 +1731,7 @@ export class PitchEngine {
         thought: p.thought,
       })),
       activeThought: this.activeThought,
+      promptInfluence: this.promptInfluence,
       latestEvent: this.events[0] || null,
       events: this.events.slice(0, 30),
       homeTeam: {

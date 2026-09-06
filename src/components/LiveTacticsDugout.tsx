@@ -116,6 +116,53 @@ export const LiveTacticsDugout: React.FC<LiveTacticsDugoutProps> = ({
         </div>
       )}
 
+      {/* Real-time Prompt-to-Pitch AI Causality Breakdown */}
+      {gameState.promptInfluence && (
+        <div
+          style={{
+            background: "rgba(15, 107, 69, 0.05)",
+            border: "1px solid #A7F0BA",
+            borderRadius: "4px",
+            padding: "8px 10px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "6px",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "11px", fontWeight: "700", color: "var(--cds-green-primary)" }}>
+              <Zap size={13} />
+              <span>Active Prompt: "{gameState.promptInfluence.activePrompt}"</span>
+            </div>
+            <span style={{ fontSize: "10px", color: "var(--cds-text-secondary)", fontFamily: "var(--font-mono)" }}>
+              🦙 {gameState.promptInfluence.modelUsed || "llama3.2:1b"} • {gameState.promptInfluence.latencyMs || 140}ms
+            </span>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "6px", fontSize: "11px" }}>
+            <div style={{ display: "flex", gap: "10px", color: "var(--cds-text-secondary)" }}>
+              <span>Press: <strong style={{ color: "var(--cds-text-primary)" }}>{Math.round(gameState.promptInfluence.pressBias * 100)}%</strong></span>
+              <span>Shot Greed: <strong style={{ color: "var(--cds-text-primary)" }}>{Math.round(gameState.promptInfluence.shotBias * 100)}%</strong></span>
+              <span>Pass Direct: <strong style={{ color: "var(--cds-text-primary)" }}>{Math.round(gameState.promptInfluence.passBias * 100)}%</strong></span>
+            </div>
+
+            <div style={{ display: "flex", gap: "8px", fontSize: "10px" }}>
+              <span className="badge badge-success" style={{ padding: "1px 6px" }}>
+                ⚡ {gameState.promptInfluence.triggeredShots} Prompt Shots
+              </span>
+              <span className="badge badge-info" style={{ padding: "1px 6px" }}>
+                🛡️ {gameState.promptInfluence.triggeredTackles} Prompt Tackles
+              </span>
+              {gameState.promptInfluence.triggeredGoals > 0 && (
+                <span className="badge badge-warning" style={{ padding: "1px 6px" }}>
+                  ⚽ {gameState.promptInfluence.triggeredGoals} Goals
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 1. Tactical Substitution & Directives in 2-Column Row */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
         {/* Substitution Panel */}

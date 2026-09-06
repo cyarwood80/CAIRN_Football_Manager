@@ -260,9 +260,32 @@ export const MatchCommentary: React.FC<MatchCommentaryProps> = ({
                     lineHeight: "1.35",
                     color: "var(--cds-text-primary)",
                     fontWeight: e.type === "goal" ? "700" : isLatest ? "600" : "400",
+                    display: "flex",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: "6px",
                   }}
                 >
-                  {e.text}
+                  <span>{e.text}</span>
+                  {e.promptAttribution && (
+                    <span
+                      style={{
+                        background: "rgba(15, 107, 69, 0.12)",
+                        border: "1px solid #A7F0BA",
+                        color: "var(--cds-green-primary)",
+                        fontSize: "9.5px",
+                        fontWeight: "700",
+                        padding: "1px 6px",
+                        borderRadius: "3px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "3px",
+                      }}
+                      title={`Triggered by manager prompt: "${e.promptAttribution.prompt}"`}
+                    >
+                      ⚡ {e.promptAttribution.shift}
+                    </span>
+                  )}
                 </div>
               </div>
             );

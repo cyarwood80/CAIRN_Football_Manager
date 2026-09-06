@@ -203,12 +203,32 @@ export interface MatchStats {
   xG: { home: number; away: number };
 }
 
+export interface PromptInfluence {
+  activePrompt: string;
+  macroKey?: string | null;
+  appliedAtMinute: number;
+  pressBias: number;
+  shotBias: number;
+  passBias: number;
+  workRate: number;
+  triggeredShots: number;
+  triggeredTackles: number;
+  triggeredGoals: number;
+  modelUsed?: string;
+  latencyMs?: number;
+}
+
 export interface MatchEvent {
   id: string;
   minute: number;
   text: string;
   type: "goal" | "shot" | "save" | "tackle" | "pass" | "info" | "whistle" | "sub" | "tactic" | "chat";
   player?: { name: string; number?: number } | null;
+  promptAttribution?: {
+    prompt: string;
+    shift: string;
+    impact: string;
+  } | null;
 }
 
 export interface ActiveThought {
@@ -270,6 +290,10 @@ export interface ChatMessage {
   text?: string;
   time?: string;
   rating?: number;
+  modelUsed?: string;
+  latencyMs?: number;
+  tokenCount?: number;
+  reasoningTrace?: string;
 }
 
 export interface GameSnapshot {
@@ -285,6 +309,7 @@ export interface GameSnapshot {
   ball: BallState;
   players: PlayerState[];
   activeThought: ActiveThought | null;
+  promptInfluence?: PromptInfluence | null;
   latestEvent: MatchEvent | null;
   events: MatchEvent[];
   postMatchSummary?: PostMatchSummary | null;

@@ -231,14 +231,24 @@ export const EmbeddedPlayerChat: React.FC<EmbeddedPlayerChatProps> = ({
                   {msg.response && (
                     <div style={{ alignSelf: "flex-start", maxWidth: "88%", background: "var(--cds-surface)", border: "1px solid var(--cds-border)", padding: "4px 8px", borderRadius: "4px", fontSize: "11px", color: "var(--cds-text-primary)" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "6px" }}>
-                        <span style={{ fontSize: "10px", color: "var(--cds-green-primary)", fontWeight: "800" }}>
-                          {msg.playerName || currentPlayer?.name}:
+                        <span style={{ fontWeight: "700", color: "var(--cds-text-primary)", fontSize: "11px" }}>
+                          {msg.playerName}
                         </span>
-                        <span style={{ fontSize: "9px", color: "var(--cds-text-muted)", fontFamily: "var(--font-mono)" }}>
-                          {activeModel}
-                        </span>
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                          {msg.modelUsed && (
+                            <span style={{ fontSize: "9.5px", color: "var(--cds-green-primary)", fontFamily: "var(--font-mono)", fontWeight: "600" }}>
+                              🦙 {msg.modelUsed} • {msg.latencyMs || 140}ms
+                            </span>
+                          )}
+                          <span style={{ fontSize: "10px", color: "var(--cds-text-muted)" }}>{msg.time}</span>
+                        </div>
                       </div>
                       <p style={{ margin: "2px 0 0 0", fontStyle: "italic", color: "var(--cds-text-secondary)" }}>"{msg.response}"</p>
+                      {msg.reasoningTrace && (
+                        <div style={{ marginTop: "3px", padding: "4px 6px", background: "rgba(15, 107, 69, 0.06)", borderRadius: "3px", fontSize: "9.5px", color: "var(--cds-text-secondary)" }}>
+                          <span style={{ fontWeight: "700", color: "var(--cds-green-primary)" }}>🧠 Local Reasoning:</span> {msg.reasoningTrace}
+                        </div>
+                      )}
                       {msg.actionTaken && (
                         <span style={{ fontSize: "10px", color: "var(--cds-blue)", display: "block", marginTop: "2px", fontWeight: "600" }}>
                           ⚡ {msg.actionTaken}
