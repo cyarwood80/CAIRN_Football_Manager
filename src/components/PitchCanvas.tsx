@@ -12,11 +12,11 @@ interface PitchCanvasProps {
 
 // Logical pitch dimensions
 const PITCH_W = 1000;
-const PITCH_H = 620;
-const MARGIN = 18;
-const PLAYER_RADIUS = 21;
+const PITCH_H = 540;
+const MARGIN = 16;
+const PLAYER_RADIUS = 15;
 
-// Helper to extract player last name for crisp on-pitch labeling
+// Helper to extract player short label (Role + Surname)
 function getPlayerShortLabel(name: string, role: string, number: number): string {
   if (!name) return `${role} #${number}`;
   const parts = name.trim().split(" ");
@@ -85,82 +85,82 @@ export function resolveEffectiveAwayKit(
 
 const DEFAULT_ANCHORS_HOME: Record<string, { x: number; y: number }[]> = {
   "4-3-3": [
-    { x: 50, y: 310 },   // 1: GK
-    { x: 220, y: 510 },  // 2: RB
-    { x: 180, y: 240 },  // 3: CB_L
-    { x: 180, y: 380 },  // 4: CB_R
-    { x: 220, y: 110 },  // 5: LB
-    { x: 380, y: 310 },  // 6: CDM
-    { x: 720, y: 510 },  // 7: RW
-    { x: 540, y: 380 },  // 8: CAM
-    { x: 780, y: 310 },  // 9: ST
-    { x: 540, y: 240 },  // 10: CM
-    { x: 720, y: 110 },  // 11: LW
+    { x: 50, y: 270 },   // 1: GK
+    { x: 220, y: 450 },  // 2: RB
+    { x: 180, y: 195 },  // 3: CB_L
+    { x: 180, y: 345 },  // 4: CB_R
+    { x: 220, y: 90 },   // 5: LB
+    { x: 380, y: 270 },  // 6: CDM
+    { x: 720, y: 450 },  // 7: RW
+    { x: 550, y: 345 },  // 8: CAM
+    { x: 780, y: 270 },  // 9: ST
+    { x: 550, y: 195 },  // 10: CM
+    { x: 720, y: 90 },   // 11: LW
   ],
   "4-4-2": [
-    { x: 50, y: 310 },   // 1: GK
-    { x: 220, y: 510 },  // 2: RB
-    { x: 180, y: 240 },  // 3: CB_L
-    { x: 180, y: 380 },  // 4: CB_R
-    { x: 220, y: 110 },  // 5: LB
-    { x: 520, y: 510 },  // 6: RM
-    { x: 480, y: 380 },  // 7: CM_R
-    { x: 480, y: 240 },  // 8: CM_L
-    { x: 760, y: 380 },  // 9: ST_R
-    { x: 760, y: 240 },  // 10: ST_L
-    { x: 520, y: 110 },  // 11: LM
+    { x: 50, y: 270 },   // 1: GK
+    { x: 220, y: 450 },  // 2: RB
+    { x: 180, y: 195 },  // 3: CB_L
+    { x: 180, y: 345 },  // 4: CB_R
+    { x: 220, y: 90 },   // 5: LB
+    { x: 520, y: 450 },  // 6: RM
+    { x: 480, y: 345 },  // 7: CM_R
+    { x: 480, y: 195 },  // 8: CM_L
+    { x: 760, y: 345 },  // 9: ST_R
+    { x: 760, y: 195 },  // 10: ST_L
+    { x: 520, y: 90 },   // 11: LM
   ],
   "3-5-2": [
-    { x: 50, y: 310 },   // 1: GK
-    { x: 190, y: 430 },  // 2: CB_R
-    { x: 170, y: 310 },  // 3: CB_C
-    { x: 190, y: 190 },  // 4: CB_L
-    { x: 420, y: 530 },  // 5: RWB
-    { x: 360, y: 310 },  // 6: CDM
-    { x: 520, y: 390 },  // 7: CM_R
-    { x: 600, y: 310 },  // 8: CAM
-    { x: 770, y: 380 },  // 9: ST_R
-    { x: 770, y: 240 },  // 10: ST_L
-    { x: 420, y: 90 },   // 11: LWB
+    { x: 50, y: 270 },   // 1: GK
+    { x: 190, y: 380 },  // 2: CB_R
+    { x: 170, y: 270 },  // 3: CB_C
+    { x: 190, y: 160 },  // 4: CB_L
+    { x: 420, y: 465 },  // 5: RWB
+    { x: 360, y: 270 },  // 6: CDM
+    { x: 520, y: 345 },  // 7: CM_R
+    { x: 600, y: 270 },  // 8: CAM
+    { x: 770, y: 345 },  // 9: ST_R
+    { x: 770, y: 195 },  // 10: ST_L
+    { x: 420, y: 75 },   // 11: LWB
   ],
   "5-3-2": [
-    { x: 50, y: 310 },   // 1: GK
-    { x: 250, y: 520 },  // 2: RWB
-    { x: 180, y: 420 },  // 3: CB_R
-    { x: 160, y: 310 },  // 4: CB_C
-    { x: 180, y: 200 },  // 5: CB_L
-    { x: 250, y: 100 },  // 6: LWB
-    { x: 380, y: 310 },  // 7: CDM
-    { x: 500, y: 380 },  // 8: CM_R
-    { x: 770, y: 380 },  // 9: ST_R
-    { x: 770, y: 240 },  // 10: ST_L
-    { x: 500, y: 240 },  // 11: CM_L
+    { x: 50, y: 270 },   // 1: GK
+    { x: 250, y: 460 },  // 2: RWB
+    { x: 180, y: 365 },  // 3: CB_R
+    { x: 160, y: 270 },  // 4: CB_C
+    { x: 180, y: 175 },  // 5: CB_L
+    { x: 250, y: 80 },   // 6: LWB
+    { x: 380, y: 270 },  // 7: CDM
+    { x: 500, y: 345 },  // 8: CM_R
+    { x: 770, y: 345 },  // 9: ST_R
+    { x: 770, y: 195 },  // 10: ST_L
+    { x: 500, y: 195 },  // 11: CM_L
   ],
   "4-2-3-1": [
-    { x: 50, y: 310 },   // 1: GK
-    { x: 220, y: 510 },  // 2: RB
-    { x: 180, y: 380 },  // 3: CB_R
-    { x: 180, y: 240 },  // 4: CB_L
-    { x: 220, y: 110 },  // 5: LB
-    { x: 360, y: 380 },  // 6: CDM_R
-    { x: 650, y: 510 },  // 7: RM
-    { x: 360, y: 240 },  // 8: CDM_L
-    { x: 800, y: 310 },  // 9: ST
-    { x: 600, y: 310 },  // 10: CAM
-    { x: 650, y: 110 },  // 11: LM
+    { x: 50, y: 270 },   // 1: GK
+    { x: 220, y: 450 },  // 2: RB
+    { x: 180, y: 345 },  // 3: CB_R
+    { x: 180, y: 195 },  // 4: CB_L
+    { x: 220, y: 90 },   // 5: LB
+    { x: 360, y: 345 },  // 6: CDM_R
+    { x: 650, y: 450 },  // 7: RM
+    { x: 360, y: 195 },  // 8: CDM_L
+    { x: 800, y: 270 },  // 9: ST
+    { x: 600, y: 270 },  // 10: CAM
+    { x: 650, y: 90 },   // 11: LM
   ],
   "3-4-3": [
-    { x: 50, y: 310 },   // 1: GK
-    { x: 190, y: 430 },  // 2: CB_R
-    { x: 170, y: 310 },  // 3: CB_C
-    { x: 190, y: 190 },  // 4: CB_L
-    { x: 480, y: 520 },  // 5: RM
-    { x: 450, y: 380 },  // 6: CM_R
-    { x: 760, y: 500 },  // 7: RW
-    { x: 450, y: 240 },  // 8: CM_L
-    { x: 820, y: 310 },  // 9: ST
-    { x: 480, y: 100 },  // 10: LM
-    { x: 760, y: 120 },  // 11: LW
+    { x: 50, y: 270 },   // 1: GK
+    { x: 190, y: 380 },  // 2: CB_R
+    { x: 170, y: 270 },  // 3: CB_C
+    { x: 190, y: 160 },  // 4: CB_L
+    { x: 480, y: 455 },  // 5: RM
+    { x: 450, y: 335 },  // 6: CM_R
+    { x: 760, y: 440 },  // 7: RW
+    { x: 450, y: 205 },  // 8: CM_L
+    { x: 820, y: 270 },  // 9: ST
+    { x: 480, y: 85 },   // 10: LM
+    { x: 760, y: 100 },  // 11: LW
   ],
 };
 
@@ -186,7 +186,7 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
 
   // Smooth 60fps interpolation state refs
   const interpPlayersRef = useRef<Map<string, { x: number; y: number; vx: number; vy: number }>>(new Map());
-  const interpBallRef = useRef<{ x: number; y: number; vx: number; vy: number }>({ x: 500, y: 310, vx: 0, vy: 0 });
+  const interpBallRef = useRef<{ x: number; y: number; vx: number; vy: number }>({ x: 500, y: 270, vx: 0, vy: 0 });
   const animFrameIdRef = useRef<number | null>(null);
 
   // Keep latest game snapshot in ref for the 60fps RAF render loop
@@ -197,8 +197,8 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
   useEffect(() => {
     if (gameState?.phase === "goal" && prevPhaseRef.current !== "goal") {
       confetti({
-        particleCount: 140,
-        spread: 90,
+        particleCount: 120,
+        spread: 80,
         origin: { y: 0.55 },
         colors: [gameState.homeTeam.color, gameState.awayTeam.color, "#0F6B45", "#FFFFFF", "#F1C21B"],
       });
@@ -247,22 +247,22 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
       const stripeCount = 14;
       const stripeW = PITCH_W / stripeCount;
       for (let i = 0; i < stripeCount; i++) {
-        ctx.fillStyle = i % 2 === 0 ? "#0e4125" : "#0a331c";
+        ctx.fillStyle = i % 2 === 0 ? "#0d3c22" : "#09311c";
         ctx.fillRect(i * stripeW, 0, stripeW, PITCH_H);
       }
 
       // Subtle pitch vignette
-      const vignette = ctx.createRadialGradient(PITCH_W / 2, PITCH_H / 2, 220, PITCH_W / 2, PITCH_H / 2, 620);
+      const vignette = ctx.createRadialGradient(PITCH_W / 2, PITCH_H / 2, 180, PITCH_W / 2, PITCH_H / 2, 560);
       vignette.addColorStop(0, "rgba(0,0,0,0)");
-      vignette.addColorStop(1, "rgba(0,0,0,0.38)");
+      vignette.addColorStop(1, "rgba(0,0,0,0.36)");
       ctx.fillStyle = vignette;
       ctx.fillRect(0, 0, PITCH_W, PITCH_H);
 
       // ==========================================
       // 2. Draw Crisp White Pitch Markings
       // ==========================================
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.88)";
-      ctx.lineWidth = 3.5;
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+      ctx.lineWidth = 3;
 
       // Outer boundary line
       ctx.strokeRect(MARGIN, MARGIN, PITCH_W - 2 * MARGIN, PITCH_H - 2 * MARGIN);
@@ -275,43 +275,43 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
 
       // Center circle
       ctx.beginPath();
-      ctx.arc(PITCH_W / 2, PITCH_H / 2, 80, 0, Math.PI * 2);
+      ctx.arc(PITCH_W / 2, PITCH_H / 2, 70, 0, Math.PI * 2);
       ctx.stroke();
 
       // Center spot
       ctx.fillStyle = "#ffffff";
       ctx.beginPath();
-      ctx.arc(PITCH_W / 2, PITCH_H / 2, 5, 0, Math.PI * 2);
+      ctx.arc(PITCH_W / 2, PITCH_H / 2, 4.5, 0, Math.PI * 2);
       ctx.fill();
 
       // Left Penalty Area (Home)
-      ctx.strokeRect(MARGIN, 160, 155, 300);
+      ctx.strokeRect(MARGIN, 135, 145, 270);
       // Left 6-Yard Box
-      ctx.strokeRect(MARGIN, 230, 55, 160);
+      ctx.strokeRect(MARGIN, 195, 50, 150);
       // Left Penalty Spot
       ctx.beginPath();
-      ctx.arc(MARGIN + 110, PITCH_H / 2, 4.5, 0, Math.PI * 2);
+      ctx.arc(MARGIN + 100, PITCH_H / 2, 4, 0, Math.PI * 2);
       ctx.fill();
       // Left Penalty Arc
       ctx.beginPath();
-      ctx.arc(MARGIN + 110, PITCH_H / 2, 70, -0.65, 0.65);
+      ctx.arc(MARGIN + 100, PITCH_H / 2, 65, -0.65, 0.65);
       ctx.stroke();
 
       // Right Penalty Area (Away)
-      ctx.strokeRect(PITCH_W - MARGIN - 155, 160, 155, 300);
+      ctx.strokeRect(PITCH_W - MARGIN - 145, 135, 145, 270);
       // Right 6-Yard Box
-      ctx.strokeRect(PITCH_W - MARGIN - 55, 230, 55, 160);
+      ctx.strokeRect(PITCH_W - MARGIN - 50, 195, 50, 150);
       // Right Penalty Spot
       ctx.beginPath();
-      ctx.arc(PITCH_W - MARGIN - 110, PITCH_H / 2, 4.5, 0, Math.PI * 2);
+      ctx.arc(PITCH_W - MARGIN - 100, PITCH_H / 2, 4, 0, Math.PI * 2);
       ctx.fill();
       // Right Penalty Arc
       ctx.beginPath();
-      ctx.arc(PITCH_W - MARGIN - 110, PITCH_H / 2, 70, Math.PI - 0.65, Math.PI + 0.65);
+      ctx.arc(PITCH_W - MARGIN - 100, PITCH_H / 2, 65, Math.PI - 0.65, Math.PI + 0.65);
       ctx.stroke();
 
       // Corner Arcs
-      const cornerR = 20;
+      const cornerR = 18;
       ctx.beginPath();
       ctx.arc(MARGIN, MARGIN, cornerR, 0, Math.PI / 2);
       ctx.stroke();
@@ -326,23 +326,23 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
       ctx.stroke();
 
       // Goals & Net
-      const goalYMin = 250;
-      const goalYMax = 370;
+      const goalYMin = 210;
+      const goalYMax = 330;
       const goalH = goalYMax - goalYMin;
 
       // Left Goal
-      ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
-      ctx.fillRect(MARGIN - 20, goalYMin, 20, goalH);
+      ctx.fillStyle = "rgba(255, 255, 255, 0.14)";
+      ctx.fillRect(MARGIN - 18, goalYMin, 18, goalH);
       ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 4;
-      ctx.strokeRect(MARGIN - 20, goalYMin, 20, goalH);
+      ctx.lineWidth = 3.5;
+      ctx.strokeRect(MARGIN - 18, goalYMin, 18, goalH);
 
       // Right Goal
-      ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
-      ctx.fillRect(PITCH_W - MARGIN, goalYMin, 20, goalH);
+      ctx.fillStyle = "rgba(255, 255, 255, 0.14)";
+      ctx.fillRect(PITCH_W - MARGIN, goalYMin, 18, goalH);
       ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 4;
-      ctx.strokeRect(PITCH_W - MARGIN, goalYMin, 20, goalH);
+      ctx.lineWidth = 3.5;
+      ctx.strokeRect(PITCH_W - MARGIN, goalYMin, 18, goalH);
 
       const state = latestGameStateRef.current;
 
@@ -354,7 +354,7 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
         const playerMap = interpPlayersRef.current;
 
         // Update / Lerp Ball
-        const targetBall = state.ball || { x: 500, y: 310, vx: 0, vy: 0, isShot: false, speed: 0 };
+        const targetBall = state.ball || { x: 500, y: 270, vx: 0, vy: 0, isShot: false, speed: 0 };
         const interpBall = interpBallRef.current;
         interpBall.x += (targetBall.x - interpBall.x) * 0.35;
         interpBall.y += (targetBall.y - interpBall.y) * 0.35;
@@ -364,13 +364,13 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
         // Draw Ball Shadow
         ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
         ctx.beginPath();
-        ctx.ellipse(interpBall.x, interpBall.y + 8, 10, 5, 0, 0, Math.PI * 2);
+        ctx.ellipse(interpBall.x, interpBall.y + 6, 8, 4, 0, 0, Math.PI * 2);
         ctx.fill();
 
         // Shot tracer line
         if (targetBall.isShot || targetBall.speed > 12) {
-          ctx.strokeStyle = "rgba(241, 194, 27, 0.9)";
-          ctx.lineWidth = 4.5;
+          ctx.strokeStyle = "rgba(241, 194, 27, 0.88)";
+          ctx.lineWidth = 3.5;
           ctx.beginPath();
           ctx.moveTo(interpBall.x, interpBall.y);
           ctx.lineTo(interpBall.x - interpBall.vx * 3.5, interpBall.y - interpBall.vy * 3.5);
@@ -378,19 +378,19 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
         }
 
         // Ball Body
-        const ballGrad = ctx.createRadialGradient(interpBall.x - 2, interpBall.y - 2, 1, interpBall.x, interpBall.y, 9);
+        const ballGrad = ctx.createRadialGradient(interpBall.x - 1.5, interpBall.y - 1.5, 1, interpBall.x, interpBall.y, 7.5);
         ballGrad.addColorStop(0, "#ffffff");
         ballGrad.addColorStop(0.7, "#f8fafc");
         ballGrad.addColorStop(1, "#94a3b8");
         ctx.fillStyle = ballGrad;
         ctx.beginPath();
-        ctx.arc(interpBall.x, interpBall.y, 9, 0, Math.PI * 2);
+        ctx.arc(interpBall.x, interpBall.y, 7.5, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.strokeStyle = "#0f172a";
-        ctx.lineWidth = 1.4;
+        ctx.lineWidth = 1.2;
         ctx.beginPath();
-        ctx.arc(interpBall.x, interpBall.y, 4.5, 0, Math.PI * 2);
+        ctx.arc(interpBall.x, interpBall.y, 3.8, 0, Math.PI * 2);
         ctx.stroke();
 
         // Resolve effective team colors
@@ -426,61 +426,61 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
           // Player Ground Shadow
           ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
           ctx.beginPath();
-          ctx.ellipse(px, py + 15, 20, 8, 0, 0, Math.PI * 2);
+          ctx.ellipse(px, py + 11, 14, 6, 0, 0, Math.PI * 2);
           ctx.fill();
 
           // Selection / Hover Ring
           if (hoveredPlayer?.id === player.id) {
             ctx.strokeStyle = "#FFFFFF";
-            ctx.lineWidth = 3.5;
+            ctx.lineWidth = 2.8;
             ctx.beginPath();
-            ctx.arc(px, py, PLAYER_RADIUS + 8, 0, Math.PI * 2);
+            ctx.arc(px, py, PLAYER_RADIUS + 6, 0, Math.PI * 2);
             ctx.stroke();
           }
 
           // Stamina Ring (Encircling outer circle)
           const staminaAngle = ((player.stamina || 100) / 100) * Math.PI * 2;
           ctx.strokeStyle = player.stamina > 50 ? "rgba(15, 107, 69, 0.95)" : "rgba(218, 30, 40, 0.95)";
-          ctx.lineWidth = 3;
+          ctx.lineWidth = 2.2;
           ctx.beginPath();
-          ctx.arc(px, py, PLAYER_RADIUS + 4, -Math.PI / 2, -Math.PI / 2 + staminaAngle);
+          ctx.arc(px, py, PLAYER_RADIUS + 3, -Math.PI / 2, -Math.PI / 2 + staminaAngle);
           ctx.stroke();
 
-          // Player Main Node Circle
+          // Player Main Node Circle (Compact, balanced size)
           ctx.fillStyle = playerColor;
           ctx.beginPath();
           ctx.arc(px, py, PLAYER_RADIUS, 0, Math.PI * 2);
           ctx.fill();
 
           ctx.strokeStyle = isHome ? "#FFFFFF" : "#161616";
-          ctx.lineWidth = 2.8;
+          ctx.lineWidth = 2.2;
           ctx.stroke();
 
-          // Player Number (Large, Bold & High Contrast)
+          // Player Number (Clear, Bold & High Contrast)
           const numberColor = isGK ? "#161616" : getContrastingTextColor(teamColor);
           ctx.fillStyle = numberColor;
-          ctx.font = "bold 15px 'IBM Plex Sans', -apple-system, sans-serif";
+          ctx.font = "bold 11.5px 'IBM Plex Sans', -apple-system, sans-serif";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(`${player.number}`, px, py);
 
           // Role + Surname Tag Pill (Below circle in protected dark background)
           const labelText = getPlayerShortLabel(player.name, player.role, player.number);
-          const pillW = Math.max(50, labelText.length * 6.8 + 12);
-          const pillH = 17;
+          const pillW = Math.max(42, labelText.length * 5.8 + 10);
+          const pillH = 14;
           const pillX = px - pillW / 2;
-          const pillY = py + PLAYER_RADIUS + 7;
+          const pillY = py + PLAYER_RADIUS + 5;
 
-          ctx.fillStyle = "rgba(15, 23, 42, 0.92)";
-          ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
-          ctx.lineWidth = 1.2;
+          ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+          ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.roundRect(pillX, pillY, pillW, pillH, 3.5);
+          ctx.roundRect(pillX, pillY, pillW, pillH, 3);
           ctx.fill();
           ctx.stroke();
 
           ctx.fillStyle = "#FFFFFF";
-          ctx.font = "700 9.5px 'IBM Plex Sans', -apple-system, sans-serif";
+          ctx.font = "700 8.5px 'IBM Plex Sans', -apple-system, sans-serif";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(labelText, px, pillY + pillH / 2);
@@ -488,7 +488,7 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
           // Tactical State Badge (Above circle if active)
           if (player.state && player.state !== "idle" && player.state !== "running") {
             const stateKey = player.state.toLowerCase();
-            let badgeBg = "#0F62FE"; // Default blue
+            let badgeBg = "#0F62FE";
             let badgeLabel = player.state.toUpperCase();
 
             if (stateKey === "shoot") {
@@ -508,38 +508,38 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
               badgeLabel = "🛡️ TACKLE";
             }
 
-            const stateW = Math.max(44, badgeLabel.length * 7 + 10);
-            const stateH = 17;
+            const stateW = Math.max(38, badgeLabel.length * 6 + 8);
+            const stateH = 14;
             const stateX = px - stateW / 2;
-            const stateY = py - PLAYER_RADIUS - 19;
+            const stateY = py - PLAYER_RADIUS - 16;
 
             ctx.fillStyle = badgeBg;
             ctx.strokeStyle = "#FFFFFF";
-            ctx.lineWidth = 1.2;
+            ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.roundRect(stateX, stateY, stateW, stateH, 3.5);
+            ctx.roundRect(stateX, stateY, stateW, stateH, 3);
             ctx.fill();
             ctx.stroke();
 
             ctx.fillStyle = stateKey === "save" ? "#161616" : "#FFFFFF";
-            ctx.font = "bold 9px 'IBM Plex Sans', -apple-system, sans-serif";
+            ctx.font = "bold 8px 'IBM Plex Sans', -apple-system, sans-serif";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.fillText(badgeLabel, px, stateY + stateH / 2);
           } else if (player.personalityIcon) {
-            ctx.font = "12px 'IBM Plex Sans', sans-serif";
+            ctx.font = "10px 'IBM Plex Sans', sans-serif";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
-            ctx.fillText(player.personalityIcon, px, py - PLAYER_RADIUS - 10);
+            ctx.fillText(player.personalityIcon, px, py - PLAYER_RADIUS - 8);
           }
 
           // Active Thought Pulse on Thinking Player
           if (state.activeThought && state.activeThought.playerId === player.id) {
             ctx.strokeStyle = "rgba(15, 107, 69, 0.9)";
-            ctx.lineWidth = 2.5;
-            ctx.setLineDash([4, 4]);
+            ctx.lineWidth = 2;
+            ctx.setLineDash([3, 3]);
             ctx.beginPath();
-            ctx.arc(px, py, PLAYER_RADIUS + 12, 0, Math.PI * 2);
+            ctx.arc(px, py, PLAYER_RADIUS + 9, 0, Math.PI * 2);
             ctx.stroke();
             ctx.setLineDash([]);
           }
@@ -550,22 +550,22 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
           const thought = state.activeThought;
           const icon = thought.personalityIcon || "💭";
           const thoughtBannerText = `${icon} ${thought.playerName}: "${thought.text}"`;
-          const tbW = Math.min(600, Math.max(280, thoughtBannerText.length * 7.2 + 32));
-          const tbH = 28;
+          const tbW = Math.min(500, Math.max(240, thoughtBannerText.length * 6.4 + 26));
+          const tbH = 24;
           const tbX = PITCH_W / 2 - tbW / 2;
-          const tbY = 26;
+          const tbY = 20;
 
-          ctx.fillStyle = "rgba(15, 23, 42, 0.95)";
+          ctx.fillStyle = "rgba(15, 23, 42, 0.92)";
           ctx.strokeStyle = thought.team === "home" ? (state.homeTeam.color || "#0F6B45") : (state.awayTeam.color || "#DA1E28");
-          ctx.lineWidth = 2;
+          ctx.lineWidth = 1.6;
 
           ctx.beginPath();
-          ctx.roundRect(tbX, tbY, tbW, tbH, 4);
+          ctx.roundRect(tbX, tbY, tbW, tbH, 3.5);
           ctx.fill();
           ctx.stroke();
 
           ctx.fillStyle = "#FFFFFF";
-          ctx.font = "600 12px 'IBM Plex Sans', -apple-system, sans-serif";
+          ctx.font = "600 10.5px 'IBM Plex Sans', -apple-system, sans-serif";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(thoughtBannerText, PITCH_W / 2, tbY + tbH / 2);
@@ -573,28 +573,28 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
 
         // Goal celebration overlay
         if (state.phase === "goal") {
-          ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+          ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
           ctx.fillRect(0, 0, PITCH_W, PITCH_H);
 
           ctx.fillStyle = "#F1C21B";
-          ctx.font = "900 50px 'IBM Plex Sans', sans-serif";
+          ctx.font = "900 44px 'IBM Plex Sans', sans-serif";
           ctx.textAlign = "center";
-          ctx.fillText("⚽ GOAL! ⚽", PITCH_W / 2, PITCH_H / 2 - 18);
+          ctx.fillText("⚽ GOAL! ⚽", PITCH_W / 2, PITCH_H / 2 - 16);
 
           ctx.fillStyle = "#FFFFFF";
-          ctx.font = "700 26px 'IBM Plex Sans', sans-serif";
-          ctx.fillText(`${state.score.home}  —  ${state.score.away}`, PITCH_W / 2, PITCH_H / 2 + 28);
+          ctx.font = "700 24px 'IBM Plex Sans', sans-serif";
+          ctx.fillText(`${state.score.home}  —  ${state.score.away}`, PITCH_W / 2, PITCH_H / 2 + 24);
         }
       } else {
         // --- PRE-MATCH PERSISTENT STADIUM VIEW ---
         // Place match ball on the center spot
-        const ballGrad = ctx.createRadialGradient(PITCH_W / 2 - 2, PITCH_H / 2 - 2, 1, PITCH_W / 2, PITCH_H / 2, 9);
+        const ballGrad = ctx.createRadialGradient(PITCH_W / 2 - 1.5, PITCH_H / 2 - 1.5, 1, PITCH_W / 2, PITCH_H / 2, 7.5);
         ballGrad.addColorStop(0, "#ffffff");
         ballGrad.addColorStop(0.7, "#f8fafc");
         ballGrad.addColorStop(1, "#94a3b8");
         ctx.fillStyle = ballGrad;
         ctx.beginPath();
-        ctx.arc(PITCH_W / 2, PITCH_H / 2, 9, 0, Math.PI * 2);
+        ctx.arc(PITCH_W / 2, PITCH_H / 2, 7.5, 0, Math.PI * 2);
         ctx.fill();
 
         // Home Team Formation Preview (Left Half)
@@ -610,9 +610,9 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
           const isGK = pRole === "GK" || idx === 0;
 
           // Shadow
-          ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+          ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
           ctx.beginPath();
-          ctx.ellipse(pos.x, pos.y + 15, 20, 8, 0, 0, Math.PI * 2);
+          ctx.ellipse(pos.x, pos.y + 11, 14, 6, 0, 0, Math.PI * 2);
           ctx.fill();
 
           // Circle
@@ -622,33 +622,33 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
           ctx.fill();
 
           ctx.strokeStyle = "#FFFFFF";
-          ctx.lineWidth = 2.8;
+          ctx.lineWidth = 2.2;
           ctx.stroke();
 
           // Number
           ctx.fillStyle = isGK ? "#161616" : getContrastingTextColor(hColor);
-          ctx.font = "bold 15px 'IBM Plex Sans', -apple-system, sans-serif";
+          ctx.font = "bold 11.5px 'IBM Plex Sans', -apple-system, sans-serif";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(`${pNum}`, pos.x, pos.y);
 
           // Role Tag Pill
           const labelText = getPlayerShortLabel(pName, pRole, pNum);
-          const pillW = Math.max(50, labelText.length * 6.8 + 12);
-          const pillH = 17;
+          const pillW = Math.max(42, labelText.length * 5.8 + 10);
+          const pillH = 14;
           const pillX = pos.x - pillW / 2;
-          const pillY = pos.y + PLAYER_RADIUS + 7;
+          const pillY = pos.y + PLAYER_RADIUS + 5;
 
-          ctx.fillStyle = "rgba(15, 23, 42, 0.92)";
-          ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
-          ctx.lineWidth = 1.2;
+          ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+          ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.roundRect(pillX, pillY, pillW, pillH, 3.5);
+          ctx.roundRect(pillX, pillY, pillW, pillH, 3);
           ctx.fill();
           ctx.stroke();
 
           ctx.fillStyle = "#FFFFFF";
-          ctx.font = "700 9.5px 'IBM Plex Sans', -apple-system, sans-serif";
+          ctx.font = "700 8.5px 'IBM Plex Sans', -apple-system, sans-serif";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(labelText, pos.x, pillY + pillH / 2);
@@ -666,9 +666,9 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
           const isGK = idx === 0;
 
           // Shadow
-          ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
+          ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
           ctx.beginPath();
-          ctx.ellipse(pos.x, pos.y + 15, 20, 8, 0, 0, Math.PI * 2);
+          ctx.ellipse(pos.x, pos.y + 11, 14, 6, 0, 0, Math.PI * 2);
           ctx.fill();
 
           // Circle
@@ -678,33 +678,33 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
           ctx.fill();
 
           ctx.strokeStyle = "#FFFFFF";
-          ctx.lineWidth = 2.8;
+          ctx.lineWidth = 2.2;
           ctx.stroke();
 
           // Number
           ctx.fillStyle = isGK ? "#FFFFFF" : getContrastingTextColor(effectiveAwayColor);
-          ctx.font = "bold 15px 'IBM Plex Sans', -apple-system, sans-serif";
+          ctx.font = "bold 11.5px 'IBM Plex Sans', -apple-system, sans-serif";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(`${pNum}`, pos.x, pos.y);
 
           // Role Tag Pill
           const labelText = `${pRole} #${pNum}`;
-          const pillW = Math.max(50, labelText.length * 6.8 + 12);
-          const pillH = 17;
+          const pillW = Math.max(42, labelText.length * 5.8 + 10);
+          const pillH = 14;
           const pillX = pos.x - pillW / 2;
-          const pillY = pos.y + PLAYER_RADIUS + 7;
+          const pillY = pos.y + PLAYER_RADIUS + 5;
 
-          ctx.fillStyle = "rgba(15, 23, 42, 0.92)";
-          ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
-          ctx.lineWidth = 1.2;
+          ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+          ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.roundRect(pillX, pillY, pillW, pillH, 3.5);
+          ctx.roundRect(pillX, pillY, pillW, pillH, 3);
           ctx.fill();
           ctx.stroke();
 
           ctx.fillStyle = "#FFFFFF";
-          ctx.font = "700 9.5px 'IBM Plex Sans', -apple-system, sans-serif";
+          ctx.font = "700 8.5px 'IBM Plex Sans', -apple-system, sans-serif";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.fillText(labelText, pos.x, pillY + pillH / 2);
@@ -713,19 +713,19 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
         // Stadium Center Ready Badge
         ctx.fillStyle = "rgba(15, 107, 69, 0.95)";
         ctx.strokeStyle = "#FFFFFF";
-        ctx.lineWidth = 1.8;
-        const bW = 380;
-        const bH = 34;
+        ctx.lineWidth = 1.5;
+        const bW = 360;
+        const bH = 30;
         ctx.beginPath();
-        ctx.roundRect(PITCH_W / 2 - bW / 2, 45, bW, bH, 4);
+        ctx.roundRect(PITCH_W / 2 - bW / 2, 40, bW, bH, 4);
         ctx.fill();
         ctx.stroke();
 
         ctx.fillStyle = "#FFFFFF";
-        ctx.font = "700 12px 'IBM Plex Sans', sans-serif";
+        ctx.font = "700 11px 'IBM Plex Sans', sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText("⚡ MATCH READY • KICK OFF TO START SIMULATION", PITCH_W / 2, 45 + bH / 2);
+        ctx.fillText("⚡ MATCH READY • KICK OFF TO START SIMULATION", PITCH_W / 2, 40 + bH / 2);
       }
 
       ctx.restore();
@@ -753,7 +753,7 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
     const mouseY = (e.clientY - rect.top) * scaleY;
 
     if (gameState && gameState.players) {
-      const hit = gameState.players.find((p) => Math.hypot(p.x - mouseX, p.y - mouseY) < PLAYER_RADIUS + 8);
+      const hit = gameState.players.find((p) => Math.hypot(p.x - mouseX, p.y - mouseY) < PLAYER_RADIUS + 6);
       setHoveredPlayer(hit || null);
     }
   };
@@ -763,15 +763,15 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
       style={{
         position: "relative",
         width: "100%",
-        minHeight: "460px",
-        aspectRatio: "1000 / 620",
+        maxHeight: "360px",
+        aspectRatio: "1000 / 540",
         margin: "0 auto",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         borderRadius: "4px",
         overflow: "hidden",
-        backgroundColor: "#0a331c",
+        backgroundColor: "#09311c",
         boxShadow: "0 4px 16px rgba(0, 0, 0, 0.12)",
         border: "1px solid var(--cds-border)",
       }}
@@ -784,6 +784,7 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
         style={{
           width: "100%",
           height: "100%",
+          maxHeight: "360px",
           display: "block",
           borderRadius: "4px",
           cursor: hoveredPlayer ? "pointer" : "default",
@@ -796,12 +797,12 @@ export const PitchCanvas: React.FC<PitchCanvasProps> = ({
           className="carbon-card"
           style={{
             position: "absolute",
-            bottom: "12px",
-            right: "12px",
+            bottom: "10px",
+            right: "10px",
             padding: "8px 12px",
             fontSize: "12px",
             zIndex: 10,
-            maxWidth: "280px",
+            maxWidth: "260px",
             boxShadow: "0 6px 18px rgba(0,0,0,0.2)",
           }}
         >

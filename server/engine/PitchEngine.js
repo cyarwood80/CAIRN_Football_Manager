@@ -4,10 +4,10 @@
 export class PitchEngine {
   constructor(homeTactics, awayTactics, options = {}) {
     this.width = 1000;
-    this.height = 620;
-    this.goalYMin = 250;
-    this.goalYMax = 370;
-    this.goalCenterY = 310;
+    this.height = 540;
+    this.goalYMin = 210;
+    this.goalYMax = 330;
+    this.goalCenterY = 270;
     this.options = options;
 
     this.homeTeam = homeTactics;
@@ -200,107 +200,107 @@ export class PitchEngine {
     if (formation === "4-3-3") {
       // 1 GK, 4 DEF (RB, CB_L, CB_R, LB), 3 MID (CDM, CAM, CM), 3 FWD (RW, ST, LW)
       return [
-        { x: xBase(0.05), y: 320 }, // 1: GK
-        { x: xBase(0.22), y: 530 }, // 2: RB
-        { x: xBase(0.18), y: 250 }, // 3: CB_L
-        { x: xBase(0.18), y: 390 }, // 4: CB_R
-        { x: xBase(0.22), y: 110 }, // 5: LB
-        { x: xBase(0.38), y: 320 }, // 6: CDM
-        { x: xBase(0.72), y: 530 }, // 7: RW
-        { x: xBase(0.55), y: 390 }, // 8: CAM
-        { x: xBase(0.78), y: 320 }, // 9: ST
-        { x: xBase(0.55), y: 250 }, // 10: CM
-        { x: xBase(0.72), y: 110 }, // 11: LW
+        { x: xBase(0.05), y: 270 }, // 1: GK
+        { x: xBase(0.22), y: 450 }, // 2: RB
+        { x: xBase(0.18), y: 195 }, // 3: CB_L
+        { x: xBase(0.18), y: 345 }, // 4: CB_R
+        { x: xBase(0.22), y: 90 },  // 5: LB
+        { x: xBase(0.38), y: 270 }, // 6: CDM
+        { x: xBase(0.72), y: 450 }, // 7: RW
+        { x: xBase(0.55), y: 345 }, // 8: CAM
+        { x: xBase(0.78), y: 270 }, // 9: ST
+        { x: xBase(0.55), y: 195 }, // 10: CM
+        { x: xBase(0.72), y: 90 },  // 11: LW
       ];
     } else if (formation === "4-4-2") {
       // 1 GK, 4 DEF (RB, CB_L, CB_R, LB), 4 MID (RM, CM_R, CM_L, LM), 2 FWD (ST_R, ST_L)
       return [
-        { x: xBase(0.05), y: 320 }, // 1: GK
-        { x: xBase(0.22), y: 530 }, // 2: RB
-        { x: xBase(0.18), y: 250 }, // 3: CB_L
-        { x: xBase(0.18), y: 390 }, // 4: CB_R
-        { x: xBase(0.22), y: 110 }, // 5: LB
-        { x: xBase(0.52), y: 530 }, // 6: RM
-        { x: xBase(0.48), y: 390 }, // 7: CM_R
-        { x: xBase(0.48), y: 250 }, // 8: CM_L
-        { x: xBase(0.76), y: 390 }, // 9: ST_R
-        { x: xBase(0.76), y: 250 }, // 10: ST_L
-        { x: xBase(0.52), y: 110 }, // 11: LM
+        { x: xBase(0.05), y: 270 }, // 1: GK
+        { x: xBase(0.22), y: 450 }, // 2: RB
+        { x: xBase(0.18), y: 195 }, // 3: CB_L
+        { x: xBase(0.18), y: 345 }, // 4: CB_R
+        { x: xBase(0.22), y: 90 },  // 5: LB
+        { x: xBase(0.52), y: 450 }, // 6: RM
+        { x: xBase(0.48), y: 345 }, // 7: CM_R
+        { x: xBase(0.48), y: 195 }, // 8: CM_L
+        { x: xBase(0.76), y: 345 }, // 9: ST_R
+        { x: xBase(0.76), y: 195 }, // 10: ST_L
+        { x: xBase(0.52), y: 90 },  // 11: LM
       ];
     } else if (formation === "3-5-2") {
       // 1 GK, 3 DEF, 5 MID, 2 FWD
       return [
-        { x: xBase(0.05), y: 320 }, // 1: GK
-        { x: xBase(0.19), y: 440 }, // 2: CB_R
-        { x: xBase(0.17), y: 320 }, // 3: CB_C
-        { x: xBase(0.19), y: 200 }, // 4: CB_L
-        { x: xBase(0.42), y: 550 }, // 5: RWB
-        { x: xBase(0.36), y: 320 }, // 6: CDM
-        { x: xBase(0.52), y: 400 }, // 7: CM_R
-        { x: xBase(0.60), y: 320 }, // 8: CAM
-        { x: xBase(0.77), y: 390 }, // 9: ST_R
-        { x: xBase(0.77), y: 250 }, // 10: ST_L
-        { x: xBase(0.42), y: 90 },  // 11: LWB
+        { x: xBase(0.05), y: 270 }, // 1: GK
+        { x: xBase(0.19), y: 380 }, // 2: CB_R
+        { x: xBase(0.17), y: 270 }, // 3: CB_C
+        { x: xBase(0.19), y: 160 }, // 4: CB_L
+        { x: xBase(0.42), y: 465 }, // 5: RWB
+        { x: xBase(0.36), y: 270 }, // 6: CDM
+        { x: xBase(0.52), y: 345 }, // 7: CM_R
+        { x: xBase(0.60), y: 270 }, // 8: CAM
+        { x: xBase(0.77), y: 345 }, // 9: ST_R
+        { x: xBase(0.77), y: 195 }, // 10: ST_L
+        { x: xBase(0.42), y: 75 },  // 11: LWB
       ];
     } else if (formation === "5-3-2") {
       // 1 GK, 5 DEF, 3 MID, 2 FWD
       return [
-        { x: xBase(0.05), y: 320 }, // 1: GK
-        { x: xBase(0.25), y: 540 }, // 2: RWB
-        { x: xBase(0.18), y: 430 }, // 3: CB_R
-        { x: xBase(0.16), y: 320 }, // 4: CB_C
-        { x: xBase(0.18), y: 210 }, // 5: CB_L
-        { x: xBase(0.25), y: 100 }, // 6: LWB
-        { x: xBase(0.38), y: 320 }, // 7: CDM
-        { x: xBase(0.50), y: 390 }, // 8: CM_R
-        { x: xBase(0.77), y: 390 }, // 9: ST_R
-        { x: xBase(0.77), y: 250 }, // 10: ST_L
-        { x: xBase(0.50), y: 250 }, // 11: CM_L
+        { x: xBase(0.05), y: 270 }, // 1: GK
+        { x: xBase(0.25), y: 460 }, // 2: RWB
+        { x: xBase(0.18), y: 365 }, // 3: CB_R
+        { x: xBase(0.16), y: 270 }, // 4: CB_C
+        { x: xBase(0.18), y: 175 }, // 5: CB_L
+        { x: xBase(0.25), y: 80 },  // 6: LWB
+        { x: xBase(0.38), y: 270 }, // 7: CDM
+        { x: xBase(0.50), y: 345 }, // 8: CM_R
+        { x: xBase(0.77), y: 345 }, // 9: ST_R
+        { x: xBase(0.77), y: 195 }, // 10: ST_L
+        { x: xBase(0.50), y: 195 }, // 11: CM_L
       ];
     } else if (formation === "4-2-3-1") {
       // 1 GK, 4 DEF (RB, CB_R, CB_L, LB), 2 CDM, 3 AM (RM, CAM, LM), 1 ST
       return [
-        { x: xBase(0.05), y: 320 }, // 1: GK
-        { x: xBase(0.22), y: 530 }, // 2: RB
-        { x: xBase(0.18), y: 390 }, // 3: CB_R
-        { x: xBase(0.18), y: 250 }, // 4: CB_L
-        { x: xBase(0.22), y: 110 }, // 5: LB
-        { x: xBase(0.36), y: 390 }, // 6: CDM_R
-        { x: xBase(0.65), y: 530 }, // 7: RM
-        { x: xBase(0.36), y: 250 }, // 8: CDM_L
-        { x: xBase(0.80), y: 320 }, // 9: ST
-        { x: xBase(0.60), y: 320 }, // 10: CAM
-        { x: xBase(0.65), y: 110 }, // 11: LM
+        { x: xBase(0.05), y: 270 }, // 1: GK
+        { x: xBase(0.22), y: 450 }, // 2: RB
+        { x: xBase(0.18), y: 345 }, // 3: CB_R
+        { x: xBase(0.18), y: 195 }, // 4: CB_L
+        { x: xBase(0.22), y: 90 },  // 5: LB
+        { x: xBase(0.36), y: 345 }, // 6: CDM_R
+        { x: xBase(0.65), y: 450 }, // 7: RM
+        { x: xBase(0.36), y: 195 }, // 8: CDM_L
+        { x: xBase(0.80), y: 270 }, // 9: ST
+        { x: xBase(0.60), y: 270 }, // 10: CAM
+        { x: xBase(0.65), y: 90 },  // 11: LM
       ];
     } else if (formation === "3-4-3") {
       // 1 GK, 3 DEF (CB_R, CB_C, CB_L), 4 MID (RM, CM_R, CM_L, LM), 3 FWD (RW, ST, LW)
       return [
-        { x: xBase(0.05), y: 320 }, // 1: GK
-        { x: xBase(0.19), y: 440 }, // 2: CB_R
-        { x: xBase(0.17), y: 320 }, // 3: CB_C
-        { x: xBase(0.19), y: 200 }, // 4: CB_L
-        { x: xBase(0.48), y: 540 }, // 5: RM
-        { x: xBase(0.45), y: 390 }, // 6: CM_R
-        { x: xBase(0.76), y: 520 }, // 7: RW
-        { x: xBase(0.45), y: 250 }, // 8: CM_L
-        { x: xBase(0.82), y: 320 }, // 9: ST
-        { x: xBase(0.48), y: 100 }, // 10: LM
-        { x: xBase(0.76), y: 120 }, // 11: LW
+        { x: xBase(0.05), y: 270 }, // 1: GK
+        { x: xBase(0.19), y: 380 }, // 2: CB_R
+        { x: xBase(0.17), y: 270 }, // 3: CB_C
+        { x: xBase(0.19), y: 160 }, // 4: CB_L
+        { x: xBase(0.48), y: 455 }, // 5: RM
+        { x: xBase(0.45), y: 335 }, // 6: CM_R
+        { x: xBase(0.76), y: 440 }, // 7: RW
+        { x: xBase(0.45), y: 205 }, // 8: CM_L
+        { x: xBase(0.82), y: 270 }, // 9: ST
+        { x: xBase(0.48), y: 85 },  // 10: LM
+        { x: xBase(0.76), y: 100 }, // 11: LW
       ];
     } else {
       // Default 4-3-3 fallback
       return [
-        { x: xBase(0.05), y: 320 },
-        { x: xBase(0.22), y: 530 },
-        { x: xBase(0.18), y: 250 },
-        { x: xBase(0.18), y: 390 },
-        { x: xBase(0.22), y: 110 },
-        { x: xBase(0.38), y: 320 },
-        { x: xBase(0.72), y: 530 },
-        { x: xBase(0.55), y: 390 },
-        { x: xBase(0.78), y: 320 },
-        { x: xBase(0.55), y: 250 },
-        { x: xBase(0.72), y: 110 },
+        { x: xBase(0.05), y: 270 },
+        { x: xBase(0.22), y: 450 },
+        { x: xBase(0.18), y: 195 },
+        { x: xBase(0.18), y: 345 },
+        { x: xBase(0.22), y: 90 },
+        { x: xBase(0.38), y: 270 },
+        { x: xBase(0.72), y: 450 },
+        { x: xBase(0.55), y: 345 },
+        { x: xBase(0.78), y: 270 },
+        { x: xBase(0.55), y: 195 },
+        { x: xBase(0.72), y: 90 },
       ];
     }
   }
