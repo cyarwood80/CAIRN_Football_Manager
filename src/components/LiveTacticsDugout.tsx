@@ -30,7 +30,7 @@ export const LiveTacticsDugout: React.FC<LiveTacticsDugoutProps> = ({
 
   const { players, subsRemaining, phase } = gameState;
   const teamPlayers = players.filter((p) => p.team === userTeamType);
-  const remainingSubs = subsRemaining ? subsRemaining[userTeamType] : 1;
+  const remainingSubs = subsRemaining ? subsRemaining[userTeamType] : 4;
 
   // Find default player to replace (lowest stamina outfield player)
   const outfieldPlayers = teamPlayers.filter((p) => p.role !== "GK");
@@ -91,7 +91,7 @@ export const LiveTacticsDugout: React.FC<LiveTacticsDugoutProps> = ({
           className={remainingSubs > 0 ? "badge badge-success" : "badge badge-neutral"}
           style={{ fontSize: "10px", padding: "2px 8px" }}
         >
-          {remainingSubs > 0 ? `${remainingSubs} / 3 Subs Available` : "0 / 3 Subs Left"}
+          {remainingSubs > 0 ? `${remainingSubs} / 4 Subs Available` : "0 / 4 Subs Left"}
         </span>
       </div>
 
@@ -132,7 +132,7 @@ export const LiveTacticsDugout: React.FC<LiveTacticsDugoutProps> = ({
               <ArrowRightLeft size={13} color="var(--cds-blue)" />
               <span>Tactical Sub Agent</span>
             </div>
-            <span style={{ fontSize: "10px", color: "var(--cds-text-muted)" }}>3 max</span>
+            <span style={{ fontSize: "10px", color: "var(--cds-text-muted)" }}>4 max</span>
           </div>
 
           {remainingSubs > 0 ? (
@@ -169,10 +169,12 @@ export const LiveTacticsDugout: React.FC<LiveTacticsDugoutProps> = ({
                     fontSize: "11px",
                   }}
                 >
+                  <option value="GK">GK (Shot Stopper)</option>
+                  <option value="CB">DEF (Dominant Stopper)</option>
+                  <option value="CM">MID (Midfield Engine)</option>
                   <option value="ST">ST (Impact Striker)</option>
                   <option value="CAM">CAM (Creative Playmaker)</option>
                   <option value="CDM">CDM (Iron Anchor)</option>
-                  <option value="CB">CB (Dominant Stopper)</option>
                   <option value="RW">RW (Inverted Winger)</option>
                   <option value="LW">LW (Explosive Winger)</option>
                 </select>
@@ -196,7 +198,7 @@ export const LiveTacticsDugout: React.FC<LiveTacticsDugoutProps> = ({
             </form>
           ) : (
             <div style={{ padding: "6px", textAlign: "center", color: "var(--cds-text-muted)", fontSize: "11px" }}>
-              ✓ All 3 tactical substitutions used.
+              ✓ All 4 tactical substitutions used.
             </div>
           )}
         </div>

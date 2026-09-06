@@ -286,11 +286,12 @@ const compiledClubs = clubDataList.map((c) => {
     { number: 11, name: (fwds[2] || other[9] || fallback('Left Winger', 'LW')).name, role: 'LW', transferValue: (fwds[2] || other[9])?.transferValue || 14.0, tier: (fwds[2] || other[9])?.tier || 3 },
   ];
 
-  // Exactly 3 bench substitutes (Total 14 players)
+  // Exactly 4 bench substitutes: GK, DEF, MID, ST (Total 15 players)
   const benchSubs = [
-    { number: 12, name: (fwds[3] || other[10] || fallback('Impact Striker', 'ST')).name, role: 'ST', transferValue: (fwds[3] || other[10])?.transferValue || 6.5, tier: 2 },
-    { number: 13, name: (mids[3] || other[11] || fallback('Playmaker Sub', 'CAM')).name, role: 'CAM', transferValue: (mids[3] || other[11])?.transferValue || 6.0, tier: 2 },
-    { number: 14, name: (defs[4] || mids[4] || other[12] || fallback('Iron Anchor', 'CDM')).name, role: 'CDM', transferValue: (defs[4] || mids[4] || other[12])?.transferValue || 5.5, tier: 2 },
+    { number: 12, name: (gks[1] || other[10] || fallback('Backup Goalkeeper', 'GK')).name, role: 'GK', transferValue: (gks[1] || other[10])?.transferValue || 5.0, tier: 2 },
+    { number: 13, name: (defs[4] || other[11] || fallback('Backup Center Back', 'CB')).name, role: 'CB', transferValue: (defs[4] || other[11])?.transferValue || 5.5, tier: 2 },
+    { number: 14, name: (mids[3] || other[12] || fallback('Midfield Engine', 'CM')).name, role: 'CM', transferValue: (mids[3] || other[12])?.transferValue || 6.0, tier: 2 },
+    { number: 15, name: (fwds[3] || other[13] || fallback('Impact Striker', 'ST')).name, role: 'ST', transferValue: (fwds[3] || other[13])?.transferValue || 6.5, tier: 2 },
   ];
 
   const totalValue = +(starting11.reduce((sum, p) => sum + p.transferValue, 0) + benchSubs.reduce((sum, p) => sum + p.transferValue, 0)).toFixed(1);

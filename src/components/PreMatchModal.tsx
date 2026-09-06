@@ -353,7 +353,7 @@ export const PreMatchModal: React.FC<PreMatchModalProps> = ({
             }}
           >
             <span style={{ fontSize: "11px", fontWeight: "700", color: "var(--cds-text-muted)", textTransform: "uppercase" }}>
-              Bench Substitutes (14-Player Squad Rule: 3 Subs)
+              Bench Substitutes (15-Player Squad Rule: 4 Subs — GK, DEF, MID, ST)
             </span>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "8px" }}>
               {bench.map((bPlayer, bIdx) => (

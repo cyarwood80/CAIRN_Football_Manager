@@ -47,7 +47,7 @@ export class PitchEngine {
     };
 
     this.score = { home: 0, away: 0 };
-    this.subsRemaining = { home: 3, away: 3 };
+    this.subsRemaining = { home: 4, away: 4 };
     this.benchSubs = {
       home: JSON.parse(JSON.stringify(this.homeTeam.benchSubs || [])),
       away: JSON.parse(JSON.stringify(this.awayTeam.benchSubs || [])),
@@ -618,6 +618,9 @@ export class PitchEngine {
     if (!player) return { success: false, reason: "Player not found on pitch." };
 
     const trait = (player.personalityTrait || "Methodical").toLowerCase();
+    const msg = (message || "").toLowerCase();
+    let response = "";
+    let actionTaken = "";
 
     if (msg.includes("press") || msg.includes("hunt") || msg.includes("close") || msg.includes("hound")) {
       player.tactic.pressBias = 0.95;

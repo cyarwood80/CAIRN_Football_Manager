@@ -258,9 +258,9 @@ export const App: React.FC = () => {
       })
       .catch(() => {});
   }, []);
-  // Fallback squad prefill using Tier 4 grassroots draft if no squad present
+  // Fallback squad prefill using Tier 4 grassroots draft if no squad present or incomplete bench
   useEffect(() => {
-    if (!teamConfig.starting11 || teamConfig.starting11.length < 11) {
+    if (!teamConfig.starting11 || teamConfig.starting11.length < 11 || !teamConfig.benchSubs || teamConfig.benchSubs.length < 4) {
       fetch("/api/cm/draft-squad")
         .then((res) => res.json())
         .then((draftData) => {
@@ -268,7 +268,7 @@ export const App: React.FC = () => {
             setTeamConfig((prev) => {
               const updated = {
                 ...prev,
-                starting11: draftData.starting11,
+                starting11: prev.starting11 && prev.starting11.length >= 11 ? prev.starting11 : draftData.starting11,
                 benchSubs: draftData.benchSubs,
                 squadHarmony: prev.squadHarmony || 82,
                 totalSquadValue: draftData.totalSquadValue || 3.5,
@@ -1080,7 +1080,7 @@ export const App: React.FC = () => {
                   className={`btn ${matchdayRightTab === "squad" ? "btn-primary" : "btn-secondary"}`}
                   style={{ fontSize: "11px", height: "26px", padding: "0 10px", fontWeight: "700" }}
                 >
-                  Live Squad & Ratings ({(teamConfig.starting11?.length || 11) + (teamConfig.benchSubs?.length || 3)})
+                  Live Squad & Ratings ({(teamConfig.starting11?.length || 11) + (teamConfig.benchSubs?.length || 4)})
                 </button>
                 <button
                   type="button"
@@ -1097,7 +1097,7 @@ export const App: React.FC = () => {
                 <PlayerSquadCM
                   players={gameState?.players || []}
                   benchSubs={gameState?.benchSubs}
-                  subsRemaining={gameState?.subsRemaining || { home: 3, away: 3 }}
+                  subsRemaining={gameState?.subsRemaining || { home: 4, away: 4 }}
                   homeTeam={{
                     name: gameState?.homeTeam?.name || teamConfig.name,
                     color: gameState?.homeTeam?.color || teamConfig.color,
@@ -1152,7 +1152,7 @@ export const App: React.FC = () => {
             <PlayerSquadCM
               players={gameState?.players || []}
               benchSubs={gameState?.benchSubs}
-              subsRemaining={gameState?.subsRemaining || { home: 3, away: 3 }}
+              subsRemaining={gameState?.subsRemaining || { home: 4, away: 4 }}
               homeTeam={{
                 name: gameState?.homeTeam?.name || teamConfig.name,
                 color: gameState?.homeTeam?.color || teamConfig.color,

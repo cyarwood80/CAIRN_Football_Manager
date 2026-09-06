@@ -223,9 +223,10 @@ export function getRandomDraftSquad(clubName = "Grassroots United FC", tierKey =
   ];
 
   const defaultSubs = [
-    { number: 12, name: "Oscar Turner (Sub)", role: "ST", rating: 5.4, potentialRating: 7.6, transferValue: 0.18, tacticalMastery: 46, personalityTrait: "Sensitive", personalityIcon: "🎭" },
-    { number: 13, name: "Alfie Scott (Sub)", role: "CAM", rating: 5.3, potentialRating: 7.5, transferValue: 0.15, tacticalMastery: 45, personalityTrait: "Creative", personalityIcon: "🧠" },
-    { number: 14, name: "Theo Clark (Sub)", role: "CDM", rating: 5.2, potentialRating: 7.2, transferValue: 0.12, tacticalMastery: 44, personalityTrait: "Methodical", personalityIcon: "🛡️" },
+    { number: 12, name: "Oscar Turner (Sub)", role: "GK", rating: 5.4, potentialRating: 7.6, transferValue: 0.18, tacticalMastery: 46, personalityTrait: "Methodical", personalityIcon: "🛡️" },
+    { number: 13, name: "Max Brown (Sub)", role: "CB", rating: 5.3, potentialRating: 7.5, transferValue: 0.20, tacticalMastery: 45, personalityTrait: "Tenacious", personalityIcon: "⚙️" },
+    { number: 14, name: "Theo Clark (Sub)", role: "CM", rating: 5.2, potentialRating: 7.2, transferValue: 0.22, tacticalMastery: 44, personalityTrait: "Creative", personalityIcon: "🧠" },
+    { number: 15, name: "Alfie Taylor (Sub)", role: "ST", rating: 5.4, potentialRating: 7.7, transferValue: 0.25, tacticalMastery: 46, personalityTrait: "Aggressive", personalityIcon: "🔥" },
   ];
 
   return {

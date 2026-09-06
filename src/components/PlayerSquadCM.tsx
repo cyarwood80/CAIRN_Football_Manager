@@ -44,7 +44,7 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
   const teamConfig = selectedTeam === "home" ? homeTeam : awayTeam;
   const teamLivePlayers = players.filter((p) => p.team === selectedTeam && !p.subbedOut);
   const teamLiveBench = (benchSubs && benchSubs[selectedTeam]) || [];
-  const subsLeft = subsRemaining[selectedTeam] ?? 3;
+  const subsLeft = subsRemaining[selectedTeam] ?? 4;
 
   const isLiveMatch = teamLivePlayers.length > 0;
   const isUserTeam = selectedTeam === userTeamKey;
@@ -312,7 +312,7 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
             }}
           >
             <RefreshCw size={11} />
-            <span>Subs: {subsLeft} / 3</span>
+            <span>Subs: {subsLeft} / 4</span>
           </div>
         </div>
 
@@ -651,7 +651,7 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "6px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
             <span style={{ fontSize: "11px", fontWeight: "700", color: "var(--cds-text-primary)", textTransform: "uppercase", letterSpacing: "0.03em" }}>
-              Bench Substitutes (3 Tactical Replacements)
+              Bench Substitutes (4 Tactical Replacements: GK, DEF, MID, ST)
             </span>
             {activeSubbingTargetId && activeTargetPlayer && (
               <span
@@ -684,7 +684,7 @@ export const PlayerSquadCM: React.FC<PlayerSquadCMProps> = ({
           </span>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "8px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "8px" }}>
           {displayBench.map((sub: any, idx: number) => {
             const isUsed = sub.used;
             const canDeploy = isUserTeam && activeSubbingTargetId && !isUsed && (!isLiveMatch || subsLeft > 0);

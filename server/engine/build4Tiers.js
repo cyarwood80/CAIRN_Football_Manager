@@ -113,7 +113,8 @@ const POSITIONS = [
   { num: 11, role: "LW" },
   { num: 12, role: "SUB_GK" },
   { num: 13, role: "SUB_DEF" },
-  { num: 14, role: "SUB_FWD" },
+  { num: 14, role: "SUB_MID" },
+  { num: 15, role: "SUB_ST" },
 ];
 
 // Tier configuration parameters
