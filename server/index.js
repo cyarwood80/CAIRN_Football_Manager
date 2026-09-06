@@ -37,6 +37,8 @@ import {
   generatePlayerChatReply,
   generateAssistantManagerBriefing,
   evaluatePromptTraitResonance,
+  optimizePromptWithAI,
+  comparePromptsWithAI,
 } from "./services/llmService.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -534,6 +536,21 @@ app.get("/api/llm/telemetry", (req, res) => {
     activeModel: getActiveModel(),
     logs: getTelemetryLogs(),
   });
+});
+
+app.post("/api/llm/optimize", async (req, res) => {
+  const { prompt, rawPrompt } = req.body || {};
+  const result = await optimizePromptWithAI(rawPrompt || prompt);
+  res.json(result);
+});
+
+app.post("/api/llm/compare", async (req, res) => {
+  const { player, promptA, promptB, gameState } = req.body || {};
+  if (!player || !promptA || !promptB) {
+    return res.status(400).json({ error: "Missing player, promptA, or promptB" });
+  }
+  const result = await comparePromptsWithAI(player, promptA, promptB, gameState);
+  res.json(result);
 });
 
 // Fallback to index.html for client routing (Express 5 compatible)

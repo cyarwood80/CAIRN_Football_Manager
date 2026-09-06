@@ -38,6 +38,7 @@ import { CarbonHeader } from "./components/CarbonHeader";
 import { DashboardOverview } from "./components/DashboardOverview";
 import { TacticsBoardCarbon } from "./components/TacticsBoardCarbon";
 import { PlayerDossierModal } from "./components/PlayerDossierModal";
+import { PromptMasterclassModal } from "./components/PromptMasterclassModal";
 import type {
   GameSnapshot,
   TeamConfig,
@@ -160,6 +161,7 @@ export const App: React.FC = () => {
   const [showLLMStudioModal, setShowLLMStudioModal] = useState<boolean>(false);
   const [showAssistantManagerDrawer, setShowAssistantManagerDrawer] = useState<boolean>(false);
   const [showAIInferenceModal, setShowAIInferenceModal] = useState<boolean>(false);
+  const [showPromptMasterclass, setShowPromptMasterclass] = useState<boolean>(false);
 
   const [inboxMessages, setInboxMessages] = useState<ClubMessage[]>([
     {
@@ -886,6 +888,7 @@ export const App: React.FC = () => {
           isAdvancing={isAdvancingCalendar}
           onOpenAIInspector={() => setShowAIInferenceModal(true)}
           onOpenAssistantManager={() => setShowAssistantManagerDrawer(true)}
+          onOpenPromptMasterclass={() => setShowPromptMasterclass(true)}
           onAdvanceDay={handleAdvanceDay}
           onAdvanceToMatchday={handleAdvanceToMatchday}
           onPlayScheduledMatch={handlePlayScheduledMatch}
@@ -975,6 +978,7 @@ export const App: React.FC = () => {
               onSaveTactics={handleSaveTactics}
               onSelectPlayerDossier={(p) => setSelectedDossierPlayer(p)}
               onEnterLiveMatch={() => setActiveTab("matchday")}
+              onOpenMasterclass={() => setShowPromptMasterclass(true)}
             />
           )}
         {activeTab === "matchday" && (
@@ -1340,6 +1344,21 @@ export const App: React.FC = () => {
         onClose={() => setSelectedDossierPlayer(null)}
         clubName={teamConfig.name}
         onApplyRecommendation={(directive) => handleUpdateTacticsLive(directive, "DOSSIER_INSIGHT")}
+      />
+
+      {/* Educational Prompt Engineering Masterclass & Playbook Modal */}
+      <PromptMasterclassModal
+        isOpen={showPromptMasterclass}
+        onClose={() => setShowPromptMasterclass(false)}
+        activeModel={activeLLMModel}
+        players={gameState?.players || []}
+        onApplyTacticsPrompt={(p) => {
+          const updated = { ...teamConfig, prompt: p };
+          setTeamConfig(updated);
+          localStorage.setItem("afc_team_config", JSON.stringify(updated));
+          handleUpdateTacticsLive(p, "MASTERCLASS_PROMPT");
+          showCalendarToast("⚡ Masterclass Prompt Applied", p.slice(0, 60) + "...", "success");
+        }}
       />
       </div>
     </div>

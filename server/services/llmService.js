@@ -108,10 +108,15 @@ export async function generatePlayerChatReply(player, message, gameState) {
   const scoreText = gameState
     ? `${gameState.score.home} - ${gameState.score.away}`
     : "0 - 0";
-  const teamType = player.team === "home" ? "Home" : "Away";
+  const ratingNum = typeof player?.rating === "number" ? player.rating : 7.2;
+  const staminaNum = typeof player?.stamina === "number" ? player.stamina : 95;
+  const playerNumber = player?.number || 9;
+  const playerName = player?.name || "Player";
+  const playerRole = player?.role || "MID";
+  const teamType = player?.team === "away" ? "Away" : "Home";
 
-  const systemPrompt = `You are ${player.name}, a professional footballer playing as ${player.role} (#${player.number}) for the ${teamType} team.
-Current match state: Minute ${simMinute}', Score: ${scoreText}. Your match performance rating is ${player.rating.toFixed(1)}/10, Stamina: ${Math.round(player.stamina)}%.
+  const systemPrompt = `You are ${playerName}, a professional footballer playing as ${playerRole} (#${playerNumber}) for the ${teamType} team.
+Current match state: Minute ${simMinute}', Score: ${scoreText}. Your match performance rating is ${ratingNum.toFixed(1)}/10, Stamina: ${Math.round(staminaNum)}%.
 The manager has just shouted instructions to you from the touchline technical area.
 Respond as the player in 1-2 punchy, professional, passionate sentences directly acknowledging the manager's tactical shout. Stay in character as a committed elite footballer. Do NOT include markdown, explanations, or quotes.`;
 
@@ -586,6 +591,139 @@ export function evaluatePromptTraitResonance(promptText, squad = []) {
     promptAnalyzed: promptText,
     averageResonance: avgResonance,
     resonances,
+  };
+}
+
+/**
+ * 1-Click AI Prompt Optimizer & Coach
+ * Upgrades casual prompts into structured, high-resonance prompt engineering patterns
+ */
+export async function optimizePromptWithAI(rawPrompt) {
+  const p = (rawPrompt || "").trim();
+  const startTime = Date.now();
+
+  const systemPrompt = `You are an elite AI Prompt Engineer and UEFA Pro Tactical Analyst for the football simulation engine CAIRN FC.
+Your task is to take a manager's casual tactical instruction and rewrite it into a highly structured, professional prompt engineering masterclass instruction.
+Incorporate:
+1. Trigger condition (When / Upon...)
+2. Precise tactical action & target pitch zone
+3. Clear negative constraint / guardrail (Do NOT...)
+4. Desired outcome
+Output valid JSON in exactly this format:
+{
+  "originalPrompt": "${p}",
+  "optimizedPrompt": "rewritten prompt here",
+  "techniqueApplied": "Few-Shot / Trigger-Action-Guardrail / CoT",
+  "reasoningExplanation": "Short 1-2 sentence explanation of why this prompt yields higher model adherence",
+  "expectedResonanceBoost": "+25% Tactical Mastery"
+}`;
+
+  if (activeModel && activeModel !== "heuristic-fast") {
+    try {
+      const res = await fetch(`${OLLAMA_HOST}/api/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: activeModel,
+          prompt: `${systemPrompt}\n\nManager Prompt: "${p}"\n\nJSON Output:`,
+          format: "json",
+          stream: false,
+          options: { temperature: 0.3, num_predict: 200 },
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const parsed = JSON.parse(data.response);
+        const latencyMs = Date.now() - startTime;
+        recordTelemetry({
+          type: "tactical_eval",
+          targetName: "Prompt Optimizer",
+          systemPrompt,
+          userPrompt: p,
+          response: parsed.optimizedPrompt,
+          latencyMs,
+          tokenCount: data.eval_count || 60,
+        });
+        return { ...parsed, latencyMs, modelUsed: activeModel };
+      }
+    } catch (err) {
+      console.warn("Prompt optimizer Ollama error, using heuristic optimization:", err.message);
+    }
+  }
+
+  // Heuristic rule-based prompt optimizer
+  let optimized = "";
+  let technique = "Trigger-Action-Guardrail";
+  const lower = p.toLowerCase();
+
+  if (lower.includes("press") || lower.includes("hunt")) {
+    optimized = "Upon losing possession in the middle third, execute immediate high-intensity Gegenpress within 4 seconds; swarm ball carrier with 2 players while preserving backline depth. Do NOT commit reckless fouls inside the 25-yard danger zone.";
+    technique = "Conditional Trigger + Flank Guardrail";
+  } else if (lower.includes("shoot") || lower.includes("attack") || lower.includes("score")) {
+    optimized = "When penetrating the attacking third, isolate opposing center-backs with quick 1v1 drop-shoulder feints and pull the trigger on sight within 20 yards. Do NOT force low-probability shots when overlapping winger is unmarked in the box.";
+    technique = "Zonal Action + Negative Constraint";
+  } else if (lower.includes("pass") || lower.includes("tiki") || lower.includes("possession")) {
+    optimized = "Maintain high-tempo short-passing triangles across the midfield pivot; advance through the half-spaces and recycle to the CDM if passing lanes are blocked. Do NOT attempt contested long balls into a crowded penalty box.";
+    technique = "Chain-of-Thought Decision Tree";
+  } else if (lower.includes("defend") || lower.includes("park") || lower.includes("hold")) {
+    optimized = "Form a compact 5-man defensive low block across our own 18-yard box; deny central passing lanes and initiate lethal vertical counter-attacks down the flanks upon interception. Do NOT break defensive line shape until ball is fully cleared.";
+    technique = "Spatial Constraint + Transition Anchor";
+  } else {
+    optimized = `When in possession, structure rapid one-touch combinations and exploit open channels with purposeful movement; remain alert to transition triggers and protect defensive balance. Do NOT concede unnecessary turnovers in central midfield.`;
+    technique = "Balanced Role-Conditioned Prompt";
+  }
+
+  const latencyMs = Date.now() - startTime;
+  return {
+    originalPrompt: p || "play fast and win",
+    optimizedPrompt: optimized,
+    techniqueApplied: technique,
+    reasoningExplanation: "Structured prompt with clear trigger condition, pitch zone specification, and negative constraint guardrails to prevent stochastic hallucinations.",
+    expectedResonanceBoost: "+24% Tactical Mastery",
+    latencyMs,
+    modelUsed: "heuristic-optimizer",
+  };
+}
+
+/**
+ * Prompt A/B Testing Lab
+ * Compares two prompts side-by-side on a given player
+ */
+export async function comparePromptsWithAI(player, promptA, promptB, gameState) {
+  const [resA, resB] = await Promise.all([
+    generatePlayerChatReply(player, promptA, gameState),
+    generatePlayerChatReply(player, promptB, gameState),
+  ]);
+
+  const pALower = (promptA || "").toLowerCase();
+  const pBLower = (promptB || "").toLowerCase();
+
+  const getWeights = (p) => ({
+    pressBias: p.includes("press") ? 0.95 : p.includes("defend") ? 0.35 : 0.6,
+    shotBias: p.includes("shoot") ? 0.95 : p.includes("pass") ? 0.3 : 0.5,
+    passBias: p.includes("pass") || p.includes("tiki") ? 0.2 : p.includes("direct") ? 0.85 : 0.5,
+  });
+
+  return {
+    player: { id: player.id, name: player.name, role: player.role, trait: player.personalityTrait },
+    promptA: {
+      text: promptA,
+      response: resA.response,
+      latencyMs: resA.latencyMs,
+      modelUsed: resA.modelUsed,
+      reasoningTrace: resA.reasoningTrace,
+      weights: getWeights(pALower),
+    },
+    promptB: {
+      text: promptB,
+      response: resB.response,
+      latencyMs: resB.latencyMs,
+      modelUsed: resB.modelUsed,
+      reasoningTrace: resB.reasoningTrace,
+      weights: getWeights(pBLower),
+    },
+    comparisonInsight: `Prompt A focuses on ${pALower.includes("press") ? "High Press" : pALower.includes("shoot") ? "Direct Attack" : "General Play"}, while Prompt B activates ${pBLower.includes("pass") ? "Possession Retention" : pBLower.includes("defend") ? "Low Block Containment" : "Tactical Discipline"}.`,
   };
 }
 

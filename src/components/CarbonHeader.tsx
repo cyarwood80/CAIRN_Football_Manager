@@ -24,6 +24,7 @@ interface CarbonHeaderProps {
   isAdvancing?: boolean;
   onOpenAIInspector: () => void;
   onOpenAssistantManager: () => void;
+  onOpenPromptMasterclass?: () => void;
   onAdvanceDay: () => void;
   onAdvanceToMatchday?: () => void;
   onPlayScheduledMatch: () => void;
@@ -48,6 +49,7 @@ export const CarbonHeader: React.FC<CarbonHeaderProps> = ({
   isAdvancing = false,
   onOpenAIInspector,
   onOpenAssistantManager,
+  onOpenPromptMasterclass,
   onAdvanceDay,
   onAdvanceToMatchday,
   onPlayScheduledMatch,
@@ -217,6 +219,28 @@ export const CarbonHeader: React.FC<CarbonHeaderProps> = ({
             <span>👔</span>
             <span>Assistant Coach</span>
           </button>
+
+          {/* Prompt Engineering Masterclass Button */}
+          {onOpenPromptMasterclass && (
+            <button
+              className="btn btn-secondary"
+              onClick={onOpenPromptMasterclass}
+              style={{
+                height: "34px",
+                padding: "0 12px",
+                fontSize: "12px",
+                fontWeight: "600",
+                gap: "6px",
+                background: "linear-gradient(135deg, rgba(15, 107, 69, 0.15) 0%, rgba(138, 63, 252, 0.15) 100%)",
+                borderColor: "#8A3FFC",
+                color: "var(--cds-text-primary)",
+              }}
+              title="Open Prompt Engineering Masterclass & Playbook"
+            >
+              <Sparkles size={14} color="#8A3FFC" />
+              <span>Prompt Masterclass</span>
+            </button>
+          )}
 
           {/* Notifications Bell with Popover */}
           <div style={{ position: "relative" }} ref={notifRef}>

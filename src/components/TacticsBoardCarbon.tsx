@@ -1,6 +1,6 @@
 // src/components/TacticsBoardCarbon.tsx
 import React, { useState } from "react";
-import { CheckCircle2, ChevronRight, Play } from "lucide-react";
+import { CheckCircle2, ChevronRight, Play, Sparkles, Wand2, BookOpen } from "lucide-react";
 import { PromptQualityAnalyzer } from "./PromptQualityAnalyzer";
 import type { TeamConfig, Formation, SquadPlayerConfig } from "../types";
 
@@ -9,6 +9,7 @@ interface TacticsBoardCarbonProps {
   onSaveTactics: (updated: TeamConfig) => void;
   onSelectPlayerDossier: (player: SquadPlayerConfig) => void;
   onEnterLiveMatch: () => void;
+  onOpenMasterclass?: () => void;
 }
 
 // 11v11 Formation Coordinate Mapping for Pitch (percent-based: [x%, y%])
@@ -86,6 +87,7 @@ export const TacticsBoardCarbon: React.FC<TacticsBoardCarbonProps> = ({
   onSaveTactics,
   onSelectPlayerDossier,
   onEnterLiveMatch,
+  onOpenMasterclass,
 }) => {
   const [activeSubTab, setActiveSubTab] = useState<"Formation" | "Instructions" | "Player Roles" | "Set Pieces">("Formation");
   const [formation, setFormation] = useState<Formation>(teamConfig.formation || "4-2-3-1");
@@ -97,6 +99,32 @@ export const TacticsBoardCarbon: React.FC<TacticsBoardCarbonProps> = ({
     teamConfig.prompt || "Relentless high pressing, suffocate opponent in their half, blitz vertical counter-attacks immediately on turnover."
   );
   const [isSaved, setIsSaved] = useState(false);
+  const [isOptimizingPrompt, setIsOptimizingPrompt] = useState(false);
+  const [optimizationFeedback, setOptimizationFeedback] = useState<{ technique: string; explanation: string } | null>(null);
+
+  const handleOptimizePrompt = async () => {
+    if (!coachingPrompt.trim()) return;
+    setIsOptimizingPrompt(true);
+    try {
+      const res = await fetch("/api/llm/optimize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rawPrompt: coachingPrompt }),
+      });
+      const data = await res.json();
+      if (data.optimizedPrompt) {
+        setCoachingPrompt(data.optimizedPrompt);
+        setOptimizationFeedback({
+          technique: data.techniqueApplied || "Few-Shot + CoT Spatial Reasoning",
+          explanation: data.reasoningExplanation || "Structured into role-based spatial triggers and defensive guardrails.",
+        });
+      }
+    } catch (e) {
+      console.error("Prompt optimization failed:", e);
+    } finally {
+      setIsOptimizingPrompt(false);
+    }
+  };
 
   // Team Instructions State
   const [defensiveLine, setDefensiveLine] = useState("Higher");
@@ -158,15 +186,38 @@ export const TacticsBoardCarbon: React.FC<TacticsBoardCarbonProps> = ({
           </div>
         </div>
 
-        {/* Action to switch to live simulation */}
-        <button
-          className="btn btn-primary"
-          onClick={onEnterLiveMatch}
-          style={{ height: "36px", padding: "0 16px", gap: "8px" }}
-        >
-          <Play size={15} />
-          <span>Enter Live Match Simulation</span>
-        </button>
+        {/* Action buttons */}
+        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+          {onOpenMasterclass && (
+            <button
+              className="btn btn-secondary"
+              onClick={onOpenMasterclass}
+              style={{
+                height: "36px",
+                padding: "0 14px",
+                gap: "6px",
+                background: "linear-gradient(135deg, rgba(15, 107, 69, 0.12) 0%, rgba(138, 63, 252, 0.15) 100%)",
+                borderColor: "#8A3FFC",
+                color: "var(--cds-text-primary)",
+                fontWeight: "600",
+                fontSize: "12px",
+              }}
+              title="Open Prompt Engineering Masterclass & Playbook"
+            >
+              <Sparkles size={14} color="#8A3FFC" />
+              <span>Prompt Masterclass</span>
+            </button>
+          )}
+
+          <button
+            className="btn btn-primary"
+            onClick={onEnterLiveMatch}
+            style={{ height: "36px", padding: "0 16px", gap: "8px" }}
+          >
+            <Play size={15} />
+            <span>Enter Live Match Simulation</span>
+          </button>
+        </div>
       </div>
 
       {/* 3-Column Layout: Left Controls, Center 2D Pitch, Right Instructions */}
@@ -263,19 +314,73 @@ export const TacticsBoardCarbon: React.FC<TacticsBoardCarbonProps> = ({
 
           {activeSubTab === "Instructions" && (
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              <div>
-                <label style={{ display: "block", fontSize: "12px", fontWeight: "600", color: "var(--cds-text-secondary)", marginBottom: "6px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <label style={{ fontSize: "12px", fontWeight: "600", color: "var(--cds-text-secondary)" }}>
                   AI Coaching Directive (Plain English)
                 </label>
-                <textarea
-                  className="carbon-input"
-                  rows={4}
-                  value={coachingPrompt}
-                  onChange={(e) => setCoachingPrompt(e.target.value)}
-                  placeholder="e.g. Relentless high pressing, suffocate opponent in their half, quick vertical passing on turnover..."
-                  style={{ width: "100%", resize: "vertical", fontSize: "12px", lineHeight: "1.4", padding: "8px" }}
-                />
+                <button
+                  type="button"
+                  onClick={handleOptimizePrompt}
+                  disabled={isOptimizingPrompt}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    background: "rgba(138, 63, 252, 0.12)",
+                    border: "1px solid #8A3FFC",
+                    borderRadius: "3px",
+                    color: "#8A3FFC",
+                    fontSize: "11px",
+                    fontWeight: "700",
+                    padding: "3px 8px",
+                    cursor: isOptimizingPrompt ? "wait" : "pointer",
+                  }}
+                  title="Automatically upgrade this prompt into structured UEFA Pro prompt engineering format"
+                >
+                  <Wand2 size={12} />
+                  <span>{isOptimizingPrompt ? "Optimizing..." : "⚡ AI 1-Click Optimize"}</span>
+                </button>
               </div>
+
+              <textarea
+                className="carbon-input"
+                rows={4}
+                value={coachingPrompt}
+                onChange={(e) => setCoachingPrompt(e.target.value)}
+                placeholder="e.g. Relentless high pressing, suffocate opponent in their half, quick vertical passing on turnover..."
+                style={{ width: "100%", resize: "vertical", fontSize: "12px", lineHeight: "1.4", padding: "8px" }}
+              />
+
+              {optimizationFeedback && (
+                <div
+                  style={{
+                    background: "var(--cds-layer-selected)",
+                    border: "1px solid var(--cds-green-primary)",
+                    borderRadius: "3px",
+                    padding: "8px 10px",
+                    fontSize: "11px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "2px",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontWeight: "700", color: "var(--cds-green-primary)" }}>
+                      ✨ Applied: {optimizationFeedback.technique}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setOptimizationFeedback(null)}
+                      style={{ background: "transparent", border: "none", color: "var(--cds-text-muted)", cursor: "pointer", fontSize: "11px" }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <span style={{ color: "var(--cds-text-secondary)", lineHeight: 1.3 }}>
+                    {optimizationFeedback.explanation}
+                  </span>
+                </div>
+              )}
 
               {/* Quick Preset Buttons */}
               <div>
@@ -310,6 +415,35 @@ export const TacticsBoardCarbon: React.FC<TacticsBoardCarbonProps> = ({
 
               {/* Live Prompt Analyzer */}
               <PromptQualityAnalyzer promptText={coachingPrompt} compact={true} />
+
+              {/* Masterclass Link Banner */}
+              {onOpenMasterclass && (
+                <div
+                  onClick={onOpenMasterclass}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "8px 10px",
+                    borderRadius: "3px",
+                    background: "var(--cds-layer)",
+                    border: "1px dashed var(--cds-border)",
+                    cursor: "pointer",
+                    fontSize: "11px",
+                    color: "var(--cds-text-secondary)",
+                    transition: "all 0.15s ease",
+                  }}
+                >
+                  <BookOpen size={14} color="var(--cds-green-primary)" />
+                  <div style={{ flex: 1 }}>
+                    <strong style={{ color: "var(--cds-text-primary)" }}>Learn Prompt Engineering</strong>
+                    <p style={{ margin: 0, fontSize: "10px", color: "var(--cds-text-muted)" }}>
+                      Explore Personas, CoT & Negative Constraints.
+                    </p>
+                  </div>
+                  <ChevronRight size={14} color="var(--cds-text-muted)" />
+                </div>
+              )}
             </div>
           )}
 
