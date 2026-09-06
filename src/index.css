@@ -1,0 +1,308 @@
+/* IBM Carbon Design System - Light Theme */
+:root {
+  /* Carbon Light Palette */
+  --cds-background: #F4F4F4;
+  --cds-surface: #FFFFFF;
+  --cds-layer: #F8F8F8;
+  --cds-layer-hover: #F1F1F1;
+  --cds-layer-selected: rgba(15, 107, 69, 0.08);
+
+  --cds-text-primary: #161616;
+  --cds-text-secondary: #525252;
+  --cds-text-muted: #8D8D8D;
+  --cds-text-on-color: #FFFFFF;
+
+  --cds-border: #E0E0E0;
+  --cds-border-subtle: #ECECEC;
+  --cds-border-strong: #8D8D8D;
+
+  /* Carbon Accent Colors */
+  --cds-green-primary: #0F6B45;
+  --cds-green-hover: #085C3B;
+  --cds-green-active: #04432B;
+  --cds-green-light: #DEFBE6;
+
+  --cds-blue: #0F62FE;
+  --cds-blue-hover: #0043CE;
+  --cds-blue-light: #EDF5FF;
+
+  --cds-red: #DA1E28;
+  --cds-red-hover: #BA1B23;
+  --cds-red-light: #FFF1F1;
+
+  --cds-amber: #F1C21B;
+  --cds-amber-hover: #D2A106;
+  --cds-amber-light: #FDF6DD;
+
+  /* Pitch & Stadium */
+  --pitch-grass-1: #1F7A4C;
+  --pitch-grass-2: #196941;
+  --pitch-line: rgba(255, 255, 255, 0.85);
+
+  /* Typography */
+  --font-main: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  /* Grid & Radii (Carbon: 0 - 4px) */
+  --cds-radius-xs: 2px;
+  --cds-radius-sm: 4px;
+  --cds-radius-pill: 9999px;
+
+  /* Minimal Shadows */
+  --cds-shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --cds-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --cds-shadow-flyout: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+  /* Backward compatibility aliases */
+  --bg-pitch-dark: #F4F4F4;
+  --bg-stadium: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F8F8F8;
+  --bg-input: #FFFFFF;
+  --border-subtle: #E0E0E0;
+  --border-accent: #0F6B45;
+  --accent-cyan: #0F6B45;
+  --accent-blue: #0F62FE;
+  --accent-pink: #DA1E28;
+  --accent-orange: #F1C21B;
+  --accent-green: #0F6B45;
+  --text-primary: #161616;
+  --text-secondary: #525252;
+  --text-muted: #8D8D8D;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--cds-background);
+  color: var(--cds-text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Carbon Clean Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--cds-background);
+}
+::-webkit-scrollbar-thumb {
+  background: #C6C6C6;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8D8D8D;
+}
+
+/* Typography Utilities */
+.type-display {
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--cds-text-primary);
+}
+
+.type-h1 {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--cds-text-primary);
+}
+
+.type-h2 {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--cds-text-primary);
+}
+
+.type-h3 {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--cds-text-primary);
+}
+
+.type-body-large {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--cds-text-primary);
+}
+
+.type-body {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--cds-text-primary);
+}
+
+.type-caption {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--cds-text-secondary);
+}
+
+.type-numbers {
+  font-family: var(--font-main);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Restrained Carbon Card */
+.carbon-card, .glass-panel {
+  background: var(--cds-surface);
+  border: 1px solid var(--cds-border);
+  border-radius: var(--cds-radius-sm);
+  box-shadow: var(--cds-shadow-subtle);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Carbon Buttons */
+.btn, .carbon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-main);
+  font-weight: 500;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: var(--cds-radius-xs);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  text-decoration: none;
+  user-select: none;
+  height: 36px;
+}
+
+.btn-primary, .carbon-btn-primary {
+  background: var(--cds-green-primary);
+  color: #FFFFFF;
+  border-color: var(--cds-green-primary);
+  box-shadow: none;
+}
+.btn-primary:hover, .carbon-btn-primary:hover {
+  background: var(--cds-green-hover);
+  border-color: var(--cds-green-hover);
+  transform: none;
+  box-shadow: none;
+}
+.btn-primary:active, .carbon-btn-primary:active {
+  background: var(--cds-green-active);
+}
+
+.btn-secondary, .carbon-btn-secondary {
+  background: #FFFFFF;
+  color: var(--cds-text-primary);
+  border: 1px solid var(--cds-border);
+}
+.btn-secondary:hover, .carbon-btn-secondary:hover {
+  background: var(--cds-layer);
+  border-color: #C6C6C6;
+}
+
+.btn-danger, .carbon-btn-danger {
+  background: var(--cds-red);
+  color: #FFFFFF;
+  border-color: var(--cds-red);
+}
+.btn-danger:hover, .carbon-btn-danger:hover {
+  background: var(--cds-red-hover);
+  border-color: var(--cds-red-hover);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--cds-text-primary);
+  border: 1px solid transparent;
+}
+.btn-ghost:hover {
+  background: var(--cds-layer);
+}
+
+/* Carbon Form Pills (e.g. W, D, L) */
+.form-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+.form-pill-win {
+  background: var(--cds-green-primary);
+  color: #FFFFFF;
+}
+.form-pill-draw {
+  background: #6F6F6F;
+  color: #FFFFFF;
+}
+.form-pill-loss {
+  background: var(--cds-red);
+  color: #FFFFFF;
+}
+
+/* Carbon Input Fields */
+.carbon-input {
+  background: var(--cds-surface);
+  border: 1px solid var(--cds-border);
+  border-radius: var(--cds-radius-xs);
+  padding: 8px 12px;
+  font-family: var(--font-main);
+  font-size: 14px;
+  color: var(--cds-text-primary);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.carbon-input:focus {
+  border-color: var(--cds-green-primary);
+  box-shadow: 0 0 0 1px var(--cds-green-primary);
+}
+.carbon-input::placeholder {
+  color: var(--cds-text-muted);
+}
+
+/* Carbon Data Table */
+.carbon-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: var(--cds-surface);
+}
+.carbon-table th {
+  background: var(--cds-layer);
+  color: var(--cds-text-secondary);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--cds-border);
+  text-align: left;
+}
+.carbon-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--cds-border-subtle);
+  color: var(--cds-text-primary);
+  vertical-align: middle;
+}
+.carbon-table tr:hover td {
+  background: var(--cds-layer-hover);
+}
