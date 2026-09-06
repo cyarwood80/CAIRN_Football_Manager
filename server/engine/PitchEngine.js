@@ -4,10 +4,10 @@
 export class PitchEngine {
   constructor(homeTactics, awayTactics, options = {}) {
     this.width = 1000;
-    this.height = 640;
-    this.goalYMin = 260;
-    this.goalYMax = 380;
-    this.goalCenterY = 320;
+    this.height = 620;
+    this.goalYMin = 250;
+    this.goalYMax = 370;
+    this.goalCenterY = 310;
     this.options = options;
 
     this.homeTeam = homeTactics;
@@ -78,7 +78,7 @@ export class PitchEngine {
 
     this.ball = {
       x: 500,
-      y: 320,
+      y: 310,
       vx: 0,
       vy: 0,
       radius: 7,
@@ -332,7 +332,7 @@ export class PitchEngine {
     this.phase = "kickoff";
     this.kickoffTeam = teamTakingKickoff;
     this.ball.x = 500;
-    this.ball.y = 320;
+    this.ball.y = 310;
     this.ball.vx = 0;
     this.ball.vy = 0;
     this.ball.possessorId = null;
