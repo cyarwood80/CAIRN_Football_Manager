@@ -4,10 +4,10 @@
 export class PitchEngine {
   constructor(homeTactics, awayTactics, options = {}) {
     this.width = 1000;
-    this.height = 540;
-    this.goalYMin = 210;
-    this.goalYMax = 330;
-    this.goalCenterY = 270;
+    this.height = 680;
+    this.goalYMin = 280;
+    this.goalYMax = 400;
+    this.goalCenterY = 340;
     this.options = options;
 
     this.homeTeam = homeTactics;
@@ -78,7 +78,7 @@ export class PitchEngine {
 
     this.ball = {
       x: 500,
-      y: 310,
+      y: 340,
       vx: 0,
       vy: 0,
       radius: 7,
@@ -200,107 +200,107 @@ export class PitchEngine {
     if (formation === "4-3-3") {
       // 1 GK, 4 DEF (RB, CB_L, CB_R, LB), 3 MID (CDM, CAM, CM), 3 FWD (RW, ST, LW)
       return [
-        { x: xBase(0.05), y: 270 }, // 1: GK
-        { x: xBase(0.22), y: 450 }, // 2: RB
-        { x: xBase(0.18), y: 195 }, // 3: CB_L
-        { x: xBase(0.18), y: 345 }, // 4: CB_R
-        { x: xBase(0.22), y: 90 },  // 5: LB
-        { x: xBase(0.38), y: 270 }, // 6: CDM
-        { x: xBase(0.72), y: 450 }, // 7: RW
-        { x: xBase(0.55), y: 345 }, // 8: CAM
-        { x: xBase(0.78), y: 270 }, // 9: ST
-        { x: xBase(0.55), y: 195 }, // 10: CM
-        { x: xBase(0.72), y: 90 },  // 11: LW
+        { x: xBase(0.05), y: 340 }, // 1: GK
+        { x: xBase(0.22), y: 565 }, // 2: RB
+        { x: xBase(0.18), y: 245 }, // 3: CB_L
+        { x: xBase(0.18), y: 435 }, // 4: CB_R
+        { x: xBase(0.22), y: 115 }, // 5: LB
+        { x: xBase(0.38), y: 340 }, // 6: CDM
+        { x: xBase(0.72), y: 565 }, // 7: RW
+        { x: xBase(0.55), y: 435 }, // 8: CAM
+        { x: xBase(0.78), y: 340 }, // 9: ST
+        { x: xBase(0.55), y: 245 }, // 10: CM
+        { x: xBase(0.72), y: 115 }, // 11: LW
       ];
     } else if (formation === "4-4-2") {
       // 1 GK, 4 DEF (RB, CB_L, CB_R, LB), 4 MID (RM, CM_R, CM_L, LM), 2 FWD (ST_R, ST_L)
       return [
-        { x: xBase(0.05), y: 270 }, // 1: GK
-        { x: xBase(0.22), y: 450 }, // 2: RB
-        { x: xBase(0.18), y: 195 }, // 3: CB_L
-        { x: xBase(0.18), y: 345 }, // 4: CB_R
-        { x: xBase(0.22), y: 90 },  // 5: LB
-        { x: xBase(0.52), y: 450 }, // 6: RM
-        { x: xBase(0.48), y: 345 }, // 7: CM_R
-        { x: xBase(0.48), y: 195 }, // 8: CM_L
-        { x: xBase(0.76), y: 345 }, // 9: ST_R
-        { x: xBase(0.76), y: 195 }, // 10: ST_L
-        { x: xBase(0.52), y: 90 },  // 11: LM
+        { x: xBase(0.05), y: 340 }, // 1: GK
+        { x: xBase(0.22), y: 565 }, // 2: RB
+        { x: xBase(0.18), y: 245 }, // 3: CB_L
+        { x: xBase(0.18), y: 435 }, // 4: CB_R
+        { x: xBase(0.22), y: 115 }, // 5: LB
+        { x: xBase(0.52), y: 565 }, // 6: RM
+        { x: xBase(0.48), y: 435 }, // 7: CM_R
+        { x: xBase(0.48), y: 245 }, // 8: CM_L
+        { x: xBase(0.76), y: 435 }, // 9: ST_R
+        { x: xBase(0.76), y: 245 }, // 10: ST_L
+        { x: xBase(0.52), y: 115 }, // 11: LM
       ];
     } else if (formation === "3-5-2") {
       // 1 GK, 3 DEF, 5 MID, 2 FWD
       return [
-        { x: xBase(0.05), y: 270 }, // 1: GK
-        { x: xBase(0.19), y: 380 }, // 2: CB_R
-        { x: xBase(0.17), y: 270 }, // 3: CB_C
-        { x: xBase(0.19), y: 160 }, // 4: CB_L
-        { x: xBase(0.42), y: 465 }, // 5: RWB
-        { x: xBase(0.36), y: 270 }, // 6: CDM
-        { x: xBase(0.52), y: 345 }, // 7: CM_R
-        { x: xBase(0.60), y: 270 }, // 8: CAM
-        { x: xBase(0.77), y: 345 }, // 9: ST_R
-        { x: xBase(0.77), y: 195 }, // 10: ST_L
-        { x: xBase(0.42), y: 75 },  // 11: LWB
+        { x: xBase(0.05), y: 340 }, // 1: GK
+        { x: xBase(0.19), y: 475 }, // 2: CB_R
+        { x: xBase(0.17), y: 340 }, // 3: CB_C
+        { x: xBase(0.19), y: 205 }, // 4: CB_L
+        { x: xBase(0.42), y: 585 }, // 5: RWB
+        { x: xBase(0.36), y: 340 }, // 6: CDM
+        { x: xBase(0.52), y: 435 }, // 7: CM_R
+        { x: xBase(0.60), y: 340 }, // 8: CAM
+        { x: xBase(0.77), y: 435 }, // 9: ST_R
+        { x: xBase(0.77), y: 245 }, // 10: ST_L
+        { x: xBase(0.42), y: 95 },  // 11: LWB
       ];
     } else if (formation === "5-3-2") {
       // 1 GK, 5 DEF, 3 MID, 2 FWD
       return [
-        { x: xBase(0.05), y: 270 }, // 1: GK
-        { x: xBase(0.25), y: 460 }, // 2: RWB
-        { x: xBase(0.18), y: 365 }, // 3: CB_R
-        { x: xBase(0.16), y: 270 }, // 4: CB_C
-        { x: xBase(0.18), y: 175 }, // 5: CB_L
-        { x: xBase(0.25), y: 80 },  // 6: LWB
-        { x: xBase(0.38), y: 270 }, // 7: CDM
-        { x: xBase(0.50), y: 345 }, // 8: CM_R
-        { x: xBase(0.77), y: 345 }, // 9: ST_R
-        { x: xBase(0.77), y: 195 }, // 10: ST_L
-        { x: xBase(0.50), y: 195 }, // 11: CM_L
+        { x: xBase(0.05), y: 340 }, // 1: GK
+        { x: xBase(0.25), y: 575 }, // 2: RWB
+        { x: xBase(0.18), y: 460 }, // 3: CB_R
+        { x: xBase(0.16), y: 340 }, // 4: CB_C
+        { x: xBase(0.18), y: 220 }, // 5: CB_L
+        { x: xBase(0.25), y: 105 }, // 6: LWB
+        { x: xBase(0.38), y: 340 }, // 7: CDM
+        { x: xBase(0.50), y: 435 }, // 8: CM_R
+        { x: xBase(0.77), y: 435 }, // 9: ST_R
+        { x: xBase(0.77), y: 245 }, // 10: ST_L
+        { x: xBase(0.50), y: 245 }, // 11: CM_L
       ];
     } else if (formation === "4-2-3-1") {
       // 1 GK, 4 DEF (RB, CB_R, CB_L, LB), 2 CDM, 3 AM (RM, CAM, LM), 1 ST
       return [
-        { x: xBase(0.05), y: 270 }, // 1: GK
-        { x: xBase(0.22), y: 450 }, // 2: RB
-        { x: xBase(0.18), y: 345 }, // 3: CB_R
-        { x: xBase(0.18), y: 195 }, // 4: CB_L
-        { x: xBase(0.22), y: 90 },  // 5: LB
-        { x: xBase(0.36), y: 345 }, // 6: CDM_R
-        { x: xBase(0.65), y: 450 }, // 7: RM
-        { x: xBase(0.36), y: 195 }, // 8: CDM_L
-        { x: xBase(0.80), y: 270 }, // 9: ST
-        { x: xBase(0.60), y: 270 }, // 10: CAM
-        { x: xBase(0.65), y: 90 },  // 11: LM
+        { x: xBase(0.05), y: 340 }, // 1: GK
+        { x: xBase(0.22), y: 565 }, // 2: RB
+        { x: xBase(0.18), y: 435 }, // 3: CB_R
+        { x: xBase(0.18), y: 245 }, // 4: CB_L
+        { x: xBase(0.22), y: 115 }, // 5: LB
+        { x: xBase(0.36), y: 435 }, // 6: CDM_R
+        { x: xBase(0.65), y: 565 }, // 7: RM
+        { x: xBase(0.36), y: 245 }, // 8: CDM_L
+        { x: xBase(0.80), y: 340 }, // 9: ST
+        { x: xBase(0.60), y: 340 }, // 10: CAM
+        { x: xBase(0.65), y: 115 }, // 11: LM
       ];
     } else if (formation === "3-4-3") {
       // 1 GK, 3 DEF (CB_R, CB_C, CB_L), 4 MID (RM, CM_R, CM_L, LM), 3 FWD (RW, ST, LW)
       return [
-        { x: xBase(0.05), y: 270 }, // 1: GK
-        { x: xBase(0.19), y: 380 }, // 2: CB_R
-        { x: xBase(0.17), y: 270 }, // 3: CB_C
-        { x: xBase(0.19), y: 160 }, // 4: CB_L
-        { x: xBase(0.48), y: 455 }, // 5: RM
-        { x: xBase(0.45), y: 335 }, // 6: CM_R
-        { x: xBase(0.76), y: 440 }, // 7: RW
-        { x: xBase(0.45), y: 205 }, // 8: CM_L
-        { x: xBase(0.82), y: 270 }, // 9: ST
-        { x: xBase(0.48), y: 85 },  // 10: LM
-        { x: xBase(0.76), y: 100 }, // 11: LW
+        { x: xBase(0.05), y: 340 }, // 1: GK
+        { x: xBase(0.19), y: 475 }, // 2: CB_R
+        { x: xBase(0.17), y: 340 }, // 3: CB_C
+        { x: xBase(0.19), y: 205 }, // 4: CB_L
+        { x: xBase(0.48), y: 570 }, // 5: RM
+        { x: xBase(0.45), y: 420 }, // 6: CM_R
+        { x: xBase(0.76), y: 555 }, // 7: RW
+        { x: xBase(0.45), y: 260 }, // 8: CM_L
+        { x: xBase(0.82), y: 340 }, // 9: ST
+        { x: xBase(0.48), y: 110 }, // 10: LM
+        { x: xBase(0.76), y: 125 }, // 11: LW
       ];
     } else {
       // Default 4-3-3 fallback
       return [
-        { x: xBase(0.05), y: 270 },
-        { x: xBase(0.22), y: 450 },
-        { x: xBase(0.18), y: 195 },
-        { x: xBase(0.18), y: 345 },
-        { x: xBase(0.22), y: 90 },
-        { x: xBase(0.38), y: 270 },
-        { x: xBase(0.72), y: 450 },
-        { x: xBase(0.55), y: 345 },
-        { x: xBase(0.78), y: 270 },
-        { x: xBase(0.55), y: 195 },
-        { x: xBase(0.72), y: 90 },
+        { x: xBase(0.05), y: 340 },
+        { x: xBase(0.22), y: 565 },
+        { x: xBase(0.18), y: 245 },
+        { x: xBase(0.18), y: 435 },
+        { x: xBase(0.22), y: 115 },
+        { x: xBase(0.38), y: 340 },
+        { x: xBase(0.72), y: 565 },
+        { x: xBase(0.55), y: 435 },
+        { x: xBase(0.78), y: 340 },
+        { x: xBase(0.55), y: 245 },
+        { x: xBase(0.72), y: 115 },
       ];
     }
   }
@@ -317,7 +317,7 @@ export class PitchEngine {
         : (idx % anchors.length);
       const isAttackingRight = (p.team === "home" && this.currentHalf === 1) || (p.team === "away" && this.currentHalf === 2);
       const defaultX = isAttackingRight ? 200 : 800;
-      const anchor = anchors[anchorIdx] || anchors[0] || { x: defaultX, y: 320 };
+      const anchor = anchors[anchorIdx] || anchors[0] || { x: defaultX, y: 340 };
       p.x = anchor.x;
       p.y = anchor.y;
       p.targetX = anchor.x;
@@ -332,7 +332,7 @@ export class PitchEngine {
     this.phase = "kickoff";
     this.kickoffTeam = teamTakingKickoff;
     this.ball.x = 500;
-    this.ball.y = 310;
+    this.ball.y = 340;
     this.ball.vx = 0;
     this.ball.vy = 0;
     this.ball.possessorId = null;
