@@ -5,6 +5,7 @@ import {
   Calendar,
   FastForward,
   Swords,
+  X,
 } from "lucide-react";
 import { PitchCanvas } from "./components/PitchCanvas";
 import { TeamBuilder } from "./components/TeamBuilder";
@@ -115,6 +116,21 @@ export const App: React.FC = () => {
   const [schedule, setSchedule] = useState<CalendarScheduleItem[]>([]);
   const [activeTier, setActiveTier] = useState<string>("tier_4");
   const [showFriendlyModal, setShowFriendlyModal] = useState<boolean>(false);
+  const [isAdvancingCalendar, setIsAdvancingCalendar] = useState<boolean>(false);
+  const [calendarToast, setCalendarToast] = useState<{
+    message: string;
+    subtext?: string;
+    type: "info" | "matchday" | "success";
+  } | null>(null);
+
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showCalendarToast = (msg: string, sub?: string, type: "info" | "matchday" | "success" = "info") => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setCalendarToast({ message: msg, subtext: sub, type });
+    toastTimerRef.current = setTimeout(() => {
+      setCalendarToast(null);
+    }, 4500);
+  };
 
   // League & Championship Standings State
   const [leagueStandings, setLeagueStandings] = useState<LeagueClubStanding[]>([]);
@@ -585,6 +601,8 @@ export const App: React.FC = () => {
   };
 
   const handleAdvanceDay = async (prompt?: string | React.MouseEvent) => {
+    if (isAdvancingCalendar) return;
+    setIsAdvancingCalendar(true);
     try {
       const promptText = typeof prompt === "string" && prompt.trim() ? prompt.trim() : (teamConfig.prompt || "Focus on pressing discipline and crisp passes");
       const res = await fetch("/api/calendar/advance", {
@@ -596,14 +614,33 @@ export const App: React.FC = () => {
         }),
       });
       const d = await res.json();
-      if (d.calendar) setCalendarState(d.calendar);
+      if (d.calendar) {
+        setCalendarState(d.calendar);
+        if (d.calendar.isMatchday) {
+          showCalendarToast(
+            "🏟️ MATCHDAY ARRIVED!",
+            `Saturday Matchday (GW #${d.calendar.currentGameweek}) vs ${nextOpponentName}. Click 'PLAY MATCH' to set lineup!`,
+            "matchday"
+          );
+        } else {
+          showCalendarToast(
+            `🗓️ Advanced to ${d.calendar.date}`,
+            `${d.calendar.activityDesc || "Squad completed daily tactical drill"} • Tactical Mastery +2%`,
+            "info"
+          );
+        }
+      }
       if (d.schedule) setSchedule(d.schedule);
     } catch (e) {
       console.error("Advance day error:", e);
+    } finally {
+      setIsAdvancingCalendar(false);
     }
   };
 
   const handleAdvanceToMatchday = async (prompt?: string | React.MouseEvent) => {
+    if (isAdvancingCalendar) return;
+    setIsAdvancingCalendar(true);
     try {
       const promptText = typeof prompt === "string" && prompt.trim() ? prompt.trim() : (teamConfig.prompt || "Focus on pressing discipline and crisp passes");
       const res = await fetch("/api/calendar/advance-matchday", {
@@ -615,10 +652,19 @@ export const App: React.FC = () => {
         }),
       });
       const d = await res.json();
-      if (d.calendar) setCalendarState(d.calendar);
+      if (d.calendar) {
+        setCalendarState(d.calendar);
+        showCalendarToast(
+          "🏟️ SATURDAY MATCHDAY ARRIVED!",
+          `Gameweek #${d.calendar.currentGameweek} fixture vs ${nextOpponentName} is ready for kickoff!`,
+          "matchday"
+        );
+      }
       if (d.schedule) setSchedule(d.schedule);
     } catch (e) {
       console.error("Advance to matchday error:", e);
+    } finally {
+      setIsAdvancingCalendar(false);
     }
   };
 
@@ -837,11 +883,69 @@ export const App: React.FC = () => {
           teamConfig={teamConfig}
           activeLLMModel={activeLLMModel}
           isConnected={isConnected}
+          isAdvancing={isAdvancingCalendar}
           onOpenAIInspector={() => setShowAIInferenceModal(true)}
           onOpenAssistantManager={() => setShowAssistantManagerDrawer(true)}
           onAdvanceDay={handleAdvanceDay}
+          onAdvanceToMatchday={handleAdvanceToMatchday}
           onPlayScheduledMatch={handlePlayScheduledMatch}
         />
+
+        {/* Floating Calendar Day Progression & Matchday Alert Toast */}
+        {calendarToast && (
+          <div
+            className="carbon-card"
+            style={{
+              position: "fixed",
+              top: "76px",
+              right: "24px",
+              zIndex: 9999,
+              display: "flex",
+              alignItems: "center",
+              gap: "14px",
+              padding: "12px 18px",
+              background: calendarToast.type === "matchday" ? "var(--cds-green-light)" : "var(--cds-surface)",
+              border: calendarToast.type === "matchday" ? "2px solid var(--cds-green-primary)" : "1px solid var(--cds-border)",
+              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.15)",
+              maxWidth: "460px",
+              animation: "fadeIn 0.2s ease-out",
+            }}
+          >
+            <div
+              style={{
+                width: "36px",
+                height: "36px",
+                borderRadius: "4px",
+                background: calendarToast.type === "matchday" ? "var(--cds-green-primary)" : "var(--cds-layer-selected)",
+                color: calendarToast.type === "matchday" ? "#fff" : "var(--cds-green-primary)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "18px",
+                flexShrink: 0,
+              }}
+            >
+              {calendarToast.type === "matchday" ? "🏟️" : "🗓️"}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: "700", fontSize: "13px", color: "var(--cds-text-primary)" }}>
+                {calendarToast.message}
+              </div>
+              {calendarToast.subtext && (
+                <div style={{ fontSize: "11px", color: "var(--cds-text-secondary)", marginTop: "2px", lineHeight: 1.35 }}>
+                  {calendarToast.subtext}
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => setCalendarToast(null)}
+              className="btn btn-secondary"
+              style={{ padding: "4px 6px", height: "auto", flexShrink: 0 }}
+            >
+              <X size={14} />
+            </button>
+          </div>
+        )}
 
         {/* Main Scrollable Workspace */}
         <main style={{ flex: 1, padding: "24px 32px", overflowY: "auto" }}>

@@ -22,10 +22,10 @@ export const FriendlyExhibitionModal: React.FC<FriendlyExhibitionModalProps> = (
   const [venue, setVenue] = useState<"home" | "away">("home");
 
   const BOT_PRESETS = [
-    { key: "GEGENPRESS", name: "Klopp's Relentless Gegenpress", color: "#C8102E", formation: "4-3-3", desc: "Suffocating packs, high line & rapid vertical blitzes" },
-    { key: "TIKI_TAKA", name: "Guardiola's Tiki-Taka Triangles", color: "#6CABDD", formation: "4-3-3", desc: "Patient possession triangles, 1-touch pass & move" },
-    { key: "LOW_BLOCK", name: "Mourinho's Impenetrable Bus", color: "#FEBE10", formation: "5-3-2", desc: "10 behind the ball, crunching tackles & long diagonal counters" },
-    { key: "SAMBA_FLAIR", name: "Ancelotti's Fluid Counter", color: "#10B981", formation: "4-2-3-1", desc: "Creative freedom, expressiveness & dynamic wing play" },
+    { key: "GEGENPRESS", name: "Klopp's Relentless Gegenpress", color: "var(--cds-red)", formation: "4-3-3", desc: "Suffocating packs, high line & rapid vertical blitzes" },
+    { key: "TIKI_TAKA", name: "Guardiola's Tiki-Taka Triangles", color: "var(--cds-blue)", formation: "4-3-3", desc: "Patient possession triangles, 1-touch pass & move" },
+    { key: "LOW_BLOCK", name: "Mourinho's Impenetrable Bus", color: "var(--cds-amber)", formation: "5-3-2", desc: "10 behind the ball, crunching tackles & long diagonal counters" },
+    { key: "SAMBA_FLAIR", name: "Ancelotti's Fluid Counter", color: "var(--cds-green-primary)", formation: "4-2-3-1", desc: "Creative freedom, expressiveness & dynamic wing play" },
   ];
 
   useEffect(() => {
@@ -57,100 +57,91 @@ export const FriendlyExhibitionModal: React.FC<FriendlyExhibitionModalProps> = (
     <div
       style={{
         position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: "rgba(0, 0, 0, 0.85)",
-        backdropFilter: "blur(8px)",
+        inset: 0,
+        backgroundColor: "rgba(22, 22, 22, 0.45)",
+        backdropFilter: "blur(4px)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         zIndex: 9999,
-        padding: "16px",
+        padding: "20px",
       }}
     >
       <div
-        className="glass-panel"
+        className="carbon-card"
         style={{
-          width: "100%",
-          maxWidth: "760px",
-          background: "linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(10, 15, 26, 0.98) 100%)",
-          border: "1px solid rgba(0, 229, 255, 0.3)",
-          boxShadow: "0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 229, 255, 0.15)",
-          borderRadius: "16px",
-          padding: "24px",
+          width: "min(780px, 95vw)",
+          maxHeight: "90vh",
+          overflowY: "auto",
+          padding: "28px 32px",
           display: "flex",
           flexDirection: "column",
-          gap: "18px",
+          gap: "20px",
+          position: "relative",
+          boxShadow: "0 12px 36px rgba(0, 0, 0, 0.18)",
         }}
       >
         {/* Header */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255, 255, 255, 0.08)", paddingBottom: "14px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: "rgba(0, 229, 255, 0.15)", border: "1px solid #00E5FF", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Swords size={20} color="#00E5FF" />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--cds-border)", paddingBottom: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "4px",
+                background: "var(--cds-green-light)",
+                border: "1px solid var(--cds-green-primary)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Swords size={20} color="var(--cds-green-primary)" />
             </div>
             <div>
-              <h2 style={{ fontSize: "1.25rem", fontWeight: "900", color: "#fff", margin: 0 }}>
+              <div style={{ fontSize: "11px", fontWeight: "700", color: "var(--cds-green-primary)", textTransform: "uppercase" }}>
+                Practice & Tuning Hub
+              </div>
+              <h2 style={{ fontSize: "18px", fontWeight: "700", color: "var(--cds-text-primary)", margin: 0 }}>
                 Friendly Exhibition Scrimmage
               </h2>
-              <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
+              <span style={{ fontSize: "12px", color: "var(--cds-text-secondary)" }}>
                 Test tactical prompts & team cohesion without affecting official League points
               </span>
             </div>
           </div>
-          <button onClick={onClose} style={{ background: "transparent", border: "none", color: "var(--text-muted)", cursor: "pointer" }}>
-            <X size={20} />
+          <button
+            onClick={onClose}
+            className="btn btn-secondary"
+            style={{ padding: "6px 8px", height: "auto" }}
+          >
+            <X size={16} />
           </button>
         </div>
 
         {/* Category Selector */}
-        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-          <button
-            type="button"
-            className={`btn ${selectedCategory === "preset" ? "btn-primary" : "btn-secondary"}`}
-            style={{ padding: "6px 14px", fontSize: "0.8rem" }}
-            onClick={() => setSelectedCategory("preset")}
-          >
-            Tactical Masterminds
-          </button>
-          <button
-            type="button"
-            className={`btn ${selectedCategory === "tier_1" ? "btn-primary" : "btn-secondary"}`}
-            style={{ padding: "6px 14px", fontSize: "0.8rem" }}
-            onClick={() => setSelectedCategory("tier_1")}
-          >
-            Premier (Tier 1)
-          </button>
-          <button
-            type="button"
-            className={`btn ${selectedCategory === "tier_2" ? "btn-primary" : "btn-secondary"}`}
-            style={{ padding: "6px 14px", fontSize: "0.8rem" }}
-            onClick={() => setSelectedCategory("tier_2")}
-          >
-            Div One (Tier 2)
-          </button>
-          <button
-            type="button"
-            className={`btn ${selectedCategory === "tier_3" ? "btn-primary" : "btn-secondary"}`}
-            style={{ padding: "6px 14px", fontSize: "0.8rem" }}
-            onClick={() => setSelectedCategory("tier_3")}
-          >
-            Div Two (Tier 3)
-          </button>
-          <button
-            type="button"
-            className={`btn ${selectedCategory === "tier_4" ? "btn-primary" : "btn-secondary"}`}
-            style={{ padding: "6px 14px", fontSize: "0.8rem" }}
-            onClick={() => setSelectedCategory("tier_4")}
-          >
-            National (Tier 4)
-          </button>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+          {[
+            { id: "preset", label: "Tactical Masterminds" },
+            { id: "tier_1", label: "Premier (Tier 1)" },
+            { id: "tier_2", label: "Div One (Tier 2)" },
+            { id: "tier_3", label: "Div Two (Tier 3)" },
+            { id: "tier_4", label: "National (Tier 4)" },
+          ].map((cat) => (
+            <button
+              key={cat.id}
+              type="button"
+              className={`btn ${selectedCategory === cat.id ? "btn-primary" : "btn-secondary"}`}
+              style={{ padding: "6px 14px", fontSize: "12px" }}
+              onClick={() => setSelectedCategory(cat.id as any)}
+            >
+              {cat.label}
+            </button>
+          ))}
         </div>
 
         {/* Opponents Grid */}
-        <div style={{ maxHeight: "240px", overflowY: "auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+        <div style={{ maxHeight: "260px", overflowY: "auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
           {selectedCategory === "preset" ? (
             BOT_PRESETS.map((p) => {
               const isSelected = selectedPresetKey === p.key;
@@ -161,22 +152,23 @@ export const FriendlyExhibitionModal: React.FC<FriendlyExhibitionModalProps> = (
                     setSelectedPresetKey(p.key);
                     setSelectedOpponentName(p.name);
                   }}
+                  className="carbon-card"
                   style={{
-                    padding: "12px",
-                    borderRadius: "10px",
-                    border: `1px solid ${isSelected ? "#00E5FF" : "rgba(255, 255, 255, 0.08)"}`,
-                    background: isSelected ? "rgba(0, 229, 255, 0.1)" : "rgba(255, 255, 255, 0.02)",
+                    padding: "12px 16px",
+                    background: isSelected ? "var(--cds-layer-selected)" : "var(--cds-surface)",
+                    border: isSelected ? "2px solid var(--cds-green-primary)" : "1px solid var(--cds-border)",
                     cursor: "pointer",
                     display: "flex",
                     flexDirection: "column",
                     gap: "4px",
+                    transition: "all 0.15s ease",
                   }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontWeight: "800", fontSize: "0.88rem", color: "#fff" }}>{p.name}</span>
-                    <span style={{ fontSize: "0.68rem", color: p.color, fontWeight: "700" }}>{p.formation}</span>
+                    <span style={{ fontWeight: "700", fontSize: "13px", color: "var(--cds-text-primary)" }}>{p.name}</span>
+                    <span className="badge badge-info" style={{ fontSize: "10px", padding: "1px 5px" }}>{p.formation}</span>
                   </div>
-                  <span style={{ fontSize: "0.72rem", color: "var(--text-secondary)" }}>{p.desc}</span>
+                  <span style={{ fontSize: "12px", color: "var(--cds-text-secondary)" }}>{p.desc}</span>
                 </div>
               );
             })
@@ -187,21 +179,22 @@ export const FriendlyExhibitionModal: React.FC<FriendlyExhibitionModalProps> = (
                 <div
                   key={c.id}
                   onClick={() => setSelectedOpponentName(c.name)}
+                  className="carbon-card"
                   style={{
                     padding: "10px 14px",
-                    borderRadius: "10px",
-                    border: `1px solid ${isSelected ? c.color : "rgba(255, 255, 255, 0.08)"}`,
-                    background: isSelected ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.02)",
+                    background: isSelected ? "var(--cds-layer-selected)" : "var(--cds-surface)",
+                    border: isSelected ? "2px solid var(--cds-green-primary)" : "1px solid var(--cds-border)",
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
                     gap: "10px",
+                    transition: "all 0.15s ease",
                   }}
                 >
-                  <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: c.color }} />
+                  <div style={{ width: "12px", height: "12px", borderRadius: "50%", background: c.color || "var(--cds-green-primary)" }} />
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: "700", fontSize: "0.86rem", color: "#fff" }}>{c.name}</div>
-                    <div style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>
+                    <div style={{ fontWeight: "700", fontSize: "13px", color: "var(--cds-text-primary)" }}>{c.name}</div>
+                    <div style={{ fontSize: "11px", color: "var(--cds-text-muted)" }}>
                       Val: £{c.totalSquadValue}M • Rep: {c.reputation}★
                     </div>
                   </div>
@@ -212,14 +205,14 @@ export const FriendlyExhibitionModal: React.FC<FriendlyExhibitionModalProps> = (
         </div>
 
         {/* Venue Selection */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderTop: "1px solid rgba(255, 255, 255, 0.08)", paddingTop: "14px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderTop: "1px solid var(--cds-border)", paddingTop: "16px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <span style={{ fontSize: "0.8rem", fontWeight: "700", color: "var(--text-secondary)" }}>Venue:</span>
-            <div style={{ display: "flex", gap: "6px" }}>
+            <span style={{ fontSize: "12px", fontWeight: "700", color: "var(--cds-text-secondary)" }}>Venue:</span>
+            <div style={{ display: "flex", gap: "8px" }}>
               <button
                 type="button"
                 className={`btn ${venue === "home" ? "btn-primary" : "btn-secondary"}`}
-                style={{ padding: "4px 12px", fontSize: "0.75rem" }}
+                style={{ padding: "6px 12px", fontSize: "12px" }}
                 onClick={() => setVenue("home")}
               >
                 🏟️ Home Ground (+Crowd Boost)
@@ -227,7 +220,7 @@ export const FriendlyExhibitionModal: React.FC<FriendlyExhibitionModalProps> = (
               <button
                 type="button"
                 className={`btn ${venue === "away" ? "btn-primary" : "btn-secondary"}`}
-                style={{ padding: "4px 12px", fontSize: "0.75rem" }}
+                style={{ padding: "6px 12px", fontSize: "12px" }}
                 onClick={() => setVenue("away")}
               >
                 ✈️ Away Match (+Hostile Atmosphere)
@@ -238,9 +231,9 @@ export const FriendlyExhibitionModal: React.FC<FriendlyExhibitionModalProps> = (
           <button
             className="btn btn-primary"
             onClick={handleLaunch}
-            style={{ padding: "10px 22px", fontSize: "0.9rem", fontWeight: "900", gap: "6px" }}
+            style={{ padding: "8px 20px", fontSize: "13px", fontWeight: "600", gap: "6px" }}
           >
-            <Play size={15} />
+            <Play size={14} />
             <span>Kick Off Friendly</span>
           </button>
         </div>

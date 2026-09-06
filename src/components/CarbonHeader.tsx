@@ -21,9 +21,11 @@ interface CarbonHeaderProps {
   teamConfig: TeamConfig;
   activeLLMModel: string;
   isConnected?: boolean;
+  isAdvancing?: boolean;
   onOpenAIInspector: () => void;
   onOpenAssistantManager: () => void;
   onAdvanceDay: () => void;
+  onAdvanceToMatchday?: () => void;
   onPlayScheduledMatch: () => void;
 }
 
@@ -43,13 +45,17 @@ export const CarbonHeader: React.FC<CarbonHeaderProps> = ({
   teamConfig,
   activeLLMModel,
   isConnected = true,
+  isAdvancing = false,
   onOpenAIInspector,
   onOpenAssistantManager,
   onAdvanceDay,
+  onAdvanceToMatchday,
   onPlayScheduledMatch,
 }) => {
   const isMatchday = calendarState?.isMatchday;
   const displayDate = calendarState?.date || "Saturday, 12 September 2026";
+  const dayOfWeek = calendarState?.dayOfWeek ?? 6;
+  const daysUntilMatch = isMatchday ? 0 : ((6 - (dayOfWeek % 7) + 7) % 7 || 7);
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [showManagerProfile, setShowManagerProfile] = useState(false);
@@ -145,9 +151,18 @@ export const CarbonHeader: React.FC<CarbonHeaderProps> = ({
 
         {/* Right Controls: Date, Weather, Notifications, Profile, Action Button */}
         <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-          {/* Date & Weather */}
+          {/* Date, Countdown & Weather */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "var(--cds-text-secondary)" }}>
-            <span style={{ fontWeight: "600", color: "var(--cds-text-primary)" }}>{displayDate}</span>
+            <span style={{ fontWeight: "700", color: "var(--cds-text-primary)" }}>{displayDate}</span>
+            {isMatchday ? (
+              <span className="badge badge-error" style={{ fontSize: "11px", fontWeight: "700", padding: "2px 8px" }}>
+                ⚡ MATCHDAY
+              </span>
+            ) : (
+              <span className="badge badge-info" style={{ fontSize: "11px", fontWeight: "600", padding: "2px 8px" }}>
+                {daysUntilMatch} day{daysUntilMatch === 1 ? "" : "s"} to Matchday
+              </span>
+            )}
             <span>•</span>
             <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
               <CloudSun size={15} color="#0F62FE" />
@@ -296,24 +311,69 @@ export const CarbonHeader: React.FC<CarbonHeaderProps> = ({
             )}
           </div>
 
-          {/* Global Match Action Button */}
-          <button
-            className="btn btn-primary"
-            onClick={isMatchday ? onPlayScheduledMatch : onAdvanceDay}
-            style={{
-              height: "36px",
-              padding: "0 16px",
-              fontSize: "13px",
-              fontWeight: "600",
-              gap: "6px",
-              background: isMatchday ? "var(--cds-red)" : "var(--cds-green-primary)",
-              borderColor: isMatchday ? "var(--cds-red)" : "var(--cds-green-primary)",
-            }}
-            title={isMatchday ? "Kick off scheduled matchday" : "Advance to next calendar day"}
-          >
-            {isMatchday ? <Play size={14} /> : <FastForward size={14} />}
-            <span>{isMatchday ? "PLAY MATCH" : "CONTINUE"}</span>
-          </button>
+          {/* Calendar Progression & Match Actions */}
+          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+            {!isMatchday && onAdvanceToMatchday && (
+              <button
+                className="btn btn-secondary"
+                onClick={onAdvanceToMatchday}
+                disabled={isAdvancing}
+                style={{
+                  height: "36px",
+                  padding: "0 12px",
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  gap: "6px",
+                  background: "var(--cds-layer)",
+                  borderColor: "var(--cds-border)",
+                  color: "var(--cds-text-primary)",
+                  opacity: isAdvancing ? 0.6 : 1,
+                  cursor: isAdvancing ? "not-allowed" : "pointer",
+                }}
+                title="Fast-forward calendar directly to Saturday Matchday"
+              >
+                <FastForward size={14} color="var(--cds-blue)" />
+                <span>⏩ Matchday</span>
+              </button>
+            )}
+
+            <button
+              className="btn btn-primary"
+              onClick={isMatchday ? onPlayScheduledMatch : onAdvanceDay}
+              disabled={isAdvancing}
+              style={{
+                height: "36px",
+                padding: "0 18px",
+                fontSize: "13px",
+                fontWeight: "700",
+                gap: "6px",
+                background: isMatchday ? "var(--cds-green-primary)" : "var(--cds-green-primary)",
+                borderColor: isMatchday ? "var(--cds-green-primary)" : "var(--cds-green-primary)",
+                boxShadow: isMatchday ? "0 0 14px rgba(15, 107, 69, 0.4)" : "none",
+                opacity: isAdvancing ? 0.7 : 1,
+                cursor: isAdvancing ? "not-allowed" : "pointer",
+                transition: "all 0.15s ease",
+              }}
+              title={isMatchday ? "Kick off scheduled matchday" : "Advance to next calendar day"}
+            >
+              {isAdvancing ? (
+                <>
+                  <span style={{ display: "inline-block", animation: "spin 0.8s linear infinite" }}>⏳</span>
+                  <span>Advancing...</span>
+                </>
+              ) : isMatchday ? (
+                <>
+                  <Play size={14} />
+                  <span>PLAY MATCH</span>
+                </>
+              ) : (
+                <>
+                  <FastForward size={14} />
+                  <span>CONTINUE</span>
+                </>
+              )}
+            </button>
+          </div>
 
           {/* Manager User Profile Pill (Opens Profile Modal) */}
           <div
