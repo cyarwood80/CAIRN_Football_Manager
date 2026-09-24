@@ -1,4 +1,4 @@
-# ⚽ CAIRN FC — AI Football Championship Manager
+# ⚽ CAIRN FC - AI Football Championship Manager
 
 > **A next-generation Agentic AI football simulation, club management suite, and interactive prompt engineering laboratory built with React 19, TypeScript, Vite, Node.js WebSocket engine, and IBM Carbon Design System.**
 
